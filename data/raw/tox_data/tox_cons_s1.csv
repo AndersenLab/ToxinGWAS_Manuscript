@@ -1,0 +1,24 @@
+toxicant,cas,mol_weight,cat_num,source,storage_temp,stock_mM,diluent
+"2,4-D",94-75-7,221.04,31518-250MG,sigma,-20,500,DMSO
+Aldicarb,116-06-3,190.26,33386-100MG,sigma,-20,2000,DMSO
+Arsenic,1327-53-3,197.84,202673-5G,sigma,-20,450,Water
+Atrazine,1912-24-9,215.68,45330-250MG-R,sigma,-20,500,DMSO
+Cadmium dichloride,10108-64-2,183.32,202908-10G,sigma,-20,500,Water
+Carbaryl,63-25-2,201.22,32055-250MG,sigma,-20,500,DMSO
+Carboxin,5234-68-4,235.3,45371-250MG,sigma,-20,1000,DMSO
+Chlorfenapyr,122453-73-0,407.61,37913-100MG-R,sigma,-20,500,DMSO
+Chlorothalonil,1897-45-6,265.91,36791-250MG,sigma,-20,75,DMSO
+Chlorpyrifos,2921-88-2,350.59,45395-250MG,sigma,-20,100,DMSO
+Copper chloride,7447-39-4,134.45,751944-25G,sigma,-20,500,Water
+Lead (II) nitrate,10099-74-8,331.21,228621-100G,sigma,-20,500,Water
+Malathion,121-75-5,330.36,36143-100MG,sigma,-20,1200,DMSO
+Mancozeb,8018-01-7,541.01,45553-100MG,sigma,-20,75,DMSO
+Methomyl,16752-77-5,162.21,36159-100MG,sigma,-20,1000,DMSO
+Methylmercury dichloride,115-09-3,251.08,442534-5G-A,sigma,-20,150,DMSO
+Nickel dichloride,7718-54-9,129.6,339350-50G,sigma,-20,2500,Water
+Paraquat,75365-73-0,257.16,856177-1G,sigma,-20,1500,Water
+Propoxur,114-26-1,209.24,45644-250MG,sigma,-20,1500,DMSO
+Pyraclostrobin,175013-18-0,387.82,33696-100MG-R,sigma,-20,500,DMSO
+Silver nitrate,7761-88-8,169.87,S6506-5G,sigma,-20,100,Water
+Triphenyl phosphate,115-86-6,326.28,241288-50G,sigma,-20,100,DMSO
+Zinc dichloride,7646-85-7,136.3,229997-10G,sigma,-20,1000,Water
