@@ -1,0 +1,40 @@
+---
+title: "Table S1: Strain Information"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(data.table)
+
+# source the helper functions
+source("bin/general.R")
+
+source("bin/outs.R")
+source("bin/materials_key.R")
+
+# get the list of strains in the GWAS
+load("data/processed/pheno.df.rda")
+
+# Read the strain means data
+strains <- unique(pheno.df$strain)
+
+# downlaod latest data from CeaNDR
+ce_iso_loc <- data.table::fread("https://caendr.org/request-strains/download/c-elegans/20220216/strain-data/csv")
+
+# Three strains have non-CaeNDR strain names in data,  c("CB4855" "CB4857" "PB306")
+# these are c("ECA248" = "CB4855, ECA250 = "CB4857", "ECA259" = "PB306")
+strains[!strains %in% ce_iso_loc$strain]
+fix <- c("ECA248" = "CB4855", "ECA250" = "CB4857", "ECA259" = "PB306")
+
+# make the table
+tableS1 <- ce_iso_loc %>%
+  dplyr::filter(strain %in% names(fix) | strain %in% strains) %>%
+  dplyr::select(-1:-3, strain = isotype, caendr_release = release, -strain_set:-sequenced)
+
+# # save the table
+# rio::export(tableS1, file = "tables/tableS1.csv")
+
+save_supp_table_csv(tableS1, "strain_table")
+```

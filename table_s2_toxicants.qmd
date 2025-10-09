@@ -1,0 +1,540 @@
+---
+title: "Table S2: Toxicant Information"
+format: html
+---
+
+# 01 Create toxicant and toxicant condition metadata table
+
+Initially from `2021_GWA_manuscript/code/tox_data/generate_tox_metadata.R`
+
+```{r}
+#!/usr/bin/env Rscript
+library(data.table)
+library(dplyr)
+library(readxl)
+library(glue)
+library(rio)
+library(flextable)
+library(officer)
+
+source("bin/outs.R")
+source("bin/materials_key.R")
+
+#### Inputs ####
+# load clean cas numbers
+w_cas_fn <- "data/raw/tox_data/toxicant_cas.csv"
+
+# load comptox data
+ct_data_fn <- "data/raw/tox_data/20241001_Comptox_export.csv"
+
+# path to Kramer MoA
+kramer_moa_fn <- "data/raw/tox_data/Table_X_Tables_A_to_F_chemicals_MoAs_ecotoxdata.xlsx"
+
+# path to prep data
+prep_data_fn <- "data/raw/tox_data/tox_cons_s1.csv"
+
+# path to MoA classification data
+moa_class_fn <- "data/raw/tox_data/moa_class.csv"
+
+# path to toxicant condition data
+con_data_fn <- "data/raw/tox_data/gwa.doses.csv"
+
+#### outs ####
+
+#### Main ####
+
+# Load and ammend cas in prep data
+prep_data <- data.table::fread(prep_data_fn) %>%
+  dplyr::mutate(cas = stringr::str_replace_all(cas, pattern = "-", replacement = "")) %>% # fix cas to match ce
+  dplyr::mutate(cas = case_when(
+    toxicant == "Methylmercury dichloride" ~ 115093,
+    toxicant == "Aldicarb" ~ 116063,
+    toxicant == "Paraquat" ~ 1910425,
+    toxicant == "Zinc dichloride" ~ 7646857,
+    TRUE ~ as.numeric(cas)
+  )) %>%
+  dplyr::select(
+    toxicant,
+    cas,
+    cat_num,
+    source,
+    storage_temp,
+    stock_mM,
+    diluent
+  )
+
+## Merge Comptox and to prep data with corrected cas ##
+
+# load comptox data
+ct_df <- data.table::fread(ct_data_fn) %>%
+  dplyr::select(
+    # cas was INPUT to ecoTox search
+    cas = INPUT,
+    DTXSID,
+    PREFERRED_NAME,
+    CASRN
+  )
+
+# merge comptox data with clean cas numbers
+merge_cas_comptox <- prep_data %>%
+  dplyr::left_join(ct_df, by = "cas") %>%
+  dplyr::mutate(alt_dtxsid = case_when(
+    cas == "1327533" ~ "DTXSID4023886", # arsenic
+    cas == "10108642" ~ "DTXSID1023940", # cadmium dichloride
+    cas == "7447394" ~ "DTXSID2023985", # copper chloride
+    cas == "10099748" ~ "DTXSID2024161", # lead nitrate
+    cas == "115093" ~ "DTXSID1024172", # methylmercury dichloride
+    cas == "7718549" ~ "DTXSID2020925", # nickel dichloride
+    cas == "7646857" ~ "DTXSID7035012", # zinc dichloride
+    TRUE ~ NA_character_
+  ))
+
+## Merge Kramer MoA with Comptox and Cas Numbers ##
+
+# read in Kramer MoA
+kramer_moa <- readxl::read_xlsx(kramer_moa_fn, sheet = "Table_C_MoA_DB") %>%
+  dplyr::select(
+    DTXSID,
+    chemical_name,
+    use_group,
+    use_group_details,
+    MoA_broad:molecular_target
+  )
+
+# First attempt to merge kramer moa with comptox data using primary DTXSID
+merge_moa_comptox <- merge_cas_comptox %>%
+  dplyr::left_join(kramer_moa, by = c("DTXSID" = "DTXSID"))
+
+# For rows where MoA data is missing, try to join using alt_dtxsid
+missing_moa <- merge_moa_comptox %>%
+  dplyr::filter(is.na(MoA_broad)) %>%
+  dplyr::select(-c(chemical_name, use_group, use_group_details, MoA_broad, MoA_specific, molecular_target)) %>%
+  dplyr::left_join(kramer_moa, by = c("alt_dtxsid" = "DTXSID"))
+
+# Combine the results
+merge_moa_comptox <- dplyr::bind_rows(
+  merge_moa_comptox %>% dplyr::filter(!is.na(MoA_broad)),
+  missing_moa
+)
+
+# Create consolidated MoA columns
+merge_moa_comptox <- merge_moa_comptox %>%
+  dplyr::mutate(
+    # First, standardize the unknown values to be capitalized
+    MoA_broad = dplyr::if_else(tolower(MoA_broad) == "unknown", "Unknown", MoA_broad),
+
+    # Create a combined MoA field using format "Broad MoA (Specific MoA)" when both exist
+    combined_moa = dplyr::case_when(
+      # When both broad and specific are available, specific is not "n/a", and they contain different information
+      !is.na(MoA_broad) & !is.na(MoA_specific) &
+        MoA_specific != "n/a" &
+        !stringr::str_detect(tolower(MoA_specific), tolower(MoA_broad)) ~
+        paste0(MoA_broad, " (", MoA_specific, ")"),
+
+      # When only specific is available and not "n/a"
+      is.na(MoA_broad) & !is.na(MoA_specific) & MoA_specific != "n/a" ~ MoA_specific,
+
+      # When only broad is available or specific is "n/a"
+      (!is.na(MoA_broad) & is.na(MoA_specific)) |
+        (!is.na(MoA_broad) & MoA_specific == "n/a") ~ MoA_broad,
+
+      # When specific is redundant with broad or is "n/a"
+      !is.na(MoA_broad) & !is.na(MoA_specific) ~ MoA_broad,
+
+      # No MoA data available
+      TRUE ~ NA_character_
+    ),
+
+    # Keep molecular target as a separate column in the dataset
+    # but we won't include it in the consolidated table
+    mt = molecular_target
+  )
+
+# Load MoA classification data
+moa_class <- data.table::fread(moa_class_fn)
+
+# Merge MoA classification with the existing data
+merge_moa_comptox <- merge_moa_comptox %>%
+  dplyr::left_join(moa_class, by = c("PREFERRED_NAME" = "toxicant"))
+
+## Merge with condition data ##
+
+# load condition data
+con_data <- data.table::fread(con_data_fn)
+
+# create a toxicant column that can be used to match the `toxicant` column in the merge_moa_comptox dataframe
+con_clean <- con_data %>%
+  dplyr::filter(
+    !nice_drug_label %in% c("DMSO", "Water")
+  ) %>%
+  dplyr::mutate(
+    toxicant = stringr::str_replace(nice_drug_label, "uM", ""),
+    toxicant = stringr::str_replace(toxicant, " \\d+\\.\\d+", ""),
+    toxicant = stringr::str_replace(toxicant, " \\d+", "")
+  ) %>%
+  dplyr::mutate(
+    toxicant = case_when(
+      toxicant == "Arsenic trioxide" ~ "Arsenic",
+      toxicant == "Lead nitrate" ~ "Lead (II) nitrate",
+      toxicant == "Methyl mercury" ~ "Methylmercury dichloride",
+      TRUE ~ toxicant
+    )
+  ) 
+
+# pull out the classes we've added restricting to tox columns
+#' instead of the other columns in the dataframe
+con_clean_classes <- con_clean %>%
+  dplyr::select(
+    toxicant,
+    class
+  ) %>%
+  dplyr::distinct()
+
+# merge with condition data
+condition_meta_out <- con_clean %>%
+  dplyr::left_join(
+    merge_moa_comptox,
+    by = "toxicant"
+    ) %>% 
+  # create a trait column
+  dplyr::mutate(trait = gsub(drug, pattern = "\\.", replacement = "_")) %>%
+  dplyr::mutate(trait = gsub(trait, pattern = "-", replacement = "_")) %>%
+  dplyr::mutate(trait = gsub(trait, pattern = " ", replacement = "_")) %>%
+  # add length_ to the trait column
+  dplyr::mutate(trait = paste0("length_", trait)) %>% 
+  dplyr::select(-"diluent ") %>%
+    # manually set the MoA for some toxicants
+    dplyr::mutate(
+      moa_class = case_when(
+        toxicant == "Mancozeb" ~ "AChE inhibition",
+        toxicant == "Paraquat" ~ "Redox disruption",
+        TRUE ~ moa_class
+      )
+    )
+
+# create a condition metadata table that includes conditions speicifc data
+con_metadata <- con_clean %>%
+  dplyr::select(
+    toxicant,
+    drug,
+    nice_drug_label2,
+    nice_drug_label,
+    concentration_um,
+    class,
+    big_class
+  ) %>%
+  # create a trait column
+  dplyr::mutate(trait = gsub(drug, pattern = "\\.", replacement = "_")) %>%
+  dplyr::mutate(trait = gsub(trait, pattern = "-", replacement = "_")) %>%
+  dplyr::mutate(trait = gsub(trait, pattern = " ", replacement = "_")) %>%
+  # add length_ to the trait column
+  dplyr::mutate(trait = paste0("length_", trait))
+
+# merge with the condition metadata
+merge_moa_comptox_con <- merge_moa_comptox %>%
+  dplyr::left_join(con_metadata, by = "toxicant") %>%
+    # manually set the MoA for some toxicants
+    dplyr::mutate(
+      moa_class = case_when(
+        toxicant == "Mancozeb" ~ "AChE inhibition",
+        toxicant == "Paraquat" ~ "Redox disruption",
+        TRUE ~ moa_class
+      )
+    )
+
+# create a dataframe of the use groups
+ug <- merge_moa_comptox_con %>%
+  dplyr::select(
+    toxicant,
+    big_class,
+    use_group,
+    use_group_details
+  )
+
+## Output the toxicant metadata table as processed data ##
+
+save_csv(
+  data = merge_moa_comptox_con,
+  output_file = "data/processed/tox_data/tox_metadata.csv"
+)
+
+## Output the condition metadata table as processed data ##
+
+save_csv(
+  data = condition_meta_out,
+  output_file = "data/processed/tox_data/con_metadata.csv"
+)
+```
+
+# 02 Create toxicant table for Table S2
+
+```{r}
+library(data.table)
+library(dplyr)
+library(flextable)
+library(glue)
+
+source("bin/outs.R")
+source("bin/materials_key.R")
+
+
+#### inputs ####
+
+tox_metadata_fn <- "data/processed/tox_data/tox_metadata.csv"
+con_data_fn <- "data/processed/tox_data/con_metadata.csv"
+
+
+#### Main ####
+
+# load the tox and the con metadata
+tox_metadata <- fread(tox_metadata_fn)
+con_data <- fread(con_data_fn)
+
+
+## Create the toxicant summary table ##
+# prepare the tox metadata for the table
+tox_table_pre <- tox_metadata %>%
+  dplyr::select(
+    PREFERRED_NAME,
+    cas,
+    cat_num,
+    source,
+    stock_mM,
+    concentration_um,
+    diluent,
+    big_class,
+    moa_class
+  ) %>%
+  # make the stock_mM a character
+  dplyr::mutate(
+    stock_mM = as.character(stock_mM)
+  ) %>%
+  dplyr::distinct() %>%
+  dplyr::mutate(
+    cas = as.character(cas),
+    source = "Sigma-Aldrich",
+    source_cat = cat_num
+  ) %>%
+  dplyr::select(-source, -cat_num) %>%
+  dplyr::rename(
+    "Toxicant" = PREFERRED_NAME,
+    "CAS" = cas,
+    "Sigma Catalog Number" = source_cat,
+    "Stock (mM)" = stock_mM,
+    "Use Group" = big_class,
+    "MoA Group" = moa_class
+  )
+
+
+tox_table_ft <- flextable::flextable(
+  tox_table_pre,
+  col_keys = c(
+    "Toxicant",
+    "CAS",
+    "Sigma Catalog Number",
+    "Stock (mM)",
+    "concentration_um",
+    "diluent",
+    "Use Group",
+    "MoA Group"
+  )
+) %>%
+  flextable::set_header_labels(
+    values = list(
+      "Toxicant" = "Toxicant",
+      "CAS" = "CAS",
+      "Sigma Catalog Number" = "Sigma Catalog Number",
+      "Stock (mM)" = "Stock (mM)",
+      concentration_um = "Concentration µM",
+      diluent = "Diluent",
+      "Use Group" = "Use Group",
+      "MoA Group" = "MoA Group"
+    )
+  ) %>%
+  flextable::line_spacing(space = 1, part = "all") %>%
+  flextable::align(j = 1, align = "left") %>%
+  flextable::align(j = 2, align = "center") %>%
+  flextable::align(j = 3, align = "center") %>%
+  flextable::align(j = 4, align = "right") %>%
+  flextable::bold(part = "header") %>%
+  flextable::bold(j = "Toxicant") %>%
+  flextable::set_table_properties(
+    layout = "autofit",
+    width = 1,
+    opts_word = list(
+      split = FALSE,
+      keep_with_next = TRUE
+    )
+  )
+
+# save the table as a flextable and a csv
+save_supp_table_csv(tox_table_pre, "tox_table_ft")
+save_supp_table_flextable(tox_table_ft, "tox_table_ft")
+
+## Create the toxicant condition table ##
+# con_table_pre <- con_data %>%
+#   dplyr::select(
+#     "toxicant_condition" = nice_drug_label2,
+#     "toxicant" = PREFERRED_NAME,
+#     concentration_um,
+#     diluent
+#   )
+
+# con_table_ft <- flextable::flextable(
+#   con_table_pre,
+#   col_keys = c(
+#     "toxicant_condition",
+#     "toxicant",
+#     "concentration_um",
+#     "diluent"
+#   )
+# ) %>%
+#   flextable::set_header_labels(
+#     values = list(
+#       toxicant_condition = "Condition",
+#       toxicant = "Toxicant",
+#       concentration_um = "Concentration µM",
+#       diluent = "Diluent"
+#     )
+#   ) %>%
+#   flextable::line_spacing(space = 1, part = "all") %>%
+#   flextable::bold(part = "header") %>%
+#   flextable::align(j = 1, align = "left") %>%
+#   flextable::align(j = 2, align = "left") %>%
+#   flextable::align(j = 3, align = "right") %>%
+#   flextable::align(j = 4, align = "right") %>%
+#   flextable::set_table_properties(
+#     layout = "autofit",
+#     width = 1,
+#     opts_word = list(
+#       split = FALSE,
+#       keep_with_next = TRUE
+#     )
+#   )
+# # save the table as a flextable and a csv
+# save_supp_table_csv(con_table_pre, "con_table_ft")
+# save_supp_table_flextable(con_table_ft, "con_table_ft")
+
+# ## Create the MoA group table ##
+
+# moa_table_pre <- tox_metadata %>%
+#   dplyr::select(
+#     PREFERRED_NAME,
+#     MoA_broad,
+#     MoA_specific,
+#     moa_class
+#   ) %>%
+#   dplyr::distinct() %>%
+#   dplyr::mutate(
+#     MoA_broad = case_when(
+#       MoA_broad == "" ~ "Unavailable",
+#       MoA_broad == " " ~ "Unavailable",
+#       TRUE ~ MoA_broad
+#     )
+#   ) %>%
+#   dplyr::mutate(
+#     MoA_specific = case_when(
+#       MoA_specific == "" ~ "n/a",
+#       MoA_specific == " " ~ "n/a",
+#       TRUE ~ MoA_specific
+#     )
+#   )
+
+# moa_table_ft <- flextable::flextable(
+#   moa_table_pre,
+#   col_keys = c(
+#     "PREFERRED_NAME",
+#     "MoA_broad",
+#     "MoA_specific",
+#     "moa_class"
+#   )
+# ) %>%
+#   flextable::set_header_labels(
+#     values = list(
+#       PREFERRED_NAME = "Toxicant",
+#       MoA_broad = "MoA Broad",
+#       MoA_specific = "MoA Specific",
+#       moa_class = "MoA Group")
+#   ) %>%
+#   flextable::bold(j = 1) %>%
+#   flextable::align(j = 1, align = "left") %>%
+#   flextable::align(j = 2, align = "left") %>%
+#   flextable::line_spacing(space = 1, part = "all") %>%
+#   flextable::align(j = 3, align = "left") %>%
+#   flextable::align(j = 4, align = "right") %>%
+#   flextable::bold(part = "header") %>%
+#   # Add horizontal grey lines
+#   flextable::hline(
+#     border = officer::fp_border(color = "grey", width = 1),
+#     part = "body"
+#   ) %>%
+#   flextable::set_table_properties(
+#     layout = "autofit",
+#     width = 1,
+#     opts_word = list(
+#       split = FALSE,
+#       keep_with_next = TRUE
+#     )
+#   )
+
+# # save the table as a flextable and a csv
+# save_supp_table_csv(moa_table_pre, "moa_table_ft")
+# save_supp_table_flextable(moa_table_ft, "moa_table_ft")
+
+# #### Create the use group table ####
+
+# use_table_pre <- tox_metadata %>%
+#   dplyr::mutate(
+#     use_group_details = case_when(
+#       use_group == "Pesticide" ~ paste("Pesticide (", use_group_details, ")", sep = ""),
+#       use_group_details == "" ~ "Unavailable",
+#       use_group_details == " " ~ "Unavailable",
+#       TRUE ~ use_group_details
+#     )
+#   ) %>%
+#   dplyr::select(
+#     PREFERRED_NAME,
+#     use_group_details,
+#     big_class
+#   ) %>%
+#   dplyr::distinct()
+
+# use_table_ft <- flextable::flextable(
+#   use_table_pre,
+#   col_keys = c(
+#     "PREFERRED_NAME",
+#     "use_group_details",
+#     "big_class"
+#   )
+# ) %>%
+#   flextable::set_header_labels(
+#     values = list(
+#       PREFERRED_NAME = "Toxicant",
+#       use_group_details = "Use Group Details",
+#       big_class = "Use Group"
+#     )
+#   )  %>%
+#   flextable::bold(part = "header") %>%
+#   flextable::line_spacing(space = 1, part = "all") %>%
+#   flextable::bold(j = 1) %>%
+#   flextable::align(j = 1, align = "left") %>%
+#   flextable::align(j = 2, align = "left") %>%
+#   flextable::align(j = 3, align = "right") %>%
+#   # Add horizontal grey lines
+#   flextable::hline(
+#     border = officer::fp_border(color = "grey", width = 1),
+#     part = "body"
+#   ) %>%
+#   flextable::set_table_properties(
+#     layout = "autofit",
+#     width = 1,
+#     opts_word = list(
+#       split = FALSE,
+#       keep_with_next = TRUE
+#     )
+#   )
+
+# # save the table as a flextable and a csv
+# save_supp_table_csv(use_table_pre, "use_table_ft")
+# save_supp_table_flextable(use_table_ft, "use_table_ft")
+```

@@ -1,0 +1,115 @@
+---
+title: Calculate means for different groupings
+---
+
+```{r}
+library(data.table)
+library(dplyr)
+library(ggplot2)
+library(ggh4x)
+
+# load required functions
+source("bin/tox_colors.R")
+source("bin/pub_format.R")
+source("bin/outs.R")
+source("bin/materials_key.R")
+
+#### Inputs ####
+# path to .rda file with phenotype data
+pheno_path <- "data/processed/pheno.df.rda"
+
+# toxicant condition metadata
+tox_meta_fn <- "data/processed/tox_data/tox_metadata.csv"
+
+#### Outputs ####
+# Define output paths
+strain_means_path <- "data/processed/phenotypes/strain_means.rds"
+drug_means_path <- "data/processed/phenotypes/drug_means.rds"
+use_group_means_path <- "data/processed/phenotypes/use_group_means.rds"
+moa_group_means_path <- "data/processed/phenotypes/moa_group_means.rds"
+
+#### Main ####
+
+# Prepare the color palette for the plot
+class.pal.df <- tibble::tibble(
+  col = c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
+  big_class = c("Flame Retardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
+)
+
+# load phenotype data
+load(pheno_path)
+
+# select relevant columns and join to the meta data with drug
+clean_pheno.df <- pheno.df %>%
+  dplyr::select(
+    drug,
+    strain,
+    median_wormlength_um_delta_reg
+  )
+
+# Load tox data
+tox_meta <- data.table::fread(tox_meta_fn) %>%
+  dplyr::select(
+    drug,
+    nice_drug_label2,
+    big_class,
+    moa_class
+  )
+
+# Join tox meta data to phenotype data
+clean_pheno_anno <- clean_pheno.df %>%
+  dplyr::left_join(., tox_meta, by = c("drug" = "drug"))
+
+## Calculate a strain means dataframe to plot the phenotype distributions
+## Strain summary data ##
+# Group by the strain and get the mean and standard deviation for all toxicants
+strain_means <- clean_pheno.df %>%
+  group_by(strain, drug) %>%
+  dplyr::summarise(
+    StrainMean_NormLength = mean(median_wormlength_um_delta_reg)
+  ) %>%
+  dplyr::ungroup()
+
+# using the strain means calculate a the mean and SD and create a twoSD_pos
+# and a twoSD_neg threshold for each drug
+drug_means <- strain_means %>%
+  dplyr::group_by(
+    drug
+  ) %>%
+  dplyr::summarise(
+    mean_NormLength = mean(StrainMean_NormLength),
+    sd_NormLength = sd(StrainMean_NormLength),
+    twoSD_pos = mean_NormLength + (2 * sd_NormLength),
+    twoSD_neg = mean_NormLength - (2 * sd_NormLength)
+  ) %>%
+  dplyr::ungroup() %>%
+  # join the metadata
+  dplyr::left_join(
+    tox_meta,
+    by = "drug"
+  )
+
+# Calculate summary statistics by use group (big_class)
+use_group_means <- drug_means %>%
+  dplyr::group_by(big_class) %>%
+  dplyr::summarise(
+    group_mean = mean(mean_NormLength),
+    group_sd = sd(mean_NormLength)
+  ) %>%
+  dplyr::arrange(desc(group_mean))
+
+# Calculate summary statistics by MOA class
+moa_group_means <- drug_means %>%
+  dplyr::group_by(moa_class) %>%
+  dplyr::summarise(
+    group_mean = mean(mean_NormLength),
+    group_sd = sd(mean_NormLength)
+  ) %>%
+  dplyr::arrange(desc(group_mean))
+
+# Save the data
+saveRDS(strain_means, strain_means_path)
+saveRDS(drug_means, drug_means_path)
+saveRDS(use_group_means, use_group_means_path)
+saveRDS(moa_group_means, moa_group_means_path)
+```
