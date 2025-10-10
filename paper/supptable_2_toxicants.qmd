@@ -3,14 +3,6 @@ title: "Table S2: Toxicant Information"
 format: html
 ---
 
-# 01 Create toxicant and toxicant condition metadata table
-
-Initially from `2021_GWA_manuscript/code/tox_data/generate_tox_metadata.R`
-
-
-
-# 02 Create toxicant table for Table S2
-
 ```{r}
 library(data.table)
 library(dplyr)

@@ -15,7 +15,7 @@ source("bin/outs.R")
 source("bin/materials_key.R")
 
 # get the list of strains in the GWAS
-load("data/processed/pheno.df.rda")
+load("data/raw/phenotypes/pheno.df.rda")
 
 # Read the strain means data
 strains <- unique(pheno.df$strain)
