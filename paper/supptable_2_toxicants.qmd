@@ -273,3 +273,7 @@ save_supp_table_flextable(tox_table_ft, "tox_table_ft")
 # save_supp_table_csv(use_table_pre, "use_table_ft")
 # save_supp_table_flextable(use_table_ft, "use_table_ft")
 ```
+
+```{r}
+tox_table_ft
+```
