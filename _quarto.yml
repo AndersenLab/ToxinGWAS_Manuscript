@@ -5,6 +5,7 @@ project:
   render: 
     - analysis/organize_tox_metadata.qmd
     - analysis/organize_strain_means.qmd
+    - analysis/organize_strain_outliers.qmd
     - paper/
 execute: 
   freeze: false
