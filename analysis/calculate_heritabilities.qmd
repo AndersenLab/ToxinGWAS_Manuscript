@@ -1,0 +1,111 @@
+---
+title: "Calculate Heritabilities"
+---
+
+```{r}
+library(tidyverse)
+
+# set today variable for filenaming yyyymmmdd
+today <- format(Sys.Date(), "%Y%m%d")
+
+# set working directory
+setwd(paste0(dirname(rstudioapi::getActiveDocumentContext()$path), "/.."))
+
+# source functions
+source("code/functions.R")
+
+# get genotype matrix
+gm <- data.table::fread("data/processed/20231116_Analysis_NemaScan/Genotype_Matrix/Genotype_Matrix.tsv")
+
+# get toxins
+tox <- data.table::fread("data/raw/tox_data/gwa.doses.csv") %>%
+  dplyr::filter(type == "Toxicant")
+
+# now load the phenotype data
+load("data/processed/phenotypes/pheno.df.rda")
+t1 <- pheno.df %>%
+  dplyr::select(drug, strain, value = median_wormlength_um_delta_reg)
+# ==============================================================================#
+# Part 1: Broad-sense heritability (H2)
+# ==============================================================================#
+# # loop - run once
+# H2.list <- NULL
+# for(i in unique(t1$drug)) {
+#   # filter to drug
+#   d <- t1 %>%
+#     dplyr::filter(drug == i)
+#   H2.d <- H2.semi.parametric(data = d, reps = 10000, ci.level = 0.95)
+#   # add to list
+#   H2.list[[i]] <- H2.d
+# }
+#
+# # save the output
+# save(H2.list, file = "data/processed/heritability/H2.parametric.boot.list.10000.rda")
+# ==============================================================================#
+# load the H2 data from boots
+load("data/processed/heritability/H2.parametric.boot.list.10000.rda")
+
+# setup as data frame
+H2.df.list <- NULL
+for (i in 1:length(H2.list)) {
+  drug <- names(H2.list)[i]
+  o <- H2.list[[i]][[1]] %>%
+    dplyr::mutate(drug = drug)
+
+  H2.df.list[[i]] <- o
+}
+# bind list
+H2.df <- data.table::rbindlist(H2.df.list) %>%
+  dplyr::filter(drug %in% unique(tox$drug))
+
+# ==============================================================================#
+# Part 2: Run h2 with strain means only
+# ==============================================================================#
+# # Run once
+# h2.list.mean <- NULL
+# for(i in unique(t1$drug)) {
+#   # filter to drug
+#   d <- t1 %>%
+#     dplyr::filter(drug == i)
+#
+#   # message
+#   drugs <- tibble::tibble(n = 1:length(unique(t1$drug)),
+#                           drug = unique(t1$drug))
+#   this.drug <- drugs %>%
+#     dplyr::filter(drug == i)
+#   message(glue::glue("Processing ({this.drug$n[[1]]} of {max(drugs$n)}) toxicants"))
+#
+#   # calc h2
+#   h2.df <- h2(d = d, geno_matrix = gm)
+#
+#   # add to list
+#   h2.list.mean[[i]] <- h2.df
+# }
+#
+# # save the output
+# save(h2.list.mean, file = "data/processed/heritability/h2.list.mean.rda")
+
+# load above
+# load("data/processed/heritability/h2.list.mean.rda")
+
+# bind it together
+h2.df.list.b <- NULL
+for (i in 1:length(h2.list.mean)) {
+  drug <- names(h2.list.mean)[i]
+  o <- h2.list.mean[[i]] %>%
+    dplyr::mutate(drug = drug)
+
+  h2.df.list.b[[i]] <- o
+}
+# bind list
+h2.df.b <- data.table::rbindlist(h2.df.list.b)
+
+h.b2 <- dplyr::left_join(H2.df, h2.df.b) %>%
+  dplyr::left_join(tox) %>%
+  # dplyr::filter(big_class != "Flame Retardant") %>%
+  dplyr::mutate(nice_drug_label2 = stringr::str_replace(nice_drug_label2, pattern = "uM", replacement = "µM"))
+
+# Save the heritability summary data
+# write_csv(h.b2, "data/processed/heritability/heritability_summary.csv")
+```
+
