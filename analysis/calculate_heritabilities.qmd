@@ -9,7 +9,7 @@ library(tidyverse)
 today <- format(Sys.Date(), "%Y%m%d")
 
 # set working directory
-setwd(paste0(dirname(rstudioapi::getActiveDocumentContext()$path), "/.."))
+# setwd(paste0(dirname(rstudioapi::getActiveDocumentContext()$path), "/.."))
 
 # source functions
 source("code/functions.R")
