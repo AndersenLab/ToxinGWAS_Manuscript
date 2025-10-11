@@ -1,0 +1,41 @@
+---
+title: Calculate phenotype correlations across toxicant conditions
+---
+
+```{r}
+library(tidyverse)
+library(data.table)
+```
+
+```{r}
+strain_means <- readRDS("data/processed/phenotypes/strain_means.rds")
+
+```
+
+
+```{r}
+library(psych)
+
+strain_means_pivot <- strain_means %>%
+  dplyr::mutate(StrainMean = as.numeric(StrainMean_NormLength)) %>%
+  dplyr::select(strain, drug, StrainMean) %>%
+  tidyr::spread(key = drug, value = StrainMean)
+
+# # Convert to matrix with strain as rownames
+strain_means_pivot_matrix <- as.matrix(strain_means_pivot[, -1])
+rownames(strain_means_pivot_matrix) <- strain_means_pivot$strain
+
+# Calculate phenotype correlations with NA's
+pheno_corr_all <- psych::corr.test(
+  strain_means_pivot_matrix,
+  use = "pairwise",
+  adjust = "bonferroni",
+  method = "spearman"
+)
+
+# Extract correlation coefficients and p-values
+# Save outputs
+saveRDS(pheno_corr_all, "data/processed/phenotypes/pheno_corr_all.Rds")
+
+pheno_corr_all
+```
