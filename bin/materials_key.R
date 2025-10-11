@@ -40,6 +40,8 @@ sup_figures <- list(
   strain_means_plot = "figure_S2",
   # outlier histograms - `outlier_table.R`
   n_outlier_hist = "figure_S3",
+  # heritability comparison to Widmayer et al. 2022 - `suppfigure_4_heritability_comp.qmd`'
+  heritability_comp = "figure_S4",
   # interval enrichment dotplot
   int_enrich_sim_dp = "figure_S5",
   physical_overlaps = "figure_S6",

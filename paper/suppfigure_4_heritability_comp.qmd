@@ -1,0 +1,151 @@
+---
+title: "Comparison of the heritability estimates to Widmayer 2022"
+format: html
+---
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+
+# Source the output functions
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
+
+# Read in data
+```{r}
+# read in the heritabilities from Widmayer 2022 and our h2s
+h_comp <- data.table::fread("data/raw/heritability/20240719_heritability_comparision_GWAS.csv")
+```
+
+# H2: Broad-sense heritability estimates 
+
+```{r}
+# plot the comps
+H_comp2 <-
+  ggpubr::ggscatter(h_comp,
+    x = "H2_widmayer", y = "H2_GWAS",
+    color = "black", shape = 21, size = 2, # Points color, shape and size
+    add = "reg.line", # Add regression line
+    add.params = list(color = "blue", fill = "lightgray"), # Customize reg. line
+    conf.int = TRUE, # Add confidence interval
+    cor.coef = TRUE, # Add correlation coefficient. see ?stat_cor
+    cor.coef.size = 3,
+    cor.coeff.args = list(method = "pearson", label.x = 0.0, label.y = 0.875)
+  ) +
+  ggpubr::stat_regline_equation(label.x = 0, size = 3) +
+  ggplot2::theme_bw() +
+  xlim(0, 1) +
+  ylim(0, 1) +
+  labs(
+    x = expression(paste(italic(H)^{
+      2
+    }, " Widmayer ", italic(et), " ", italic(al), ". ", "2022")),
+    y = expression(paste(italic(H)^{
+      2
+    }, " GWAS"))
+  ) +
+  theme(
+    axis.text = element_text(size = 7),
+    axis.title = element_text(size = 9),
+    panel.grid = element_blank()
+  )
+
+H_comp2
+```
+
+# h2: Narrow-sense heritability estiamtes
+
+```{r}
+# plot narrow sense comp now
+h_comp3 <-
+  ggpubr::ggscatter(h_comp,
+    x = "h2_widmayer", y = "h2_GWAS",
+    color = "black", shape = 21, size = 2, # Points color, shape and size
+    add = "reg.line", # Add regression line
+    add.params = list(color = "blue", fill = "lightgray"), # Customize reg. line
+    conf.int = TRUE, # Add confidence interval
+    cor.coef = TRUE, # Add correlation coefficient. see ?stat_cor
+    cor.coef.size = 3,
+    cor.coeff.args = list(method = "pearson", label.x = 0.0, label.y = 0.875)
+  ) +
+  ggpubr::stat_regline_equation(label.x = 0, size = 3) +
+  ggplot2::theme_bw() +
+  xlim(0, 1) +
+  ylim(0, 1) +
+  labs(
+    x = expression(paste(italic(h)^{
+      2
+    }, " Widmayer ", italic(et), " ", italic(al), ". ", "2022")),
+    y = expression(paste(italic(h)^{
+      2
+    }, " GWAS"))
+  ) +
+  theme(
+    axis.text = element_text(size = 7),
+    axis.title = element_text(size = 9),
+    panel.grid = element_blank()
+  )
+
+h_comp3
+```
+
+# Combined plots
+```{r}
+# put them together
+h_comp_supplement <- cowplot::plot_grid(H_comp2, h_comp3, labels = c("a", "b"), align = "hv")
+
+save_plot(
+  h_comp_supplement,
+  sup_figure_fns$heritability_comp,
+  w_in = 7.5, h_in = 3
+)
+```
+
+```{r}
+#| label: fig-heritability_comp
+#| fig-width: 7.5
+#| fig-height: 3
+#| fig-cap: Regression of heritability estimates for the 195 strains in the GWAS mapping panel against the eight strains from Widmayer et al. 2022.
+#| fig-alt: (A) Broad-sense heritability estimates. (B) Narrow-sense heritability estimates. Each point represents the heritability estimate for a particular toxicant condition. In each panel, the regression equation, Pearson’s correlation coefficient (r), and the associated p-value (p) are shown in the upper left corner.
+h_comp_supplement
+```
+
+# Double check linear model outputs outside of ggpubr function
+
+## H2
+```{r}
+# check the linear model outputs outside of ggpubr functions for safety
+H_m1 <- lm(data = h_comp, formula = H2_GWAS ~ H2_widmayer)
+summary(H_m1)
+```
+
+## h2
+```{r}
+h_m2 <- lm(data = h_comp, formula = h2_GWAS ~ h2_widmayer)
+summary(h_m2)
+```
+
+# Get means and SDs of the heritabilities
+
+## H2
+
+```{r}
+# get a mean and SD for all H2s
+H2_mean <- mean(h_comp$H2_GWAS)
+H2_sd <- sd(h_comp$H2_GWAS)
+
+print(glue::glue("Mean H2: {round(H2_mean, 3)} +/- {round(H2_sd, 3)}"))
+```
+
+## h2
+
+```{r}
+h2_mean <- mean(h_comp$h2_GWAS)
+h2_sd <- sd(h_comp$h2_GWAS)
+
+print(glue::glue("Mean h2: {round(h2_mean, 3)} +/- {round(h2_sd, 3)}"))
+```
