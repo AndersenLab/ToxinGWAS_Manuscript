@@ -1,0 +1,99 @@
+---
+title: Figure S1 Strain responses by toxicant
+---
+
+```{r}
+library(tidyverse)
+library(pheatmap)
+library(cowplot)
+library(glue)
+
+# Load correlation data
+pheno_corr_all <- readRDS("data/processed/phenotypes/pheno_corr_all.Rds")
+
+# Get correlation coefficients and p-values
+pheno_corr_all_r <- pheno_corr_all$r
+pheno_corr_all_p <- pheno_corr_all$p
+pheno_corr_all_p_symbol <- ifelse(round(pheno_corr_all$p, digits = 3) <= 0.05, "*", " ")
+
+```
+
+# Create the color palette and annotation data
+
+```{r}
+tox_data <- data.table::fread("data/processed/tox_data/con_metadata.csv")
+
+# Set color palette for annotations
+class.pal.df <- tibble::tibble(
+  col = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
+  big_class = c("Control", "Flame Retardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
+)
+
+# filter the meta data to include only toxicant and join to the class palette
+tox_cols <- tox_data %>%
+  # remove the controls
+  dplyr::filter(big_class != "Control") %>%
+  dplyr::select(nice_drug_label2, big_class) %>%
+  # join to the class palette
+  dplyr::left_join(., class.pal.df, by = c("big_class" = "big_class")) %>%
+  dplyr::select(nice_drug_label2, big_class, col)
+
+moa_anno_df <- tox_cols %>%
+  # set the row names to the nice drug label
+  tibble::column_to_rownames(var = "nice_drug_label2") %>%
+  # rename the big class column to Class
+  dplyr::rename(Class = big_class) %>%
+  # remove the color column
+  dplyr::select(-col)
+
+
+
+# Create annotation colors
+cols <- unique(class.pal.df$col)
+names(cols) <- unique(class.pal.df$big_class)
+anno_cols <- list(Class = cols)
+```
+
+```{r}
+# Create clustered correlation heatmap
+fig <- pheatmap::pheatmap(pheno_corr_all_r,
+  annotation_row = moa_anno_df,
+  annotation_colors = anno_cols,
+  color = colorRampPalette(c("navy", "white", "darkred"))(1000),
+  breaks = seq(-1, 1, length.out = (1000 + 1)),
+  display_numbers = pheno_corr_all_p_symbol,
+  fontsize_number = 12,
+  cutree_rows = 2, cutree_cols = 2,
+  show_colnames = TRUE,
+  annotation_names_row = FALSE,
+  cluster_cols = FALSE # Remove the dendrogram along the x-axis
+)
+
+# # Save figure
+# cowplot::ggsave2(fig, filename = glue::glue("figures/phenotypes/pheno_corr_heatmap_all_moa.png"), height = 7.5, width = 10)
+
+# # Save main figure
+# ggplot2::ggsave(
+#   filename = glue::glue("figures/Figure_2/figure_2.png"),
+#   plot = fig,
+#   width = 7.5,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+
+# ggplot2::ggsave(
+#   filename = glue::glue("figures/Figure_2/figure_2.eps"),
+#   plot = fig,
+#   width = 7.5,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+
+```
+
+```{r}
+fig
+```
+
