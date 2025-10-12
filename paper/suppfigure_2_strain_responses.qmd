@@ -4,6 +4,8 @@ execute-dir: file
 ---
 
 ```{r}
+#| include: false
+
 library(data.table)
 library(dplyr)
 library(ggplot2)
