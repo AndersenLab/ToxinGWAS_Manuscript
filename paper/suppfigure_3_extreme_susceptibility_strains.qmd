@@ -4,15 +4,42 @@ format: html
 ---
 
 ```{r}
+#| include: false
 library(tidyverse)
 library(ggplot2)
 
+# Source the portable project setup function
+script_dir <- tryCatch(
+  dirname(normalizePath(knitr::current_input())),
+  error = function(e) getwd()
+)
+
+setup_file <- file.path(script_dir, "..", "bin", "setup_project_here.R")
+
+if (file.exists(setup_file)) {
+  source(setup_file)
+  project_root <- setup_toxin_project_here()
+} else {
+  setup_file <- file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R")
+  if (file.exists(setup_file)) {
+    source(setup_file)
+    project_root <- setup_toxin_project_here()
+  } else {
+    stop("Could not find setup_project_here.R")
+  }
+}
+
+if (is.null(project_root)) {
+  stop("Could not locate ToxinGWAS_Manuscript project root.")
+}
+
+
 # Source the output functions
-source("bin/outs.R")
-source("bin/materials_key.R")
+source(file.path(project_root, "bin", "outs.R"))
+source(file.path(project_root, "bin", "materials_key.R"))
 
 # Load the outlier summary data
-outlier_summary_df <- read.csv("data/processed/phenotypes/outlier_summary_df.csv")
+outlier_summary_df <- read.csv(file.path(project_root, "data", "processed", "phenotypes", "outlier_summary_df.csv"))
 
 # Plot the histogram of the number of times a strain is designated an outlier
 n_outlier_hist <- outlier_summary_df %>%
