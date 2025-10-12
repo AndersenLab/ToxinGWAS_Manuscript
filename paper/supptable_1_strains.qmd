@@ -4,18 +4,45 @@ format: html
 ---
 
 ```{r}
+#| include: false
 library(tidyverse)
 library(dplyr)
 library(data.table)
 
-# source the helper functions
-source("bin/general.R")
+# Source the portable project setup function
+script_dir <- tryCatch(
+  dirname(normalizePath(knitr::current_input())),
+  error = function(e) getwd()
+)
 
-source("bin/outs.R")
-source("bin/materials_key.R")
+setup_file <- file.path(script_dir, "..", "bin", "setup_project_here.R")
+
+if (file.exists(setup_file)) {
+  source(setup_file)
+  project_root <- setup_toxin_project_here()
+} else {
+  setup_file <- file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R")
+  if (file.exists(setup_file)) {
+    source(setup_file)
+    project_root <- setup_toxin_project_here()
+  } else {
+    stop("Could not find setup_project_here.R")
+  }
+}
+
+if (is.null(project_root)) {
+  stop("Could not locate ToxinGWAS_Manuscript project root.")
+}
+
+
+# source the helper functions
+source(file.path(project_root, "bin", "general.R"))
+
+source(file.path(project_root, "bin", "outs.R"))
+source(file.path(project_root, "bin", "materials_key.R"))
 
 # get the list of strains in the GWAS
-load("data/raw/phenotypes/pheno.df.rda")
+load(file.path(project_root, "data", "raw", "phenotypes", "pheno.df.rda"))
 
 # Read the strain means data
 strains <- unique(pheno.df$strain)
@@ -37,4 +64,11 @@ tableS1 <- ce_iso_loc %>%
 # rio::export(tableS1, file = "tables/tableS1.csv")
 
 save_supp_table_csv(tableS1, "strain_table")
+```
+
+```{r}
+#| label: tbl-strain-info
+#| echo: false
+
+tableS1
 ```
