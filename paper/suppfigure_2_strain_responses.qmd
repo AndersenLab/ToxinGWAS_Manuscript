@@ -1,5 +1,6 @@
 ---
 title: Figure S2 Strain responses by toxicant
+execute-dir: file
 ---
 
 ```{r}
@@ -7,27 +8,48 @@ library(data.table)
 library(dplyr)
 library(ggplot2)
 library(ggh4x)
+library(here)
 
-# load required functions
-source("bin/tox_colors.R")
-source("bin/pub_format.R")
-source("bin/outs.R")
-source("bin/materials_key.R")
+# Source the portable project setup function
+script_dir <- tryCatch(
+  dirname(normalizePath(knitr::current_input())),
+  error = function(e) getwd()
+)
+
+setup_file <- file.path(script_dir, "..", "bin", "setup_project_here.R")
+
+if (file.exists(setup_file)) {
+  source(setup_file)
+  project_root <- setup_toxin_project_here()
+} else {
+  setup_file <- file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R")
+  if (file.exists(setup_file)) {
+    source(setup_file)
+    project_root <- setup_toxin_project_here()
+  } else {
+    stop("Could not find setup_project_here.R")
+  }
+}
+
+if (is.null(project_root)) {
+  stop("Could not locate ToxinGWAS_Manuscript project root.")
+}
+
+# Load required functions using file.path with project_root
+source(file.path(project_root, "bin", "tox_colors.R"))
+source(file.path(project_root, "bin", "pub_format.R"))
+source(file.path(project_root, "bin", "outs.R"))
+source(file.path(project_root, "bin", "materials_key.R"))
 
 #### Inputs ####
-# Load the saved data
-strain_means <- readRDS("data/processed/phenotypes/strain_means.rds")
-drug_means <- readRDS("data/processed/phenotypes/drug_means.rds")
+strain_means <- readRDS(file.path(project_root, "data", "processed", "phenotypes", "strain_means.rds"))
+drug_means <- readRDS(file.path(project_root, "data", "processed", "phenotypes", "drug_means.rds"))
 
-# Prepare the color palette for the plot
 class.pal.df <- tibble::tibble(
   col = c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
   big_class = c("Flame Retardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
 )
 
-# Create a data frame by joining the drug_means data to
-# the strain means data and flag strains that are above or
-# are below the two SD threshold
 strain_means_out <- strain_means %>%
   dplyr::left_join(drug_means, by = "drug") %>%
   dplyr::mutate(
@@ -36,71 +58,35 @@ strain_means_out <- strain_means %>%
       StrainMean_NormLength < twoSD_neg ~ "Low",
       TRUE ~ "Normal"
     ),
-    # Ensure big_class levels match the color palette order
     big_class = factor(big_class, levels = class.pal.df$big_class)
   )
 
-# Create a color scale for the ResponderType
 res_col_pal <- c("Low" = "#FF0000", "Normal" = "grey", "High" = "#0000FF")
-
-# Create color palette for the classes
-man_pal <- class.pal.df %>%
-  dplyr::pull(col)
-
-# Create a named vector for the strip colors
+man_pal <- class.pal.df %>% dplyr::pull(col)
 strip_colors <- setNames(man_pal, class.pal.df$big_class)
 
 strip_y <- ggh4x::strip_themed(
   background_y = ggh4x::elem_list_rect(
     fill = strip_colors[levels(strain_means_out$big_class)]
   ),
-  text_y = ggh4x::elem_list_text(
-    face = "bold",
-    size = 12
-  )
+  text_y = ggh4x::elem_list_text(face = "bold", size = 12)
 )
 
-### Plot the distribution of strainmeans for each toxicant ###
 strain_means_plot <- strain_means_out %>%
-  dplyr::mutate(
-    nice_drug_label2 = stringr::str_replace(nice_drug_label2, "uM", "µM")
-  ) %>%
-  ggplot2::ggplot(
-    aes(x = StrainMean_NormLength, y = nice_drug_label2)
-  ) +
-  ggplot2::geom_jitter(
-    aes(color = ResponderType),
-    alpha = 0.8,
-    width = 0.2, height = 0.2
-  ) +
-  ggplot2::geom_boxplot(
-    outliers = FALSE
-  ) +
-  ggh4x::facet_grid2(
-    big_class ~ .,
-    scales = "free_y",
-    strip = strip_y
-  ) +
+  dplyr::mutate(nice_drug_label2 = stringr::str_replace(nice_drug_label2, "uM", "µM")) %>%
+  ggplot2::ggplot(aes(x = StrainMean_NormLength, y = nice_drug_label2)) +
+  ggplot2::geom_jitter(aes(color = ResponderType), alpha = 0.8, width = 0.2, height = 0.2) +
+  ggplot2::geom_boxplot(outliers = FALSE) +
+  ggh4x::facet_grid2(big_class ~ ., scales = "free_y", strip = strip_y) +
   scale_color_manual(
     values = res_col_pal,
     labels = c("Low" = "Highly susceptible", "Normal" = "Moderately susceptible", "High" = "Minimally susceptible")
   ) +
-  ggplot2::labs(
-    x = "Normalized animal length (µm)",
-    color = "Response type"
-  ) +
+  ggplot2::labs(x = "Normalized animal length (µm)", color = "Response type") +
   pub_theme() +
-  theme(
-    axis.title.y = ggplot2::element_blank(),
-    legend.position = "top"
-  )
+  theme(axis.title.y = ggplot2::element_blank(), legend.position = "top")
 
-# Save the strain means plot as supplementary figure 2
-save_plot(
-  strain_means_plot,
-  sup_figure_fns$strain_means_plot,
-  w_in = 7.5, h_in = 10
-)
+save_plot(strain_means_plot, sup_figure_fns$strain_means_plot, w_in = 7.5, h_in = 10)
 ```
 
 ```{r}
@@ -108,6 +94,5 @@ save_plot(
 #| fig-width: 7.5
 #| fig-height: 10
 #| fig-cap: Differences in susceptibility among 195 C. elegans strains to 26 environmental toxicant conditions.
-#| fig-alt: The normalized animal length of each strain (x-axis) in a toxicant condition (y-axis) is represented by a colored point. Strains that exhibited a distinct response to a toxicant and were either highly susceptible (normalized animal length less than mean normalized animal length -2SD) or were minimally susceptible (normalized animal length less than mean normalized animal length +2SD) are represented by red or blue points, respectively. Strains with normalized animal length estimates that were within two standard deviations are grey. The distribution of differences in susceptibility among all strains in each toxicant condition is shown as a boxplot. For each box, the median normalized animal length of all strains in the distribution is marked by the central line, the box edges represent the first and third quartiles, and the whiskers extend to 1.5 times the interquartile range.
 strain_means_plot
 ```
