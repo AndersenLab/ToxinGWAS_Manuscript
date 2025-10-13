@@ -24,7 +24,7 @@ find_project_root <- function(marker = "ToxinGWAS_Manuscript") {
     error = function(e) getwd()
   )
 
-  # Walk up the directory tree
+  # Walk up the directory tree from the script location
   current <- start_path
   while (current != dirname(current)) { # Stop at filesystem root
     if (basename(current) == marker) {
@@ -33,15 +33,31 @@ find_project_root <- function(marker = "ToxinGWAS_Manuscript") {
     current <- dirname(current)
   }
 
-  # If not found in path, search from working directory
+  # If not found in path from script, check if we're already inside the project
+  # Look for key project files to confirm we're in the right place
+  key_files <- c("_quarto.yml", "bin", "data", "paper")
+  current <- start_path
+  while (current != dirname(current)) {
+    # Check if all key project files exist in current directory
+    if (all(file.exists(file.path(current, key_files)))) {
+      return(current)
+    }
+    current <- dirname(current)
+  }
+
+  # If still not found, search from working directory for projects structure
   search_paths <- c(
     file.path(getwd(), "projects", marker),
-    file.path(dirname(getwd()), "projects", marker)
+    file.path(dirname(getwd()), "projects", marker),
+    file.path(getwd()) # Check if we're already in the right place
   )
 
   for (path in search_paths) {
     if (dir.exists(path)) {
-      return(normalizePath(path))
+      # Verify this is actually the right project by checking for key files
+      if (all(file.exists(file.path(path, key_files)))) {
+        return(normalizePath(path))
+      }
     }
   }
 
