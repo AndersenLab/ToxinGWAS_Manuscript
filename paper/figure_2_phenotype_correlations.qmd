@@ -11,11 +11,52 @@ library(tidyverse)
 library(pheatmap)
 library(cowplot)
 library(glue)
+library(here)
 ```
+
+```{r}
+# Source the portable project setup function
+script_dir <- tryCatch(
+  dirname(normalizePath(knitr::current_input())),
+  error = function(e) getwd()
+)
+
+# Try multiple possible locations for the setup file
+setup_file_paths <- c(
+  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
+  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
+  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
+)
+
+setup_file <- NULL
+for (path in setup_file_paths) {
+  if (file.exists(path)) {
+    setup_file <- path
+    break
+  }
+}
+
+if (!is.null(setup_file)) {
+  source(setup_file)
+  project_root <- setup_toxin_project_here()
+} else {
+  stop(
+    "Could not find setup_project_here.R in any of the expected locations: ",
+    paste(setup_file_paths, collapse = ", ")
+  )
+}
+
+if (is.null(project_root)) {
+  stop("Could not locate ToxinGWAS_Manuscript project root.")
+}
+
+```
+
 ```{r}
 #| include: false
 # Load correlation data
-pheno_corr_all <- readRDS("data/processed/phenotypes/pheno_corr_all.Rds")
+pheno_corr_all <- readRDS(file.path(project_root, "data/processed/phenotypes/pheno_corr_all.Rds"))
+tox_data <- data.table::fread(file.path(project_root, "data/processed/tox_data/con_metadata.csv"))
 ```
 
 
@@ -23,7 +64,6 @@ pheno_corr_all <- readRDS("data/processed/phenotypes/pheno_corr_all.Rds")
 #| include: false
 # Create the color palette and annotation data
 
-tox_data <- data.table::fread("data/processed/tox_data/con_metadata.csv")
 
 # Set color palette for annotations
 class.pal.df <- tibble::tibble(
@@ -100,10 +140,15 @@ create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_co
 ```
 
 ```{r}
-create_phenotype_heatmap(
+#| label: fig-phenotype-correlations
+#| fig-width: 7.5
+#| fig-height: 6
+#| fig-cap: Correlations between differences in susceptibility to toxicant conditions. The pairwise Spearman correlation coefficient (ρ) between all toxicant conditions is displayed as a heatmap. Spearman’s rank order correlation coefficients (colored cells), were calculated using the normalized animal length measurements for all strains. Significant correlations (p-value ≤ 0.05) are denoted with an asterisk (*). The top triangle shows significance symbols after Bonferroni multiple testing correction, and the bottom triangle shows uncorrected significance symbols. On the left, columns of colored tiles denote the mechanism of action (MoA) and class of each toxicant. The traits are arranged by hierarchical clustering performed with correlation coefficients. More similar toxicant conditions are grouped together. The similarity between toxicants is represented by the branch lengths in the dendrograms plotted to the left of the heatmap.
+phenotype_correlations <- create_phenotype_heatmap(
   similarity_matrix = pheno_corr_all_r,
   con_metadata_df = moa_anno_df,
   anno_cols = anno_cols
 )
+phenotype_correlations
 ```
 
