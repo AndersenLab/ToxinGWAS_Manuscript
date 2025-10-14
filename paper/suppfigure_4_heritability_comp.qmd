@@ -1,6 +1,8 @@
 ---
-title: "Comparison of the heritability estimates to Widmayer 2022"
-format: html
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 ```{r}

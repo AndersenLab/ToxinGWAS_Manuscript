@@ -1,6 +1,8 @@
 ---
-title: Figure S2 Strain responses by toxicant
-execute-dir: file
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 ```{r}

@@ -1,6 +1,8 @@
 ---
-title: "Figure S4: Comparison of the mean standard deviation of normalized animal lengths across toxicant groups"
-format: html
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 ```{r}
@@ -80,7 +82,7 @@ n_outlier_hist <- outlier_summary_df %>%
     panel.grid = ggplot2::element_blank(),
     legend.position = "inside",
     legend.position.inside = c(0.85, 0.90),
-    text = element_text(size = 10, family = "Arial"),
+    text = element_text(size = 10),
     legend.title = element_text(face = "bold"),
     axis.title.x = element_text(face = "bold"),
     axis.title.y = element_text(face = "bold")
@@ -100,8 +102,7 @@ save_plot(
 #| label: fig-n_outlier_hist
 #| fig-width: 7.5
 #| fig-height: 7.5
-#| fig-cap: Number of strains with extreme susceptibility profiles across 26 toxicant exposures
-#| fig-alt: The height of each bar represents the subset of strains (n = 108) that exhibited either highly susceptible (Red bars; normalized animal length > 2 SD below the mean)  or were minimally susceptible (Blue bars; normalized animal length > 2 SD below the mean) to at least one toxicant condition.
+#| fig-cap: "**Number of strains with extreme susceptibility profiles across 26 toxicant exposures** The height of each bar represents the subset of strains (n = 108) that exhibited either highly susceptible (Red bars; normalized animal length > 2 SD below the mean) or were minimally susceptible (Blue bars; normalized animal length > 2 SD below the mean) to at least one toxicant condition."
 
 n_outlier_hist
 ```
