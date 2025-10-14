@@ -36,14 +36,14 @@ class.pal.df <- tibble::tibble(
 tox_cols <- tox_data %>%
   # remove the controls
   dplyr::filter(big_class != "Control") %>%
-  dplyr::select(nice_drug_label2, big_class) %>%
+  dplyr::select(drug, big_class, moa_class) %>%
   # join to the class palette
   dplyr::left_join(., class.pal.df, by = c("big_class" = "big_class")) %>%
-  dplyr::select(nice_drug_label2, big_class, col)
+  dplyr::select(drug, big_class, moa_class, col)
 
 moa_anno_df <- tox_cols %>%
   # set the row names to the nice drug label
-  tibble::column_to_rownames(var = "nice_drug_label2") %>%
+  tibble::column_to_rownames(var = "drug") %>%
   # rename the big class column to Class
   dplyr::rename(Class = big_class) %>%
   # remove the color column
