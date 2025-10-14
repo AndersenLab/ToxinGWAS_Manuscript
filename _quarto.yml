@@ -6,6 +6,7 @@ project:
     - analysis/organize_tox_metadata.qmd
     - analysis/organize_strain_means.qmd
     - analysis/organize_strain_outliers.qmd
+    - analysis/calculate_phenotype_correlations.qmd
     - paper/
 execute: 
   freeze: false
