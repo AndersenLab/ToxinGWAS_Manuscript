@@ -108,7 +108,41 @@ fig <- pheatmap::pheatmap(pheno_corr_all_r,
 
 ```
 
+Testing with function from Gene semantic similarity analysis
+
 ```{r}
-fig
+create_phenotype_heatmap <- function(similarity_matrix, title, con_metadata_df, anno_cols) {
+  # Perform hierarchical clustering on rows to get the dendrogram
+  row_dist <- dist(similarity_matrix)
+  row_hclust <- hclust(row_dist)
+
+  # Use the same clustering order for both rows and columns
+  # (since it's a symmetric similarity matrix)
+  p <- pheatmap::pheatmap(
+    similarity_matrix,
+    annotation_row = con_metadata_df,
+    annotation_colors = anno_cols,
+    width = 7.5,
+    height = 6,
+    color = colorRampPalette(c("navy", "white", "darkred"))(1000),
+    breaks = seq(-1, 1, length.out = (1000 + 1)),
+    show_colnames = TRUE,
+    fontsize_number = 12,
+    display_numbers = pheno_corr_all_p_symbol,
+    cluster_rows = row_hclust,
+    cluster_cols = row_hclust,
+    main = title,
+    silent = TRUE
+  )
+  return(p)
+}
+
+create_phenotype_heatmap(
+  similarity_matrix = pheno_corr_all_r,
+  title = "Phenotype Correlation Heatmap",
+  con_metadata_df = moa_anno_df,
+  anno_cols = anno_cols
+)
+
 ```
 
