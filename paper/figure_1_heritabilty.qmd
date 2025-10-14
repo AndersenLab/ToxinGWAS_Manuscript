@@ -1,28 +1,79 @@
 ---
-title: Figure S1 Strain responses by toxicant
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 ```{r}
+#| include: false
+
 library(dplyr)
 library(ggplot2)
 library(ggh4x)
 library(ggrepel)
+library(here)
 
-source("bin/tox_colors.R")
-source("bin/outs.R")
-source("bin/materials_key.R")
+# Source the portable project setup function
+script_dir <- tryCatch(
+  dirname(normalizePath(knitr::current_input())),
+  error = function(e) getwd()
+)
+
+# Try multiple possible locations for the setup file
+setup_file_paths <- c(
+  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
+  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
+  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
+)
+
+setup_file <- NULL
+for (path in setup_file_paths) {
+  if (file.exists(path)) {
+    setup_file <- path
+    break
+  }
+}
+
+if (!is.null(setup_file)) {
+  source(setup_file)
+  project_root <- setup_toxin_project_here()
+} else {
+  stop(
+    "Could not find setup_project_here.R in any of the expected locations: ",
+    paste(setup_file_paths, collapse = ", ")
+  )
+}
+
+if (is.null(project_root)) {
+  stop("Could not locate ToxinGWAS_Manuscript project root.")
+}
+
+```
+
+```{r}
+#| include: false
+# Inputs
+source(file.path(project_root, "bin", "tox_colors.R"))
+source(file.path(project_root, "bin", "outs.R"))
+source(file.path(project_root, "bin", "materials_key.R"))
 
 #### Inputs ####
 
 # load H2 and h2 rdata files
-load("data/processed/heritability/h2.list.mean.rda")
+load(file.path(project_root, "data/processed/heritability/h2.list.mean.rda"))
 
 # load the H2 data from boots
-load("data/processed/heritability/H2.parametric.boot.list.10000.rda")
+load(file.path(project_root, "data/processed/heritability/H2.parametric.boot.list.10000.rda"))
 
 # load the tox data
-tox <- data.table::fread("data/processed/tox_data/con_metadata.csv") %>%
+tox <- data.table::fread(file.path(project_root, "data/processed/tox_data/con_metadata.csv")) %>%
   dplyr::filter(type == "Toxicant")
+
+```
+
+```{r}
+#| include: false
 
 #### Create dataframes for plotting ####
 
@@ -107,17 +158,17 @@ heritability_all_classes_p <- ggplot(h.b2, aes(x = H2.point, y = h2.point)) +
     panel.grid = element_blank(),
     strip.text.y = element_text(
       size = 10,
-      family = "Arial",
+      # family = "Arial",
       face = "bold"
     ),
     strip.text.x = element_text(
       size = 10,
-      family = "Arial",
+      # family = "Arial",
       face = "bold"
     ),
     axis.text = element_text(
       size = 10,
-      family = "Arial"
+      # family = "Arial"
     ),
     axis.title = element_text(
       size = 10
@@ -137,5 +188,9 @@ save_plot(
 ```
 
 ```{r}
+#| label: fig-heritability
+#| fig-width: 7.5
+#| fig-height: 5
+#| fig-cap: "**Heritability of toxicant susceptibilities**. The broad-sense (H2) (x-axis) and narrow-sense heritability (h2) (y-axis) of normalized animal length measurements were calculated for each toxicant exposure condition. Within each use group, heritability estimates for a single toxicant exposure condition are denoted by a cross, where the horizontal line corresponds to the 95% confidence interval of the broad-sense heritability estimate obtained using the parametric bootstrapping approach, and the vertical line corresponds to the standard error of the narrow-sense heritability estimate. The three toxicants measured at two concentrations (TPhP, paraquat, and silver) are annotated with concentrations."
 heritability_all_classes_p
 ```
