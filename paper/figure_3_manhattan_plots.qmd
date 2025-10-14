@@ -1,0 +1,294 @@
+---
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(ggh4x)
+library(here)
+
+script_dir <- tryCatch(
+  dirname(normalizePath(knitr::current_input())),
+  error = function(e) getwd()
+)
+
+# Try multiple possible locations for the setup file
+setup_file_paths <- c(
+  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
+  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
+  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
+)
+
+setup_file <- NULL
+for (path in setup_file_paths) {
+  if (file.exists(path)) {
+    setup_file <- path
+    break
+  }
+}
+
+if (!is.null(setup_file)) {
+  source(setup_file)
+  project_root <- setup_toxin_project_here()
+} else {
+  stop(
+    "Could not find setup_project_here.R in any of the expected locations: ",
+    paste(setup_file_paths, collapse = ", ")
+  )
+}
+
+if (is.null(project_root)) {
+  stop("Could not locate ToxinGWAS_Manuscript project root.")
+}
+
+```
+
+```{r}
+#| include: false
+
+source(file.path(project_root, "bin", "tox_colors.R"))
+source(file.path(project_root, "bin", "outs.R"))
+source(file.path(project_root, "bin", "materials_key.R"))
+
+
+ns_folder <- file.path(project_root, "data/processed/20231116_Analysis_NemaScan")
+
+# get define the examples together
+ex <- c(
+  "tpp" = glue::glue("{ns_folder}/INBRED/Mapping/Processed/processed_length_Triphenyl_phosphate_6_25_AGGREGATE_mapping_inbred.tsv"),
+  "chlorothalonil" = glue::glue("{ns_folder}/INBRED/Mapping/Processed/processed_length_Chlorothalonil_AGGREGATE_mapping_inbred.tsv"),
+  "aldicarb" = glue::glue("{ns_folder}/INBRED/Mapping/Processed/processed_length_Aldicarb_AGGREGATE_mapping_inbred.tsv"),
+  "nickel" = glue::glue("{ns_folder}/INBRED/Mapping/Processed/processed_length_Nickel_dichloride_AGGREGATE_mapping_inbred.tsv"),
+  "paraquat" = glue::glue("{ns_folder}/INBRED/Mapping/Processed/processed_length_Paraquat_62_5_AGGREGATE_mapping_inbred.tsv")
+)
+
+total_independent_tests <- read.table(file.path(project_root, "data/processed/20231116_Analysis_NemaScan/Genotype_Matrix/total_independent_tests.txt"), quote = "\"", comment.char = "", stringsAsFactors = FALSE)
+
+
+# load classes
+tox <- data.table::fread(file.path(project_root, "data/processed/tox_data/con_metadata.csv")) %>%
+  dplyr::select(trait, nice_drug_label2, big_class) %>%
+  # adjust the uM to µM
+  dplyr::mutate(nice_drug_label2 = dplyr::case_when(
+    nice_drug_label2 == "uM" ~ "µM",
+    TRUE ~ nice_drug_label2
+  ))
+```
+
+```{r}
+#| label: manhattan-plot-function
+#| include: false
+
+# ==============================================================================#
+# Manhattan Plot
+# ==============================================================================#
+# datPath = the path to an aggregate .tsv mapping file from NemaScan
+# indepTestPath = the path to the independent tests for EIGEN threshold from NeamScan: Genotype_Matrix/total_independent_tests.txt
+# xlab = ggplot x label default is: "Genomic position (Mb)"
+# ylab = ggplot y label default is: expression(-log[10](italic(p)))
+# title = Whatever you want to title the plot: default is: NULL
+# sigThresh = The significance threshold to use for plotting, defualt is: NULL which shows BF and EIGEN,
+#   other options are "BF" and "EIGEN" to show just one or the other.
+# ==============================================================================#
+manPlot <- function(dataPath,
+                    indepTestPath,
+                    xlab = "Genomic position (Mb)",
+                    ylab = expression(-log[10](italic(p))),
+                    title = NULL,
+                    sigThresh = NULL) {
+  # pull the nemascan data
+  d.all <- data.table::fread(dataPath) %>%
+    dplyr::distinct(marker, .keep_all = T)
+
+  # filter out the mitochondria
+  data <- d.all %>%
+    dplyr::filter(CHROM != "MtDNA")
+
+
+  # get the BF threshold
+  BF <- -log10(0.05 / nrow(d.all %>% dplyr::distinct(marker)))
+
+  # load independent tests result file to get EIGEN sig threshold
+  total_independent_tests <- read.table(indepTestPath, quote = "\"", comment.char = "", stringsAsFactors = FALSE)
+  EIGEN <- -log10(0.05 / total_independent_tests[[1]])
+
+  # set sig thresholds
+  if (is.null(sigThresh)) {
+    sig.colors <- c("red", "#EE4266", "black")
+    names(sig.colors) <- c("BF", "EIGEN", "NONSIG")
+    # set the sig thresholds for plotting
+    sig.df <- tibble::tibble(name = c("BF", "EIGEN"), sig = c(BF, EIGEN))
+  } else {
+    if (sigThresh == "BF") {
+      sig.colors <- c("red", "black")
+      names(sig.colors) <- c("BF", "NONSIG")
+      sig.df <- tibble::tibble(name = "BF", sig = BF)
+    }
+    if (sigThresh == "EIGEN") {
+      sig.colors <- c("red", "black")
+      names(sig.colors) <- c("EIGEN", "NONSIG")
+      sig.df <- tibble::tibble(name = "EIGEN", sig = EIGEN)
+    }
+    if (!is.null(sigThresh) & !(sigThresh %in% c("BF", "EIGEN"))) {
+      message('Please specify a valid sigThresh: NULL, "BF", or "EIGEN"')
+      stop()
+    }
+  }
+
+  # add sig colors
+  sig.data <- data %>%
+    dplyr::mutate(sig = dplyr::case_when(
+      log10p > BF ~ "BF",
+      log10p > EIGEN & log10p <= BF ~ "EIGEN",
+      TRUE ~ "NONSIG"
+    ))
+  # Plot it
+  man.plot <- ggplot() +
+    theme_bw() +
+    geom_point(
+      data = sig.data,
+      mapping = aes(
+        x = POS / 1000000,
+        y = log10p,
+        colour = sig,
+        alpha = sig
+      )
+    ) +
+    scale_alpha_manual(values = c("BF" = 1, "EIGEN" = 1, "user" = 1, "NONSIG" = 0.25)) +
+    scale_colour_manual(values = sig.colors) +
+    scale_x_continuous(expand = c(0, 0), breaks = c(5, 10, 15, 20)) +
+    geom_hline(data = sig.df, aes(yintercept = sig, linetype = name)) +
+    scale_linetype_manual(values = c("BF" = 1, "EIGEN" = 3, "user" = 2)) +
+    labs(
+      x = xlab,
+      y = ylab
+    ) + # expression(-log[10](italic(p)))
+    theme(
+      legend.position = "none",
+      panel.grid = element_blank()
+    ) +
+    facet_grid(~CHROM, scales = "free")
+
+  # add a title if needed
+  if (is.null(title)) {
+    return(man.plot)
+  } else {
+    man.plot2 <- man.plot +
+      ggtitle(title)
+    return(man.plot2)
+  }
+}
+```
+
+```{r}
+#| label: prep-manhattan-plots
+#| include: false
+
+# load them all
+d.list <- NULL
+for (i in 1:length(ex)) {
+  # get the path
+  p <- ex[[i]]
+  # load the mapping file
+  d <- data.table::fread(p)
+
+  # get the name
+  name <- names(ex[i])
+
+  # add it to the list
+  d.list[[name]] <- d
+}
+
+# bind it
+d.all <- data.table::rbindlist(d.list) %>%
+  dplyr::filter(CHROM != "MtDNA") %>%
+  dplyr::distinct(trait, marker, .keep_all = T) %>%
+  dplyr::left_join(tox)
+# get the BF threshold
+BF <- -log10(0.05 / nrow(d.all %>% dplyr::distinct(marker)))
+
+EIGEN <- -log10(0.05 / total_independent_tests[[1]])
+
+d.all2 <- d.all %>%
+  dplyr::mutate(sig = dplyr::case_when(
+    log10p > BF ~ "BF",
+    log10p > EIGEN & log10p <= BF ~ "EIGEN",
+    TRUE ~ "NONSIG"
+  ))
+# colors
+sig.colors <- c("red", "#EE4266", "black")
+names(sig.colors) <- c("BF", "EIGEN", "NONSIG")
+# set the sig thresholds for plotting
+sig.df <- tibble::tibble(name = c("BF", "EIGEN"), sig = c(BF, EIGEN))
+
+# class colors for y
+man_pal <- d.all2 %>%
+  dplyr::distinct(nice_drug_label2, big_class) %>%
+  dplyr::arrange(nice_drug_label2) %>%
+  dplyr::left_join(class.pal.df) %>%
+  dplyr::pull(col)
+
+# set strip col for y
+strip_y <- ggh4x::strip_themed(background_y = ggh4x::elem_list_rect(fill = man_pal))
+
+# Highlight regions
+highlight_regions <- d.all2 %>%
+  dplyr::filter(!is.na(startPOS) & !is.na(endPOS)) %>%
+  dplyr::mutate(
+    startPOS = startPOS / 1000000,
+    endPOS = endPOS / 1000000
+  )
+```
+
+```{r}
+#| label: create-base-manhattan-plots
+#| include: false
+
+
+manhattan_plots <- ggplot(d.all2) +
+  theme_bw() +
+  geom_rect(
+    data = highlight_regions,
+    aes(xmin = startPOS, xmax = endPOS, ymin = -Inf, ymax = Inf),
+    fill = "yellow", alpha = 0.3
+  ) +
+  geom_point(
+    data = d.all2,
+    mapping = aes(
+      x = POS / 1000000,
+      y = log10p,
+      colour = sig,
+      alpha = sig
+    ),
+    size = 0.85
+  ) +
+  scale_alpha_manual(values = c("BF" = 1, "EIGEN" = 1, "user" = 1, "NONSIG" = 0.25)) +
+  scale_colour_manual(values = sig.colors) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(5, 10, 15, 20)) +
+  geom_hline(data = sig.df, aes(yintercept = sig, linetype = name), linewidth = 0.25) +
+  scale_linetype_manual(values = c("BF" = 1, "EIGEN" = 3, "user" = 2)) +
+  labs(
+    x = "Genomic position (Mb)",
+    y = expression(bold(-log[10](bolditalic(p))))
+  ) +
+  theme(
+    legend.position = "none",
+    panel.grid = element_blank()
+  ) +
+  ggh4x::facet_grid2(
+    nice_drug_label2 ~ CHROM,
+    scales = "free",
+    strip = strip_y
+  ) +
+  theme(
+    strip.background.x = ggplot2::element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")
+  )
+
+```
+
+```{r}
+saveRDS(manhattan_plots, file = "_shared/manhattan_plots.rds")
+```
