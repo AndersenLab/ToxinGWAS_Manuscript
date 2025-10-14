@@ -6,23 +6,21 @@ execute:
 ---
 
 ```{r}
+#| include: false
 library(tidyverse)
 library(pheatmap)
 library(cowplot)
 library(glue)
-
+```
+```{r}
+#| include: false
 # Load correlation data
 pheno_corr_all <- readRDS("data/processed/phenotypes/pheno_corr_all.Rds")
-
-# Get correlation coefficients and p-values
-pheno_corr_all_r <- pheno_corr_all$r
-pheno_corr_all_p <- pheno_corr_all$p
-pheno_corr_all_p_symbol <- ifelse(round(pheno_corr_all$p, digits = 3) <= 0.05, "*", " ")
-
 ```
 
 
 ```{r}
+#| include: false
 # Create the color palette and annotation data
 
 tox_data <- data.table::fread("data/processed/tox_data/con_metadata.csv")
@@ -47,6 +45,11 @@ tox_cols <- tox_data %>%
 # Create a mapping from drug to nice_drug_label2
 drug_to_label <- setNames(tox_cols$nice_drug_label2, tox_cols$drug)
 
+# Get correlation coefficients and p-values
+pheno_corr_all_r <- pheno_corr_all$r
+pheno_corr_all_p <- pheno_corr_all$p
+pheno_corr_all_p_symbol <- ifelse(round(pheno_corr_all$p, digits = 3) <= 0.05, "*", " ")
+
 # Update row and column names of correlation matrices
 rownames(pheno_corr_all_r) <- drug_to_label[rownames(pheno_corr_all_r)]
 colnames(pheno_corr_all_r) <- drug_to_label[colnames(pheno_corr_all_r)]
@@ -70,48 +73,8 @@ anno_cols <- list(Class = cols)
 ```
 
 ```{r}
-# Create clustered correlation heatmap
-fig <- pheatmap::pheatmap(pheno_corr_all_r,
-  annotation_row = moa_anno_df,
-  annotation_colors = anno_cols,
-  color = colorRampPalette(c("navy", "white", "darkred"))(1000),
-  breaks = seq(-1, 1, length.out = (1000 + 1)),
-  display_numbers = pheno_corr_all_p_symbol,
-  fontsize_number = 12,
-  cutree_rows = 2, cutree_cols = 2,
-  show_colnames = TRUE,
-  annotation_names_row = FALSE,
-  cluster_cols = FALSE # Remove the dendrogram along the x-axis
-)
-
-# # Save figure
-# cowplot::ggsave2(fig, filename = glue::glue("figures/phenotypes/pheno_corr_heatmap_all_moa.png"), height = 7.5, width = 10)
-
-# # Save main figure
-# ggplot2::ggsave(
-#   filename = glue::glue("figures/Figure_2/figure_2.png"),
-#   plot = fig,
-#   width = 7.5,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-
-# ggplot2::ggsave(
-#   filename = glue::glue("figures/Figure_2/figure_2.eps"),
-#   plot = fig,
-#   width = 7.5,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-
-```
-
-Testing with function from Gene semantic similarity analysis
-
-```{r}
-create_phenotype_heatmap <- function(similarity_matrix, title, con_metadata_df, anno_cols) {
+#| include: false
+create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_cols) {
   # Perform hierarchical clustering on rows to get the dendrogram
   row_dist <- dist(similarity_matrix)
   row_hclust <- hclust(row_dist)
@@ -130,19 +93,17 @@ create_phenotype_heatmap <- function(similarity_matrix, title, con_metadata_df, 
     fontsize_number = 12,
     display_numbers = pheno_corr_all_p_symbol,
     cluster_rows = row_hclust,
-    cluster_cols = row_hclust,
-    main = title,
     silent = TRUE
   )
   return(p)
 }
+```
 
+```{r}
 create_phenotype_heatmap(
   similarity_matrix = pheno_corr_all_r,
-  title = "Phenotype Correlation Heatmap",
   con_metadata_df = moa_anno_df,
   anno_cols = anno_cols
 )
-
 ```
 
