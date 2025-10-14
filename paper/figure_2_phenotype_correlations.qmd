@@ -1,5 +1,8 @@
 ---
-title: Figure S1 Strain responses by toxicant
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 ```{r}
