@@ -7,11 +7,13 @@ library(tidyverse)
 library(data.table)
 ```
 
+# Inputs
 ```{r}
 strain_means <- readRDS("data/processed/phenotypes/strain_means.rds")
-
+tox_data <- data.table::fread("data/processed/tox_data/con_metadata.csv")
 ```
 
+# Calculate correlations
 
 ```{r}
 library(psych)
