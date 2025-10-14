@@ -1,0 +1,125 @@
+---
+title: GOterm enrichment for each intervals
+---
+
+```{r}
+library(clusterProfiler)
+library(glue)
+
+source("bin/genes.R")
+```
+
+```{r}
+ns_dir <- "data/processed/20231116_Analysis_NemaScan"
+tox_file <- "data/processed/tox_data/tox_metadata.csv"
+
+#### outputs ####
+out_dir <- "data/processed/interval_genes/enrichments"
+
+## create the output directory if it doesn't exist
+if (!dir.exists(out_dir)) {
+  dir.create(out_dir, recursive = TRUE)
+}
+```
+
+```{r}
+#### Main ####
+# load the toxicant metadata
+con_metadata <- data.table::fread(tox_file)
+
+# pull trait and nice drug label
+con_key <- con_metadata %>%
+  dplyr::select(
+    trait,
+    nice_drug_label2,
+    big_class,
+    moa_class
+  )
+
+# load the interval data
+inbred <- data.table::fread(
+  glue::glue("{ns_dir}/INBRED/Mapping/Processed/QTL_peaks_inbred.tsv"),
+  data.table = F
+) %>%
+  # fix drug names
+  dplyr::mutate(
+    drug = stringr::str_replace(
+      trait,
+      pattern = "^length_",
+      replacement = ""
+    )
+  ) %>%
+  # remove the CV_ length_ traits
+  dplyr::filter(
+    !stringr::str_detect(drug, "CV_")
+  ) %>%
+  dplyr::select(
+    trait,
+    drug,
+    CHROM,
+    marker,
+    startPOS,
+    endPOS
+  ) %>%
+  # add the nice drug label
+  dplyr::left_join(con_key, by = c("trait"))
+
+unique_traits <- unique(inbred$trait)
+
+# Initialize list to store results
+all_genes_dfs <- list()
+
+# Process each trait
+for (trait_id in unique_traits) {
+  # Get the nice drug label for this trait
+  nice_label <- inbred %>%
+    dplyr::filter(trait == trait_id) %>%
+    dplyr::pull(nice_drug_label2) %>%
+    unique()
+
+  # Get genes for each interval
+  genes_list <- get_genes_each_interval(
+    qtl = inbred,
+    trait_id = trait_id,
+    gff_df = gff,
+    cEGO = cEGO
+  )
+
+  # Convert to dataframe using nice drug label
+  genes_df <- genes_list_to_df(genes_list, nice_label)
+
+  # Store in results list
+  all_genes_dfs[[trait_id]] <- genes_df
+}
+
+# Combine all dataframes
+combined_genes_df <- do.call(rbind, all_genes_dfs)
+
+# metal_traits <- inbred %>%
+#   dplyr::filter(big_class == "Metal") %>%
+#   dplyr::pull(nice_drug_label2)
+
+# metal_genes_df <- combined_genes_df %>%
+#   dplyr::filter(trait %in% metal_traits)
+
+# Calculate enrichment
+interval_enrich <- compareCluster(
+  entrez_id ~ peak_marker + trait,
+  data = combined_genes_df,
+  fun = "enrichGO",
+  OrgDb = org.Ce.eg.db,
+  ont = "BP",
+  pAdjustMethod = "bonferroni",
+  keyType = "ENTREZID",
+  pvalueCutoff = 0.05,
+  qvalueCutoff = 0.05,
+  readable = T
+)
+
+# save the interval enrich object
+saveRDS(
+  interval_enrich,
+  file.path(out_dir, "enrich_each_interval.rds")
+)
+
+```

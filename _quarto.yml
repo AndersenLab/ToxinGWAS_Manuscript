@@ -7,6 +7,7 @@ project:
     - analysis/organize_strain_means.qmd
     - analysis/organize_strain_outliers.qmd
     - analysis/calculate_phenotype_correlations.qmd
+    - analysis/calculate_enrich_each_interval.qmd
     - paper/
 execute: 
   freeze: false
