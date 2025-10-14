@@ -1,0 +1,149 @@
+---
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: interval-go-enrich-setup
+#| include: false
+
+library(clusterProfiler)
+library(glue)
+library(here)
+
+script_dir <- tryCatch(
+  dirname(normalizePath(knitr::current_input())),
+  error = function(e) getwd()
+)
+
+# Try multiple possible locations for the setup file
+setup_file_paths <- c(
+  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
+  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
+  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
+)
+
+setup_file <- NULL
+for (path in setup_file_paths) {
+  if (file.exists(path)) {
+    setup_file <- path
+    break
+  }
+}
+
+if (!is.null(setup_file)) {
+  source(setup_file)
+  project_root <- setup_toxin_project_here()
+} else {
+  stop(
+    "Could not find setup_project_here.R in any of the expected locations: ",
+    paste(setup_file_paths, collapse = ", ")
+  )
+}
+
+if (is.null(project_root)) {
+  stop("Could not locate ToxinGWAS_Manuscript project root.")
+}
+
+
+
+source(file.path(project_root, "bin", "outs.R"))
+source(file.path(project_root, "bin", "materials_key.R"))
+source(file.path(project_root, "bin", "pub_format.R"))
+```
+
+```{r}
+#| label: interval-go-prep
+#| include: false
+
+in_dir <- "data/processed/interval_genes/enrichments"
+
+#### Load data ####
+interval_enrich <- readRDS(file.path(in_dir, "enrich_each_interval.rds"))
+
+
+
+# simplify the dotplot
+int_enrich_simp <- clusterProfiler::simplify(interval_enrich)
+
+# Filter for SCF-related terms
+scf_terms <- int_enrich_simp@compareClusterResult %>%
+  filter(grepl("SCF", Description, ignore.case = TRUE))
+
+# Print the filtered results
+print(scf_terms)
+
+# Function to update SCF term description
+update_scf_description <- function(enrich_obj) {
+  # Get the compareClusterResult
+  result <- enrich_obj@compareClusterResult
+
+  # Update the Description for SCF terms
+  result$Description[grepl("SCF", result$Description, ignore.case = TRUE)] <-
+    "SCF/ubiquitin-dependent protein catabolic processes"
+
+  # Update the object
+  enrich_obj@compareClusterResult <- result
+  return(enrich_obj)
+}
+
+# Apply the update
+int_enrich_simp <- update_scf_description(int_enrich_simp)
+
+# Verify the changes
+scf_terms_updated <- int_enrich_simp@compareClusterResult %>%
+  filter(grepl("SCF", Description, ignore.case = TRUE))
+print(scf_terms_updated)
+# Filter for SCF-related terms
+scf_terms <- int_enrich_simp@compareClusterResult %>%
+  filter(grepl("SCF", Description, ignore.case = TRUE))
+
+# Print the filtered results
+print(scf_terms)
+
+# Function to update SCF term description
+update_scf_description <- function(enrich_obj) {
+  # Get the compareClusterResult
+  result <- enrich_obj@compareClusterResult
+
+  # Update the Description for SCF terms
+  result$Description[grepl("SCF", result$Description, ignore.case = TRUE)] <-
+    "SCF/ubiquitin-dependent protein catabolism"
+
+  # Update the object
+  enrich_obj@compareClusterResult <- result
+  return(enrich_obj)
+}
+
+# Apply the update
+int_enrich_simp <- update_scf_description(int_enrich_simp)
+
+# Verify the changes
+scf_terms_updated <- int_enrich_simp@compareClusterResult %>%
+  filter(grepl("SCF", Description, ignore.case = TRUE))
+print(scf_terms_updated)
+
+```
+
+```{r}
+#| label: interval-go-plot-base
+#| include: false
+
+int_enrich_simp_dp_no_facet <- enrichplot::dotplot(
+  int_enrich_simp,
+  x = "peak_marker",
+  font.size = 10,
+  label_format = 50
+)
+```
+
+```{r}
+saveRDS(int_enrich_simp_dp_no_facet, file = "_shared/interval_go_enrichments_plot.rds")
+```
+
+```{r}
+int_enrich_simp_dp_no_facet
+```
+
