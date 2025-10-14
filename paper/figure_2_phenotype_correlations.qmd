@@ -1,26 +1,28 @@
 ---
-title: Figure S1 Strain responses by toxicant
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 ```{r}
+#| include: false
 library(tidyverse)
 library(pheatmap)
 library(cowplot)
 library(glue)
-
+```
+```{r}
+#| include: false
 # Load correlation data
 pheno_corr_all <- readRDS("data/processed/phenotypes/pheno_corr_all.Rds")
-
-# Get correlation coefficients and p-values
-pheno_corr_all_r <- pheno_corr_all$r
-pheno_corr_all_p <- pheno_corr_all$p
-pheno_corr_all_p_symbol <- ifelse(round(pheno_corr_all$p, digits = 3) <= 0.05, "*", " ")
-
 ```
 
-# Create the color palette and annotation data
 
 ```{r}
+#| include: false
+# Create the color palette and annotation data
+
 tox_data <- data.table::fread("data/processed/tox_data/con_metadata.csv")
 
 # Set color palette for annotations
@@ -33,18 +35,34 @@ class.pal.df <- tibble::tibble(
 tox_cols <- tox_data %>%
   # remove the controls
   dplyr::filter(big_class != "Control") %>%
-  dplyr::select(nice_drug_label2, big_class) %>%
+  dplyr::select(drug, nice_drug_label2, big_class, moa_class) %>%
+  # Clean up to have special character for plotting
+  dplyr::mutate(nice_drug_label2 = stringr::str_replace(nice_drug_label2, pattern = "uM", replacement = "µM")) %>%
   # join to the class palette
   dplyr::left_join(., class.pal.df, by = c("big_class" = "big_class")) %>%
-  dplyr::select(nice_drug_label2, big_class, col)
+  dplyr::select(drug, nice_drug_label2, big_class, moa_class, col)
+
+# Create a mapping from drug to nice_drug_label2
+drug_to_label <- setNames(tox_cols$nice_drug_label2, tox_cols$drug)
+
+# Get correlation coefficients and p-values
+pheno_corr_all_r <- pheno_corr_all$r
+pheno_corr_all_p <- pheno_corr_all$p
+pheno_corr_all_p_symbol <- ifelse(round(pheno_corr_all$p, digits = 3) <= 0.05, "*", " ")
+
+# Update row and column names of correlation matrices
+rownames(pheno_corr_all_r) <- drug_to_label[rownames(pheno_corr_all_r)]
+colnames(pheno_corr_all_r) <- drug_to_label[colnames(pheno_corr_all_r)]
+rownames(pheno_corr_all_p_symbol) <- drug_to_label[rownames(pheno_corr_all_p_symbol)]
+colnames(pheno_corr_all_p_symbol) <- drug_to_label[colnames(pheno_corr_all_p_symbol)]
 
 moa_anno_df <- tox_cols %>%
   # set the row names to the nice drug label
   tibble::column_to_rownames(var = "nice_drug_label2") %>%
   # rename the big class column to Class
   dplyr::rename(Class = big_class) %>%
-  # remove the color column
-  dplyr::select(-col)
+  # remove the drug and color columns
+  dplyr::select(-drug, -col)
 
 
 
@@ -55,45 +73,37 @@ anno_cols <- list(Class = cols)
 ```
 
 ```{r}
-# Create clustered correlation heatmap
-fig <- pheatmap::pheatmap(pheno_corr_all_r,
-  annotation_row = moa_anno_df,
-  annotation_colors = anno_cols,
-  color = colorRampPalette(c("navy", "white", "darkred"))(1000),
-  breaks = seq(-1, 1, length.out = (1000 + 1)),
-  display_numbers = pheno_corr_all_p_symbol,
-  fontsize_number = 12,
-  cutree_rows = 2, cutree_cols = 2,
-  show_colnames = TRUE,
-  annotation_names_row = FALSE,
-  cluster_cols = FALSE # Remove the dendrogram along the x-axis
-)
+#| include: false
+create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_cols) {
+  # Perform hierarchical clustering on rows to get the dendrogram
+  row_dist <- dist(similarity_matrix)
+  row_hclust <- hclust(row_dist)
 
-# # Save figure
-# cowplot::ggsave2(fig, filename = glue::glue("figures/phenotypes/pheno_corr_heatmap_all_moa.png"), height = 7.5, width = 10)
-
-# # Save main figure
-# ggplot2::ggsave(
-#   filename = glue::glue("figures/Figure_2/figure_2.png"),
-#   plot = fig,
-#   width = 7.5,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-
-# ggplot2::ggsave(
-#   filename = glue::glue("figures/Figure_2/figure_2.eps"),
-#   plot = fig,
-#   width = 7.5,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-
+  # Use the same clustering order for both rows and columns
+  # (since it's a symmetric similarity matrix)
+  p <- pheatmap::pheatmap(
+    similarity_matrix,
+    annotation_row = con_metadata_df,
+    annotation_colors = anno_cols,
+    width = 7.5,
+    height = 6,
+    color = colorRampPalette(c("navy", "white", "darkred"))(1000),
+    breaks = seq(-1, 1, length.out = (1000 + 1)),
+    show_colnames = TRUE,
+    fontsize_number = 12,
+    display_numbers = pheno_corr_all_p_symbol,
+    cluster_rows = row_hclust,
+    silent = TRUE
+  )
+  return(p)
+}
 ```
 
 ```{r}
-fig
+create_phenotype_heatmap(
+  similarity_matrix = pheno_corr_all_r,
+  con_metadata_df = moa_anno_df,
+  anno_cols = anno_cols
+)
 ```
 
