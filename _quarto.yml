@@ -9,6 +9,7 @@ project:
     - analysis/calculate_phenotype_correlations.qmd
     - analysis/calculate_enrich_each_interval.qmd
     - analysis/call_candidate_genes.qmd
+    - analysis/call_candidate_GO.qmd
     - paper/
 execute: 
   freeze: false
