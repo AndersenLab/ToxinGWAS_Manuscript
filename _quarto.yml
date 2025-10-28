@@ -8,6 +8,7 @@ project:
     - analysis/organize_strain_outliers.qmd
     - analysis/calculate_phenotype_correlations.qmd
     - analysis/calculate_enrich_each_interval.qmd
+    - analysis/summarize_strain_hdrs.qmd
     - paper/
 execute: 
   freeze: false
