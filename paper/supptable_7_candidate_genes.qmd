@@ -1,0 +1,31 @@
+---
+title: "Table S7: Candidate Genes and GO terms"
+format: html
+---
+
+```{r}
+#| label: candidate-genes-table-setup
+
+library(dplyr)
+library(data.table)
+library(flextable)
+
+# source the helper functions
+source("bin/general.R")
+source("bin/outs.R")
+source("bin/materials_key.R")
+source("bin/candidate_groupGO.R")
+```
+
+# Inputs
+
+`candidate_out_name` - path to the candidate file output by `analysis/call_candidate_genes.qmd`
+`tox_meta_fn` - path to the toxin metadata file 
+
+```{r}
+#| label: candidate-genes-table-input
+
+candidate_out_name <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes.tsv.gz"
+tox_meta_fn <- "data/processed/interval_genes/toxin_metadata.tsv.gz"
+
+```
