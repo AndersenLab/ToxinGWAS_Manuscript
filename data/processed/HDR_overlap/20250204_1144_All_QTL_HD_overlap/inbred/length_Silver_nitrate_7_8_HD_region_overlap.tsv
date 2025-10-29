@@ -1,0 +1,4 @@
+".id"	"peak_marker"	"n_strains_ref"	"n_strains_alt"	"total_strains"	"n_strains_ref_overlap"	"n_strains_alt_overlap"	"prop_ref_overlap"	"prop_alt_overlap"	"trait_name"	"algorithm"
+"I:1622740"	"I:1622740"	109	85	194	34	75	0.311926605504587	0.882352941176471	"length_Silver_nitrate_7_8"	"inbred"
+"II:3016298"	"II:3016298"	166	28	194	147	28	0.885542168674699	1	"length_Silver_nitrate_7_8"	"inbred"
+"II:11883855"	"II:11883855"	176	18	194	52	2	0.295454545454545	0.111111111111111	"length_Silver_nitrate_7_8"	"inbred"
