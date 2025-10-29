@@ -1,0 +1,5 @@
+".id"	"peak_marker"	"n_strains_ref"	"n_strains_alt"	"total_strains"	"n_strains_ref_overlap"	"n_strains_alt_overlap"	"prop_ref_overlap"	"prop_alt_overlap"	"trait_name"	"algorithm"
+"I:3282224"	"I:3282224"	146	9	155	0	0	0	0	"length_Paraquat_62_5"	"inbred"
+"I:11258815"	"I:11258815"	146	9	155	22	1	0.150684931506849	0.111111111111111	"length_Paraquat_62_5"	"inbred"
+"II:13675568"	"II:13675568"	130	25	155	88	17	0.676923076923077	0.68	"length_Paraquat_62_5"	"inbred"
+"X:2848181"	"X:2848181"	140	15	155	3	13	0.0214285714285714	0.866666666666667	"length_Paraquat_62_5"	"inbred"

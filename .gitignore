@@ -5,3 +5,4 @@ _products/*
 data/.DS_Store
 .DS_Store
 data/processed/20231116_Analysis_NemaScan
+.Rproj.user

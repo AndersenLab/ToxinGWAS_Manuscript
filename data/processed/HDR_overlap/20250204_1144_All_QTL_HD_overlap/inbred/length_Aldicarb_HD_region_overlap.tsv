@@ -1,0 +1,6 @@
+".id"	"peak_marker"	"n_strains_ref"	"n_strains_alt"	"total_strains"	"n_strains_ref_overlap"	"n_strains_alt_overlap"	"prop_ref_overlap"	"prop_alt_overlap"	"trait_name"	"algorithm"
+"III:8311919"	"III:8311919"	184	10	194	0	0	0	0	"length_Aldicarb"	"inbred"
+"IV:2368192"	"IV:2368192"	183	11	194	9	4	0.0491803278688525	0.363636363636364	"length_Aldicarb"	"inbred"
+"IV:13208614"	"IV:13208614"	175	19	194	9	0	0.0514285714285714	0	"length_Aldicarb"	"inbred"
+"IV:16631628"	"IV:16631628"	88	106	194	0	25	0	0.235849056603774	"length_Aldicarb"	"inbred"
+"X:13252751"	"X:13252751"	149	45	194	2	3	0.0134228187919463	0.0666666666666667	"length_Aldicarb"	"inbred"
