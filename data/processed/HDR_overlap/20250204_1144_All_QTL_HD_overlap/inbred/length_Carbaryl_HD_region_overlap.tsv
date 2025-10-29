@@ -1,0 +1,2 @@
+".id"	"peak_marker"	"n_strains_ref"	"n_strains_alt"	"total_strains"	"n_strains_ref_overlap"	"n_strains_alt_overlap"	"prop_ref_overlap"	"prop_alt_overlap"	"trait_name"	"algorithm"
+"I:2596756"	"I:2596756"	93	101	194	25	56	0.268817204301075	0.554455445544555	"length_Carbaryl"	"inbred"

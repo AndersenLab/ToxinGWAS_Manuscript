@@ -1,0 +1,68 @@
+---
+title: "Summarize Mapping Panel HDRs"
+---
+
+Filter to HDR regions present in GWA mapping panel strains
+
+```{r}
+#| label: summarize-strain-hdrs-setup
+library(tidyverse)
+today <- format(Sys.time(), "%Y%m%d")
+```
+
+# Inputs
+- `raw_hvr_file`: path the bed file with HVRs for the species
+- `pheno.df`: The phenotype data frame. Loaded from `load(data/processed/pheno.df.rda)` 
+```{r}
+#| label: summarize-strain-hdrs-inputs
+raw_hvr_file <- "data/raw/HDR/20240408_c_elegans_divergent_regions.bed"
+pheno_path <- "data/raw/phenotypes/pheno.df.rda"
+```
+
+# Main
+
+```{r}
+#| label: summarize-strain-hdrs-main
+
+# Load the hdr data
+raw_hvr_df <- data.table::fread(
+  raw_hvr_file,
+  col.names = c("chrom", "start", "stop", "strain")
+)
+
+# load phenotype data
+load("data/processed/pheno.df.rda")
+
+gwas_strains <- pheno.df %>%
+  pull(strain) %>%
+  unique()
+
+hvr_df <- raw_hvr_df %>%
+  dplyr::filter(strain %in% gwas_strains) %>%
+  tidyr::unite("hd_region", chrom, start, stop, sep = "_", remove = FALSE) %>%
+  dplyr::group_by(chrom, start, stop, hd_region) %>%
+  dplyr::summarize(
+    strains = paste(strain, collapse = ","),
+    n_strains = n_distinct(strain)
+  )
+
+data.table::fwrite(
+  hvr_df,
+  glue::glue("data/processed/HDR_overlap/{today}_hvr_gwas_strains.tsv"),
+  sep = "\t",
+  quote = FALSE
+)
+
+#### Create a collapsed version of the HVRs ####
+hvr_df_collapsed <- raw_hvr_df %>%
+  dplyr::filter(strain %in% gwas_strains) %>%
+  dplyr::select(chrom, start, stop)
+
+data.table::fwrite(
+  hvr_df_collapsed,
+  glue::glue("data/processed/HDR_overlap/{today}_hvr_gwas_strains_collapsed.tsv"),
+  sep = "\t",
+  quote = FALSE
+)
+
+```
