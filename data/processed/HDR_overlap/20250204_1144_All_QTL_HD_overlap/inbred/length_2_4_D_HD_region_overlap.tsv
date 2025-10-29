@@ -1,0 +1,2 @@
+".id"	"peak_marker"	"n_strains_ref"	"n_strains_alt"	"total_strains"	"n_strains_ref_overlap"	"n_strains_alt_overlap"	"prop_ref_overlap"	"prop_alt_overlap"	"trait_name"	"algorithm"
+"V:14453636"	"V:14453636"	178	14	192	14	13	0.0786516853932584	0.928571428571429	"length_2_4_D"	"inbred"

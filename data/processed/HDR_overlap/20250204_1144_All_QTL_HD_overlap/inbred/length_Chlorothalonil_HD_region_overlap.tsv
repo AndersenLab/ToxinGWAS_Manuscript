@@ -1,0 +1,7 @@
+".id"	"peak_marker"	"n_strains_ref"	"n_strains_alt"	"total_strains"	"n_strains_ref_overlap"	"n_strains_alt_overlap"	"prop_ref_overlap"	"prop_alt_overlap"	"trait_name"	"algorithm"
+"I:1741155"	"I:1741155"	57	137	194	16	95	0.280701754385965	0.693430656934307	"length_Chlorothalonil"	"inbred"
+"II:5392976"	"II:5392976"	42	152	194	31	149	0.738095238095238	0.980263157894737	"length_Chlorothalonil"	"inbred"
+"II:13921653"	"II:13921653"	46	148	194	16	121	0.347826086956522	0.817567567567568	"length_Chlorothalonil"	"inbred"
+"III:1455164"	"III:1455164"	51	143	194	22	138	0.431372549019608	0.965034965034965	"length_Chlorothalonil"	"inbred"
+"III:2605810"	"III:2605810"	58	136	194	6	131	0.103448275862069	0.963235294117647	"length_Chlorothalonil"	"inbred"
+"III:4478684"	"III:4478684"	65	129	194	4	45	0.0615384615384615	0.348837209302326	"length_Chlorothalonil"	"inbred"
