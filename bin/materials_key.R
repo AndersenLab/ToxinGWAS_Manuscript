@@ -38,6 +38,7 @@ figures <- list(
 )
 
 sup_figures <- list(
+  sim_performance = "figure_S1",
   # phenotype distributions - `pheno_ranges.R`
   strain_means_plot = "figure_S2",
   # outlier histograms - `outlier_table.R`
