@@ -1,0 +1,224 @@
+---
+title: "Table S7: Candidate Genes and GO terms"
+format: html
+---
+
+Based on original candidate gene identification script from analysis repository `create_candidate_table.R`
+
+```{r}
+#| label: candidate-genes-table-setup
+
+library(dplyr)
+library(data.table)
+library(flextable)
+
+# source the helper functions
+source("bin/general.R")
+source("bin/outs.R")
+source("bin/materials_key.R")
+source("bin/candidate_groupGO.R")
+```
+
+# Inputs
+`candidate_out_name` - path to the candidate file output by `analysis/call_candidate_genes.qmd`
+`tox_meta_fn` - path to the toxin metadata file 
+`ranked_qtl_fn` - path to the ranked QTL data output by `analysis/rank_regions.qmd`
+```{r}
+#| label: candidate-genes-table-input
+
+candidate_out_name <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes.tsv.gz"
+tox_meta_fn <- "data/processed/tox_data/tox_metadata.csv"
+
+# Path to ranked QTL data
+ranked_qtl_fn <- "data/processed/qtl_ranking/inbred/ranked_qtl.tsv"
+```
+
+# Functions
+```{r}
+#| label: candidate-genes-table-functions
+# Function to pull the max log10 p-value for each candidate gene
+#' @param candidate_raw output of the finemapping.curation.R script
+#' @return A data frame with the min p-value for each candidate gene and associated marker information
+max_log10p_candidates <- function(candidate_raw) {
+  # pull out the min p-value for each candidate gene and keep the associated marker info
+  gene_max <- candidate_raw %>%
+    dplyr::group_by(WBGeneID) %>%
+    dplyr::arrange(desc(VARIANT_LOG10p)) %>%
+    dplyr::slice(1) %>%
+    dplyr::select(
+      WBGeneID,
+      max_log10p = VARIANT_LOG10p,
+      max_marker = MARKER,
+      max_marker_ld = VARIANT_LD_WITH_PEAK_MARKER,
+      max_marker_maf = MAF_variant
+    ) %>%
+    dplyr::ungroup()
+
+  return(gene_max)
+}
+```
+
+
+# Main
+```{r}
+#| label: candidate-genes-table-main
+
+## Process the Tox data ##
+# load the toxicant condition metadata
+tox_meta <- data.table::fread(tox_meta_fn)
+
+# load the ranked QTL data
+ranked_qtl <- data.table::fread(ranked_qtl_fn) %>%
+  dplyr::select(trait, marker, rank)
+
+## Read in the candidate gene data ##
+# Read in the candidate gene table
+candidate_raw <- data.table::fread(candidate_out_name)
+
+# format the peakmarker column of the candidate gene table to have correct naming syntax
+
+candidate_anno <- candidate_raw %>%
+  dplyr::mutate(
+    PEAK_MARKER = sapply(
+      PEAK_MARKER,
+      convert_marker,
+      to_marker = "RM",
+      from_marker = "NUM"
+    ),
+    MARKER = stringr::str_replace_all(
+      MARKER,
+      "_",
+      ":"
+    )
+  ) %>%
+  dplyr::left_join(
+    tox_meta,
+    by = c("trait")
+  )
+
+candidate_anno_rank <- left_join(
+  candidate_anno,
+  ranked_qtl,
+  by = c(
+    "trait" = "trait",
+    "PEAK_MARKER" = "marker"
+  )
+)
+
+## Convert WBid to readable gene
+
+# pull the WORMBASE ID from the candidate gene table
+wormbase_id <- candidate_anno_rank %>%
+  dplyr::pull(WBGeneID)
+
+ids <- clusterProfiler::bitr(
+  wormbase_id,
+  fromType = "WORMBASE",
+  toType = c("GENENAME", "SYMBOL"),
+  OrgDb = "org.Ce.eg.db"
+)
+
+# join the ids to the candidate gene table
+candidate_anno_rank <- candidate_anno_rank %>%
+  dplyr::left_join(ids, by = c("WBGeneID" = "WORMBASE"))
+
+
+# select to just the gene and finemapping snv centric data
+
+candidate_simple <- candidate_anno_rank %>%
+  dplyr::select(
+    nice_drug_label2,
+    PEAK_MARKER,
+    WBGeneID,
+    SYMBOL,
+    GENENAME,
+    MARKER,
+    VARIANT_LOG10p,
+    VARIANT_LD_WITH_PEAK_MARKER,
+    MAF_variant,
+    rank
+  ) %>%
+  dplyr::distinct()
+
+candidate_pre_table <- candidate_simple %>%
+  dplyr::select(
+    nice_drug_label2,
+    PEAK_MARKER,
+    MARKER,
+    SYMBOL,
+    GENENAME,
+    WBGeneID,
+    VARIANT_LOG10p,
+    VARIANT_LD_WITH_PEAK_MARKER,
+    MAF_variant,
+    rank
+  ) %>%
+  # create a combined column for the drug and marker
+  dplyr::mutate(
+    drug_marker = paste0(nice_drug_label2, " (", PEAK_MARKER, ")")
+  )
+
+candidate_max_log10p <- max_log10p_candidates(candidate_anno_rank)
+
+candidate_flex_table_pre <- candidate_pre_table %>%
+  dplyr::select(
+    drug_marker,
+    SYMBOL,
+    GENENAME,
+    WBGeneID,
+    rank
+  ) %>%
+  # join the max log10 p-value to the candidate gene table
+  dplyr::left_join(candidate_max_log10p, by = c("WBGeneID")) %>%
+  dplyr::distinct() %>%
+  dplyr::arrange(desc(max_log10p))
+
+
+candidate_ft <- candidate_flex_table_pre %>%
+  flextable::flextable(
+    col_keys = c(
+      "SYMBOL",
+      "GENENAME",
+      "max_log10p",
+      "max_marker_ld",
+      "max_marker_maf",
+      "drug_marker",
+      "rank"
+    ),
+  ) %>%
+  flextable::set_header_labels(
+    SYMBOL = "Gene",
+    GENENAME = "Details",
+    max_log10p = "Log10p",
+    max_marker_ld = "R2",
+    max_marker_maf = "MAF",
+    drug_marker = "Interval",
+    rank = "Interval Rank"
+  ) %>%
+  # make the gene name bold and italic
+  flextable::italic(j = 1, i = ~ !is.na(SYMBOL), part = "body") %>%
+  # center the rank column
+  flextable::align(j = "rank", align = "center", part = "all") %>%
+  # replace NA values with "N/a"
+  flextable::compose(j = "rank", value = as_paragraph(ifelse(is.na(rank), "N/a", rank))) %>%
+  # add vertical line before interval column
+  flextable::vline(i = 1, j = 5, part = "header", border = officer::fp_border(color = "black")) %>%
+  flextable::vline(j = 5, part = "body", border = officer::fp_border(color = "black")) %>%
+  flextable::set_table_properties(layout = "autofit") %>%
+  flextable::line_spacing(space = 1, part = "all") %>%
+  flextable::align(align = "left", part = "all") %>%
+  flextable::set_table_properties(
+    layout = "autofit",
+    width = 1,
+    opts_word = list(split = FALSE, keep_with_next = TRUE)
+  ) %>%
+  flextable::paginate(
+    group = "SYMBOL",
+    group_def = c("rle")
+  )
+
+# fns <- table_fns[["candidate_ft"]]
+# docx_fn <- fns$docx
+
+# flextable::save_as_docx(candidate_ft, path = docx_fn)
+```

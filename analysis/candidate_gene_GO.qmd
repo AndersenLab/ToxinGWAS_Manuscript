@@ -1,0 +1,55 @@
+---
+title: Tagging candidate genes with GO terms using clusterProfiler groupGO function
+---
+
+```{r}
+#| label: call-candidate-go-setup
+
+library(clusterProfiler)
+library(glue)
+library(org.Ce.eg.db)
+
+source("bin/candidate_groupGO.R")
+```
+
+# Inputs
+
+```{r}
+#### Inputs ####
+inbred_can_fn <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes.tsv.gz"
+```
+
+# Outputs
+
+```{r}
+#### Outputs ####
+out_dir <- "data/processed/interval_genes/candidate_genes"
+```
+
+# Main
+
+```{r}
+#### Main ####
+# load the candidate gene data
+inbred_can_df <- data.table::fread(
+  inbred_can_fn
+)
+
+candidate_clusters <- prepare_trait_clusters(inbred_can_df)
+
+# run groupGO on candidate gene clusters
+candidate_comp <- clusterProfiler::compareCluster(
+  geneClusters = candidate_clusters,
+  fun = "groupGO",
+  OrgDb = org.Ce.eg.db,
+  ont = "BP",
+  level = 5
+)
+
+# save the candidate groupGO results as an rds file
+saveRDS(
+  candidate_comp,
+  file.path(out_dir, "inbred_candidate_groupGO.rds")
+)
+
+```
