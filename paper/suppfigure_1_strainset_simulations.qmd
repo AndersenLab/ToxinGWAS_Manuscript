@@ -1,4 +1,158 @@
 ---
-title: "Table S1: Strain Information"
+title: "Simulation performance of mapping panels"
 format: html
 ---
+
+```{r}
+#| label: strain-set-simulations-setup
+library(tidyverse)
+library(ggrepel)
+
+source("bin/outs.R")
+source("bin/materials_key.R")
+
+```
+
+# Inputs
+- `sim_data_fn`: path to the simulation data RDS file. When loaded a dataframe named `simulation.metrics.df` is added to the env
+```{r}
+sim_data_fn <- "data/raw/simulations/NemaScan_Performance.SummerGWA_Sims_LiberalSwept192.20210506.RData"
+```
+# Functions
+```{r}
+#| label: strain-set-simulations-functions
+expand_sims <- function(df) {
+  df %>%
+    tidyr::separate(col = sim, into = c("nQTL", "Rep", "h2", "MAF", "effect_range", "population"), sep = "_") %>%
+    dplyr::mutate(
+      nQTL = as.integer(nQTL),
+      Rep = as.integer(Rep),
+      h2 = as.numeric(h2),
+      MAF = as.numeric(MAF),
+      effect_range = as.factor(effect_range),
+      population = as.factor(population)
+    )
+}
+```
+
+# Main
+
+```{r}
+#| label: strain-set-simulations-main
+load(sim_data_fn)
+
+summer.GWA.dat.6.lib.swept.192 <- simulation.metrics.df %>%
+  tidyr::separate(col = sim,
+                  into = c("nQTL","Rep","h2","MAF","effect_range","strain_set"), 
+                  sep = "_", remove = F) %>%
+  tidyr::separate(col = QTL,
+                  into = c("CHROM","POS"), 
+                  sep = ":", remove = F) %>%
+  dplyr::mutate(h2 = as.factor(h2),
+                nQTL = as.factor(nQTL),
+                POS = as.numeric(POS),
+                startPOS = as.numeric(startPOS),
+                peakPOS = as.numeric(peakPOS),
+                endPOS = as.numeric(endPOS),
+                interval.var.exp  = as.numeric(interval.var.exp),
+                Simulated.QTL.VarExp = as.numeric(Simulated.QTL.VarExp), 
+                peak_id = as.numeric(peak_id),
+                BETA = as.numeric(BETA),
+                Effect = as.numeric(Effect),
+                Frequency = as.numeric(Frequency),
+                log10p = dplyr::if_else(Simulated == FALSE, true = interval.log10p, false = log10p), # false discoveries inherit the log10p value of the peak marker for the interval
+                log10p = as.numeric(log10p),
+                interval_size = as.numeric(interval_size),
+                aboveBF = dplyr::case_when(aboveBF == 1 ~ TRUE, 
+                                           aboveBF == 0 ~ FALSE,
+                                           is.na(aboveBF) ~ TRUE), # false discoveries by definition exceed significance threshold
+                aboveBF = as.factor(aboveBF)) %>%
+  dplyr::filter(!c(Detected == FALSE & aboveBF == TRUE),
+                CHROM != 7)
+```
+
+Designate the QTL detections code pulled from SamW script `summerGWA.Rmd` (`/vast/eande106/rdss/LabFolders/PastMembers/SamW/projects/NemaScan_StrainSetSims/analysis/summerGWA.Rmd`)
+```{r}
+designations <- summer.GWA.dat.6.lib.swept.192 %>%
+  dplyr::filter(algorithm == "MIXED") %>%
+  droplevels() %>%
+  dplyr::mutate(designation = case_when(Simulated == TRUE & Detected == TRUE & aboveBF == TRUE ~ "Detected.CV",
+                                        Simulated == TRUE & Detected == FALSE & aboveBF == FALSE ~ "Missed.CV",
+                                        Simulated == TRUE & Detected == TRUE & aboveBF == FALSE ~ "CV.Not.Significant.In.Interval",
+                                        Simulated == FALSE & Detected == TRUE & aboveBF == TRUE ~ "False.Discovery")) %>%
+  tidyr::separate(col = detected.peak,
+                  into = c("peak.CHROM","peak.POS"), 
+                  sep = ":", remove = F) %>%
+  dplyr::mutate(QTL.v.peak = abs(as.numeric(POS)-as.numeric(peak.POS))) %>%
+  dplyr::group_by(designation, strain_set, nQTL, h2, Rep) %>%
+  dplyr::summarise(n = n()) %>%
+  tidyr::pivot_wider(names_from = designation, values_from = n)
+
+designations[is.na(designations)] <- 0
+designations$Detected <- rowSums(designations[,5:7])
+```
+
+Calculate detection power using code pulled from the same script
+```{r}
+Power <- designations %>%
+  dplyr::mutate(Simulated = as.numeric(as.character(nQTL)),
+                Power = Detected.CV/Simulated,
+                Artefact.Rate = False.Discovery/Detected,
+                Detected.CV.NS.Rate = CV.Not.Significant.In.Interval/Detected) %>%
+  dplyr::ungroup() %>%
+  dplyr::group_by(strain_set, h2) %>%
+  dplyr::summarise(mean.Power = mean(Power),
+                   sd.Power = sd(Power),
+                   n = n())
+```
+
+Calculate false discovery rate (artefact rate) using code pulled from the same script
+
+```{r}
+Artefact.Rate <- designations %>%
+  dplyr::mutate(Simulated = as.numeric(as.character(nQTL)),
+                Power = Detected.CV/Simulated,
+                Artefact.Rate = False.Discovery/Detected,
+                Detected.CV.NS.Rate = CV.Not.Significant.In.Interval/Detected) %>%
+  dplyr::ungroup() %>%
+  dplyr::group_by(strain_set, h2) %>%
+  dplyr::mutate(Artefact.Rate = if_else(is.na(Artefact.Rate), true = 0, false = Artefact.Rate)) %>%
+  dplyr::summarise(mean.Artefact.Rate = mean(Artefact.Rate),
+                   sd.Artefact.Rate = sd(Artefact.Rate),
+                   n = n()) 
+```
+
+Combine power and artefact rate into a single dataframe
+```{r}
+summer.GWA.perform <- Power %>%
+  dplyr::full_join(.,Artefact.Rate)
+```
+
+Add plotting code for figure
+
+```{r}
+sim_performance <- summer.GWA.perform %>%
+  # highlight the population of interacts - underground.gartersnake
+  dplyr::mutate(ssoi = ifelse(strain_set == "underground.gartersnake", TRUE, FALSE)) %>%
+  ggplot(aes(x = mean.Power, y = mean.Artefact.Rate)) +
+  geom_point(aes(color = ssoi)) +
+  ggrepel::geom_text_repel(data = . %>% filter(ssoi == TRUE), 
+                  aes(label = strain_set), 
+                  size = 3,
+                  box.padding = 1,
+                  point.padding = 0.5,
+                  min.segment.length = 0,
+                  nudge_y = -0.02,
+                  show.legend = FALSE) +
+  scale_color_manual(values = c("TRUE" = "red", "FALSE" = "black")) +
+  labs(x = "Average Detection Power", y = "Average FDR") +
+  guides(color = "none") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  facet_wrap(~h2) 
+```
+Save the plot
+```{r}
+save_plot(sim_performance, sup_figure_fns$sim_performance, w_in = 7.5, h_in = 5)
+```
