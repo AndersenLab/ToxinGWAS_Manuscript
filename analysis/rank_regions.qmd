@@ -118,14 +118,7 @@ mapping.results.class <- inbred.mapping.results %>%
   dplyr::filter(
     !stringr::str_detect(trait, "CV_")
   ) %>%
-  # remove length prefix from trait names
-  dplyr::mutate(
-    trait = stringr::str_replace(
-      trait,
-      pattern = "^length_",
-      replacement = ""
-    )
-  ) %>%
+  dplyr::distinct() %>%
   # add the nice drug label
   dplyr::left_join(con_key, by = c("trait"))
 
@@ -134,15 +127,7 @@ mapping.results.class <- inbred.mapping.results %>%
 qtl_database <- data.table::fread(qtl_database_file) %>%
     # adjust values in the algorithm column
     dplyr::mutate(Algorithm = stringr::str_to_lower(Algorithm)) %>%
-    dplyr::rename(algorithm = Algorithm)%>%
-      # remove length prefix from trait names
-    dplyr::mutate(
-      drug = stringr::str_replace(
-        Trait,
-        pattern = "^length_",
-        replacement = ""
-      )
-    ) 
+    dplyr::rename(algorithm = Algorithm)
 # Process overlap data
 inbred_overlaps <- process_overlaps(inbred_overlap_dir)
 
