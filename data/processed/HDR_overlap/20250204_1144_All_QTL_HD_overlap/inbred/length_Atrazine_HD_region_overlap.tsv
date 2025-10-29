@@ -1,0 +1,2 @@
+".id"	"peak_marker"	"n_strains_ref"	"n_strains_alt"	"total_strains"	"n_strains_ref_overlap"	"n_strains_alt_overlap"	"prop_ref_overlap"	"prop_alt_overlap"	"trait_name"	"algorithm"
+"II:12658388"	"II:12658388"	177	17	194	146	16	0.824858757062147	0.941176470588235	"length_Atrazine"	"inbred"
