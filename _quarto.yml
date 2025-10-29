@@ -10,6 +10,8 @@ project:
     - analysis/calculate_enrich_each_interval.qmd
     - analysis/hdr_summarize_strain.qmd
     - analysis/hdr_calculate_region_overlaps.qmd
+    - analysis/candidate_gene_identification.qmd
+    - analysis/candidate_gene_GO.qmd
     - paper/
 execute: 
   freeze: false
