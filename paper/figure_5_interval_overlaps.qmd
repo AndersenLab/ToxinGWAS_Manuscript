@@ -143,7 +143,7 @@ qtl_overlaps <- ggplot() +
     strip = strip_y
   ) +
   theme(
-    strip.text.y.right = element_text(angle = 0, family = "Helvetica", size = 9, face = "bold"),
+    strip.text.y.right = element_text(angle = 0, family = "Helvetica", size = 9, face = "bold", lineheight = 0.9),
     strip.text.x = element_text(family = "Helvetica", size = 10, face = "bold"),
     axis.text.y = element_text(family = "Helvetica", size = 10, face = "bold"),
     axis.title.y = element_blank(),
