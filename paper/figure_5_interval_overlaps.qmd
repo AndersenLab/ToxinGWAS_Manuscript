@@ -40,7 +40,9 @@ chr_lens_fn <- "data/raw/c_elegans_chr_lengths.tsv"
 chr_lens <- data.table::fread(chr_lens_fn) %>%
   dplyr::select(CHROM, startPOS = start, endPOS = stop)
 
-tox_meta <- data.table::fread(tox_meta_fn)
+tox_meta <- data.table::fread(tox_meta_fn) %>%
+  dplyr::mutate(nice_drug_label2 = stringr::str_replace(nice_drug_label2, pattern = "uM", replacement = "µM"))
+
 
 # Load the Inbred QTL that overlap with another
 # output of find_overlaps.R
