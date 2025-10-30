@@ -151,8 +151,8 @@ n_overlaps_per_int_hist <- overlaps_per_int_hist_df %>%
   ) +
   scale_fill_manual(values = man_pal$col) +
   labs(
-    x = "Overlaps with other toxicant intervals",
-    y = "Number of Intervals"
+    x = "Overlaps with other regions",
+    y = "Number of regions"
   ) +
   theme_bw() +
   theme(
@@ -170,6 +170,8 @@ Calculate the linear model
 lm_model <- lm(num_overlaps ~ int_size, data = overlaps_per_int_size_df)
 lm_summary <- broom::glance(lm_model)
 p_value <- lm_summary$p.value
+
+lm_summary
 ```
 Plot interval size vs. number of overlaps
 ```{r}
@@ -191,7 +193,7 @@ n_overlaps_per_int_size <- overlaps_per_int_size_df %>%
   ) +
   scale_color_manual(values = man_pal$col) +
   labs(
-    x = "Interval Size (Kb)",
+    x = "Region size (Kb)",
     y = "Number of overlaps"
   ) +
   theme_bw() +
@@ -213,7 +215,7 @@ n_overlaps_per_int_size <- overlaps_per_int_size_df %>%
     "text",
     x = 7500,
     y = 3.0,
-    label = paste("r =", format(summary(lm_model)$r.squared, digits = 3)),
+    label = bquote(R^2 == .(format(summary(lm_model)$r.squared, digits = 3))),
     hjust = 0
   )
 ```
