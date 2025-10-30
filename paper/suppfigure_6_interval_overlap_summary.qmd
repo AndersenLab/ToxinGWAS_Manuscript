@@ -28,7 +28,7 @@ tox_meta_fn <- "data/processed/tox_data/con_metadata.csv"
 
 # load the inbred qtl overlaps with use group data
 inbred_qtl_overlaps <- data.table::fread(
-  "data/processed/qtl_overlaps/inbred_qtl_overlaps.csv"
+  "data/processed/interval_overlap/inbred_qtl_overlaps.csv"
 )
 
 ```
