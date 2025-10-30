@@ -1,8 +1,6 @@
 /.quarto/
 **/*.quarto_ipynb
 _products/*
-.DS_Store
-data/.DS_Store
-.DS_Store
+**/.DS_Store
 data/processed/20231116_Analysis_NemaScan
 .Rproj.user
