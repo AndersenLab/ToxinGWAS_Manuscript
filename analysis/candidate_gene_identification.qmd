@@ -199,6 +199,7 @@ summarize.gene.candidates <- function(bcsq.file, LD, MAF, logPthresh, algorithm)
     return(div.bcsq.data)
   }
 }
+
 alleleDivergence <- function(data, marker, qtl) {
   n.strains <- sum(data$n)
   divergent.annotated <- data %>%
