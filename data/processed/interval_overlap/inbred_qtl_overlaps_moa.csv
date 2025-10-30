@@ -1,0 +1,125 @@
+traitA,traitB,peakidA,peakidB,nQTLA,nQTLB,groupA,groupB,n_overlaps,JI
+length_2_4_D,length_Methyl_mercury,,,1,8,Other|unknown,Redox disruption,0,0
+length_2_4_D,length_Paraquat_62_5,,,1,4,Other|unknown,Redox disruption,0,0
+length_2_4_D,length_Aldicarb,,,1,5,Other|unknown,AChE inhibition,0,0
+length_2_4_D,length_Zinc_dichloride,,,1,1,Other|unknown,Other|unknown,0,0
+length_2_4_D,length_Propoxur,,,1,1,Other|unknown,AChE inhibition,0,0
+length_2_4_D,length_Mancozeb,,,1,1,Other|unknown,AChE inhibition,0,0
+length_2_4_D,length_Triphenyl_phosphate_6_25,V:14453636,V:7623783,1,2,Other|unknown,Other|unknown,1,0.5
+length_2_4_D,length_Carboxin,,,1,1,Other|unknown,Redox disruption,0,0
+length_2_4_D,length_Silver_nitrate_7_8,,,1,3,Other|unknown,Other|unknown,0,0
+length_2_4_D,length_Atrazine,,,1,1,Other|unknown,Redox disruption,0,0
+length_2_4_D,length_Chlorothalonil,,,1,6,Other|unknown,Redox disruption,0,0
+length_2_4_D,length_Cadmium_dichloride,,,1,1,Other|unknown,Redox disruption,0,0
+length_2_4_D,length_Carbaryl,,,1,1,Other|unknown,AChE inhibition,0,0
+length_2_4_D,length_Nickel_dichloride,,,1,2,Other|unknown,Other|unknown,0,0
+length_2_4_D,length_Arsenic_trioxide,,,1,2,Other|unknown,Redox disruption,0,0
+length_Methyl_mercury,length_Paraquat_62_5,I:2994073,I:3282224,8,4,Redox disruption,Redox disruption,1,0.0909090909090909
+length_Methyl_mercury,length_Aldicarb,,,8,5,Redox disruption,AChE inhibition,0,0
+length_Methyl_mercury,length_Zinc_dichloride,,,8,1,Redox disruption,Other|unknown,0,0
+length_Methyl_mercury,length_Propoxur,,,8,1,Redox disruption,AChE inhibition,0,0
+length_Methyl_mercury,length_Mancozeb,,,8,1,Redox disruption,AChE inhibition,0,0
+length_Methyl_mercury,length_Triphenyl_phosphate_6_25,V:15476283,V:7623783,8,2,Redox disruption,Other|unknown,1,0.111111111111111
+length_Methyl_mercury,length_Carboxin,III:2461452,III:2527992,8,1,Redox disruption,Redox disruption,1,0.125
+length_Methyl_mercury,length_Silver_nitrate_7_8,II:2730209,II:3016298,8,3,Redox disruption,Other|unknown,1,0.1
+length_Methyl_mercury,length_Atrazine,,,8,1,Redox disruption,Redox disruption,0,0
+length_Methyl_mercury,length_Chlorothalonil,III:2461452,III:2605810,8,6,Redox disruption,Redox disruption,2,0.166666666666667
+length_Methyl_mercury,length_Chlorothalonil,III:3716201,III:4478684,8,6,Redox disruption,Redox disruption,2,0.166666666666667
+length_Methyl_mercury,length_Cadmium_dichloride,,,8,1,Redox disruption,Redox disruption,0,0
+length_Methyl_mercury,length_Carbaryl,I:2994073,I:2596756,8,1,Redox disruption,AChE inhibition,1,0.125
+length_Methyl_mercury,length_Nickel_dichloride,,,8,2,Redox disruption,Other|unknown,0,0
+length_Methyl_mercury,length_Arsenic_trioxide,III:2461452,III:1642838,8,2,Redox disruption,Redox disruption,1,0.111111111111111
+length_Paraquat_62_5,length_Aldicarb,,,4,5,Redox disruption,AChE inhibition,0,0
+length_Paraquat_62_5,length_Zinc_dichloride,I:11258815,I:4884561,4,1,Redox disruption,Other|unknown,1,0.25
+length_Paraquat_62_5,length_Propoxur,,,4,1,Redox disruption,AChE inhibition,0,0
+length_Paraquat_62_5,length_Mancozeb,,,4,1,Redox disruption,AChE inhibition,0,0
+length_Paraquat_62_5,length_Triphenyl_phosphate_6_25,,,4,2,Redox disruption,Other|unknown,0,0
+length_Paraquat_62_5,length_Carboxin,,,4,1,Redox disruption,Redox disruption,0,0
+length_Paraquat_62_5,length_Silver_nitrate_7_8,,,4,3,Redox disruption,Other|unknown,0,0
+length_Paraquat_62_5,length_Atrazine,,,4,1,Redox disruption,Redox disruption,0,0
+length_Paraquat_62_5,length_Chlorothalonil,II:13675568,II:13921653,4,6,Redox disruption,Redox disruption,1,0.111111111111111
+length_Paraquat_62_5,length_Cadmium_dichloride,,,4,1,Redox disruption,Redox disruption,0,0
+length_Paraquat_62_5,length_Carbaryl,,,4,1,Redox disruption,AChE inhibition,0,0
+length_Paraquat_62_5,length_Nickel_dichloride,,,4,2,Redox disruption,Other|unknown,0,0
+length_Paraquat_62_5,length_Arsenic_trioxide,II:13675568,II:13692527,4,2,Redox disruption,Redox disruption,1,0.2
+length_Aldicarb,length_Zinc_dichloride,,,5,1,AChE inhibition,Other|unknown,0,0
+length_Aldicarb,length_Propoxur,,,5,1,AChE inhibition,AChE inhibition,0,0
+length_Aldicarb,length_Mancozeb,,,5,1,AChE inhibition,AChE inhibition,0,0
+length_Aldicarb,length_Triphenyl_phosphate_6_25,,,5,2,AChE inhibition,Other|unknown,0,0
+length_Aldicarb,length_Carboxin,,,5,1,AChE inhibition,Redox disruption,0,0
+length_Aldicarb,length_Silver_nitrate_7_8,,,5,3,AChE inhibition,Other|unknown,0,0
+length_Aldicarb,length_Atrazine,,,5,1,AChE inhibition,Redox disruption,0,0
+length_Aldicarb,length_Chlorothalonil,,,5,6,AChE inhibition,Redox disruption,0,0
+length_Aldicarb,length_Cadmium_dichloride,,,5,1,AChE inhibition,Redox disruption,0,0
+length_Aldicarb,length_Carbaryl,,,5,1,AChE inhibition,AChE inhibition,0,0
+length_Aldicarb,length_Nickel_dichloride,,,5,2,AChE inhibition,Other|unknown,0,0
+length_Aldicarb,length_Arsenic_trioxide,,,5,2,AChE inhibition,Redox disruption,0,0
+length_Zinc_dichloride,length_Propoxur,,,1,1,Other|unknown,AChE inhibition,0,0
+length_Zinc_dichloride,length_Mancozeb,,,1,1,Other|unknown,AChE inhibition,0,0
+length_Zinc_dichloride,length_Triphenyl_phosphate_6_25,,,1,2,Other|unknown,Other|unknown,0,0
+length_Zinc_dichloride,length_Carboxin,,,1,1,Other|unknown,Redox disruption,0,0
+length_Zinc_dichloride,length_Silver_nitrate_7_8,,,1,3,Other|unknown,Other|unknown,0,0
+length_Zinc_dichloride,length_Atrazine,,,1,1,Other|unknown,Redox disruption,0,0
+length_Zinc_dichloride,length_Chlorothalonil,,,1,6,Other|unknown,Redox disruption,0,0
+length_Zinc_dichloride,length_Cadmium_dichloride,,,1,1,Other|unknown,Redox disruption,0,0
+length_Zinc_dichloride,length_Carbaryl,,,1,1,Other|unknown,AChE inhibition,0,0
+length_Zinc_dichloride,length_Nickel_dichloride,,,1,2,Other|unknown,Other|unknown,0,0
+length_Zinc_dichloride,length_Arsenic_trioxide,,,1,2,Other|unknown,Redox disruption,0,0
+length_Propoxur,length_Mancozeb,,,1,1,AChE inhibition,AChE inhibition,0,0
+length_Propoxur,length_Triphenyl_phosphate_6_25,,,1,2,AChE inhibition,Other|unknown,0,0
+length_Propoxur,length_Carboxin,,,1,1,AChE inhibition,Redox disruption,0,0
+length_Propoxur,length_Silver_nitrate_7_8,,,1,3,AChE inhibition,Other|unknown,0,0
+length_Propoxur,length_Atrazine,,,1,1,AChE inhibition,Redox disruption,0,0
+length_Propoxur,length_Chlorothalonil,,,1,6,AChE inhibition,Redox disruption,0,0
+length_Propoxur,length_Cadmium_dichloride,,,1,1,AChE inhibition,Redox disruption,0,0
+length_Propoxur,length_Carbaryl,,,1,1,AChE inhibition,AChE inhibition,0,0
+length_Propoxur,length_Nickel_dichloride,,,1,2,AChE inhibition,Other|unknown,0,0
+length_Propoxur,length_Arsenic_trioxide,,,1,2,AChE inhibition,Redox disruption,0,0
+length_Mancozeb,length_Triphenyl_phosphate_6_25,,,1,2,AChE inhibition,Other|unknown,0,0
+length_Mancozeb,length_Carboxin,,,1,1,AChE inhibition,Redox disruption,0,0
+length_Mancozeb,length_Silver_nitrate_7_8,,,1,3,AChE inhibition,Other|unknown,0,0
+length_Mancozeb,length_Atrazine,,,1,1,AChE inhibition,Redox disruption,0,0
+length_Mancozeb,length_Chlorothalonil,II:10305644,II:5392976,1,6,AChE inhibition,Redox disruption,1,0.166666666666667
+length_Mancozeb,length_Cadmium_dichloride,,,1,1,AChE inhibition,Redox disruption,0,0
+length_Mancozeb,length_Carbaryl,,,1,1,AChE inhibition,AChE inhibition,0,0
+length_Mancozeb,length_Nickel_dichloride,,,1,2,AChE inhibition,Other|unknown,0,0
+length_Mancozeb,length_Arsenic_trioxide,,,1,2,AChE inhibition,Redox disruption,0,0
+length_Triphenyl_phosphate_6_25,length_Carboxin,,,2,1,Other|unknown,Redox disruption,0,0
+length_Triphenyl_phosphate_6_25,length_Silver_nitrate_7_8,,,2,3,Other|unknown,Other|unknown,0,0
+length_Triphenyl_phosphate_6_25,length_Atrazine,,,2,1,Other|unknown,Redox disruption,0,0
+length_Triphenyl_phosphate_6_25,length_Chlorothalonil,,,2,6,Other|unknown,Redox disruption,0,0
+length_Triphenyl_phosphate_6_25,length_Cadmium_dichloride,,,2,1,Other|unknown,Redox disruption,0,0
+length_Triphenyl_phosphate_6_25,length_Carbaryl,,,2,1,Other|unknown,AChE inhibition,0,0
+length_Triphenyl_phosphate_6_25,length_Nickel_dichloride,,,2,2,Other|unknown,Other|unknown,0,0
+length_Triphenyl_phosphate_6_25,length_Arsenic_trioxide,,,2,2,Other|unknown,Redox disruption,0,0
+length_Carboxin,length_Silver_nitrate_7_8,,,1,3,Redox disruption,Other|unknown,0,0
+length_Carboxin,length_Atrazine,,,1,1,Redox disruption,Redox disruption,0,0
+length_Carboxin,length_Chlorothalonil,III:2527992,III:2605810,1,6,Redox disruption,Redox disruption,1,0.166666666666667
+length_Carboxin,length_Cadmium_dichloride,,,1,1,Redox disruption,Redox disruption,0,0
+length_Carboxin,length_Carbaryl,,,1,1,Redox disruption,AChE inhibition,0,0
+length_Carboxin,length_Nickel_dichloride,,,1,2,Redox disruption,Other|unknown,0,0
+length_Carboxin,length_Arsenic_trioxide,III:2527992,III:1642838,1,2,Redox disruption,Redox disruption,1,0.5
+length_Silver_nitrate_7_8,length_Atrazine,,,3,1,Other|unknown,Redox disruption,0,0
+length_Silver_nitrate_7_8,length_Chlorothalonil,I:1622740,I:1741155,3,6,Other|unknown,Redox disruption,2,0.285714285714286
+length_Silver_nitrate_7_8,length_Chlorothalonil,II:11883855,II:5392976,3,6,Other|unknown,Redox disruption,2,0.285714285714286
+length_Silver_nitrate_7_8,length_Cadmium_dichloride,,,3,1,Other|unknown,Redox disruption,0,0
+length_Silver_nitrate_7_8,length_Carbaryl,,,3,1,Other|unknown,AChE inhibition,0,0
+length_Silver_nitrate_7_8,length_Nickel_dichloride,,,3,2,Other|unknown,Other|unknown,0,0
+length_Silver_nitrate_7_8,length_Arsenic_trioxide,,,3,2,Other|unknown,Redox disruption,0,0
+length_Atrazine,length_Chlorothalonil,II:12658388,II:5392976,1,6,Redox disruption,Redox disruption,1,0.166666666666667
+length_Atrazine,length_Cadmium_dichloride,,,1,1,Redox disruption,Redox disruption,0,0
+length_Atrazine,length_Carbaryl,,,1,1,Redox disruption,AChE inhibition,0,0
+length_Atrazine,length_Nickel_dichloride,,,1,2,Redox disruption,Other|unknown,0,0
+length_Atrazine,length_Arsenic_trioxide,,,1,2,Redox disruption,Redox disruption,0,0
+length_Chlorothalonil,length_Cadmium_dichloride,,,6,1,Redox disruption,Redox disruption,0,0
+length_Chlorothalonil,length_Carbaryl,,,6,1,Redox disruption,AChE inhibition,0,0
+length_Chlorothalonil,length_Nickel_dichloride,II:5392976,II:12203935,6,2,Redox disruption,Other|unknown,1,0.142857142857143
+length_Chlorothalonil,length_Arsenic_trioxide,II:13921653,II:13692527,6,2,Redox disruption,Redox disruption,3,0.6
+length_Chlorothalonil,length_Arsenic_trioxide,III:1455164,III:1642838,6,2,Redox disruption,Redox disruption,3,0.6
+length_Chlorothalonil,length_Arsenic_trioxide,III:2605810,III:1642838,6,2,Redox disruption,Redox disruption,3,0.6
+length_Cadmium_dichloride,length_Carbaryl,,,1,1,Redox disruption,AChE inhibition,0,0
+length_Cadmium_dichloride,length_Nickel_dichloride,,,1,2,Redox disruption,Other|unknown,0,0
+length_Cadmium_dichloride,length_Arsenic_trioxide,,,1,2,Redox disruption,Redox disruption,0,0
+length_Carbaryl,length_Nickel_dichloride,,,1,2,AChE inhibition,Other|unknown,0,0
+length_Carbaryl,length_Arsenic_trioxide,,,1,2,AChE inhibition,Redox disruption,0,0
+length_Nickel_dichloride,length_Arsenic_trioxide,,,2,2,Other|unknown,Redox disruption,0,0
