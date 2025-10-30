@@ -28,8 +28,8 @@ tox_file <- "data/processed/tox_data/tox_metadata.csv"
 ```{r}
 #| label: semsim_all_genes_outputs
 # path to output directory should be the same name as the dir contain the script
-out_dir <- "data/processed/interval_genes/semantic_similarity"
-out_fn <- "all_genes_semSim.rda"
+out_dir <- "data/processed/semantic_similarity"
+out_fn <- "all_genes_semSim.rds"
 # check if the output directory exists, if not create it
 if (!dir.exists(out_dir)) {
   message(glue("Output directory '{out_dir}' does not exist. Creating it..."))
