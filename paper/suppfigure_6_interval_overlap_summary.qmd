@@ -1,0 +1,239 @@
+---
+title: "Plot the number of overlaps per interval and breakdown by size"
+---
+
+```{r}
+#| label: plot-interval-overlaps-setup
+#| include: false
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# load required functions
+source("bin/tox_colors.R")
+source("bin/pub_format.R")
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
+# Inputs
+```{r}
+#| label: plot-interval-overlaps-inputs
+
+### Load the Inbred intervals
+ns_dir <- "data/processed/20231116_Analysis_NemaScan"
+
+# toxicant condition metadata
+tox_meta_fn <- "data/processed/tox_data/con_metadata.csv"
+
+# load the inbred qtl overlaps with use group data
+inbred_qtl_overlaps <- data.table::fread(
+  "data/processed/qtl_overlaps/inbred_qtl_overlaps.csv"
+)
+
+```
+# Main
+```{r}
+#| label: plot-interval-overlaps-main
+inbred_qtl <- data.table::fread(
+  glue::glue("{ns_dir}/INBRED/Mapping/Processed/QTL_peaks_inbred.tsv")
+) %>%
+  # remove the CV_length traits
+  dplyr::filter(!stringr::str_detect(trait, pattern = "CV_length"))
+
+
+# Load the tox condition metadata
+tox_metadata <- data.table::fread(tox_meta_fn) %>%
+  dplyr::select(trait, nice_drug_label2, big_class, class, moa_class) %>%
+  # adjust the uM to µM
+  dplyr::mutate(nice_drug_label2 = dplyr::case_when(
+    nice_drug_label2 == "uM" ~ "µM",
+    TRUE ~ nice_drug_label2
+  ))
+
+  tox.QTL.summary <- inbred_qtl %>%
+  dplyr::left_join(tox_metadata, by = c("trait" = "trait"))
+
+#### Summarize the number of overlaps each interval has #### ----
+
+# reduce column data to just the overlapping intervals before summarizing
+overlapping_int_pairs <- inbred_qtl_overlaps %>%
+  dplyr::filter(!is.na(peakidA) | !is.na(peakidB)) %>%
+  dplyr::filter(peakidA != "" | peakidB != "") %>%
+  dplyr::select(
+    traitA,
+    peakidA,
+    traitB,
+    peakidB
+  )
+
+# get the number of overlapping interval pairs
+n_int_overlap_pairs <- overlapping_int_pairs %>%
+  nrow()
+
+# pivot the data to get the number of overlaps each interval has
+overlaps_per_int_df <- overlapping_int_pairs %>%
+  tidyr::pivot_longer(
+    cols = c(peakidA, peakidB),
+    names_to = "interval_col",
+    values_to = "interval"
+  ) %>%
+  tidyr::pivot_longer(
+    cols = c(traitA, traitB),
+    names_to = "trait_col",
+    values_to = "trait"
+  ) %>%
+  # remove rows where the trait and interval are the same
+  dplyr::filter(
+    interval_col == "peakidA" & trait_col == "traitA" |
+      interval_col == "peakidB" & trait_col == "traitB"
+  ) %>%
+  # group by interval and trait and count
+  count(interval, trait, name = "num_overlaps")
+
+# Join the class data to the overlaps per interval data for plotting
+class_key <- tox.QTL.summary %>%
+  dplyr::select(
+    marker,
+    trait,
+    big_class
+  ) %>%
+  dplyr::distinct()
+
+overlaps_per_int_hist_df <- overlaps_per_int_df %>%
+  dplyr::left_join(
+    class_key,
+    by = c("interval" = "marker", "trait")
+  )
+
+# create color palette for the big_class
+man_pal <- tibble::tibble(
+  col = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
+  big_class = c("Control", "Flame Retardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
+) %>%
+  dplyr::filter(big_class != "Control")
+
+# get the size of the intervals
+int_size_key <- tox.QTL.summary %>%
+  dplyr::select(
+    marker,
+    trait,
+    big_class,
+    startPOS,
+    endPOS
+  ) %>%
+  # calculate the size of the interval in Kb
+  dplyr::mutate(
+    int_size = (endPOS - startPOS) / 1000
+  )
+
+# join the interval size data to the overlaps per interval data
+overlaps_per_int_size_df <- overlaps_per_int_df %>%
+  dplyr::left_join(
+    int_size_key,
+    by = c("interval" = "marker", "trait")
+  )
+
+```
+
+## Plot distribution of overlaps per interval
+```{r}
+## Plot distribution of overlaps per interval ##
+n_overlaps_per_int_hist <- overlaps_per_int_hist_df %>%
+  ggplot2::ggplot(
+    aes(
+      x = num_overlaps,
+      fill = big_class
+    )
+  ) +
+  geom_histogram(
+    binwidth = 1
+  ) +
+  scale_fill_manual(values = man_pal$col) +
+  labs(
+    x = "Overlaps with other toxicant intervals",
+    y = "Number of Intervals"
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid = ggplot2::element_blank(),
+    legend.position = c(0.90, 0.80),
+    legend.title = ggplot2::element_blank()
+  )
+
+```
+
+## Interval size vs. number of overlaps
+Calculate the linear model 
+```{r}
+# calculate the linear model and extract the p-value
+lm_model <- lm(num_overlaps ~ int_size, data = overlaps_per_int_size_df)
+lm_summary <- broom::glance(lm_model)
+p_value <- lm_summary$p.value
+```
+Plot interval size vs. number of overlaps
+```{r}
+# plot the number of overlaps compared to the size of the interval
+n_overlaps_per_int_size <- overlaps_per_int_size_df %>%
+  ggplot(
+    aes(
+      x = int_size,
+      y = num_overlaps
+    )
+  ) +
+  geom_point(
+    aes(color = big_class)
+  ) +
+  # add regression line
+  geom_smooth(
+    method = "lm",
+    se = FALSE
+  ) +
+  scale_color_manual(values = man_pal$col) +
+  labs(
+    x = "Interval Size (Kb)",
+    y = "Number of overlaps"
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid = ggplot2::element_blank(),
+    legend.position = "top",
+    legend.title = ggplot2::element_blank()
+  ) +
+  # add p-value annotation
+  annotate(
+    "text",
+    x = 7500,
+    y = 2.75,
+    label = bquote(italic(p) == .(format(p_value, digits = 3))),
+    hjust = 0
+  ) +
+  # add r-squared annotation
+  annotate(
+    "text",
+    x = 7500,
+    y = 3.0,
+    label = paste("r =", format(summary(lm_model)$r.squared, digits = 3)),
+    hjust = 0
+  )
+```
+
+# Combine plots
+```{r}
+#### Combine N overlaps per interval and N overlaps per interval size plots #### ----
+overlaps_supp_fig <- cowplot::plot_grid(
+  n_overlaps_per_int_hist
+  + theme(legend.position = "none"),
+  n_overlaps_per_int_size,
+  ncol = 1,
+  label_fontface = "bold",
+  labels = c("A", "B")
+)
+
+save_plot(
+  overlaps_supp_fig,
+  sup_figure_fns$physical_overlaps,
+  w_in = 6.5, h_in = 6.5
+)
+
+```
