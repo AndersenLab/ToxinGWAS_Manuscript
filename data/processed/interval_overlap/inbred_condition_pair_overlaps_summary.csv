@@ -1,0 +1,19 @@
+traitA,traitB,nQTLA,nQTLB,groupA,groupB,n_overlaps,JI
+length_2_4_D,length_Triphenyl_phosphate_6_25,1,2,Herbicide,Flame Retardant,1,0.5
+length_Methyl_mercury,length_Paraquat_62_5,8,4,Metal,Herbicide,1,0.0909090909090909
+length_Methyl_mercury,length_Triphenyl_phosphate_6_25,8,2,Metal,Flame Retardant,1,0.111111111111111
+length_Methyl_mercury,length_Carboxin,8,1,Metal,Fungicide,1,0.125
+length_Methyl_mercury,length_Silver_nitrate_7_8,8,3,Metal,Metal,1,0.1
+length_Methyl_mercury,length_Chlorothalonil,8,6,Metal,Fungicide,2,0.166666666666667
+length_Methyl_mercury,length_Carbaryl,8,1,Metal,Insecticide,1,0.125
+length_Methyl_mercury,length_Arsenic_trioxide,8,2,Metal,Metal,1,0.111111111111111
+length_Paraquat_62_5,length_Zinc_dichloride,4,1,Herbicide,Metal,1,0.25
+length_Paraquat_62_5,length_Chlorothalonil,4,6,Herbicide,Fungicide,1,0.111111111111111
+length_Paraquat_62_5,length_Arsenic_trioxide,4,2,Herbicide,Metal,1,0.2
+length_Mancozeb,length_Chlorothalonil,1,6,Fungicide,Fungicide,1,0.166666666666667
+length_Carboxin,length_Chlorothalonil,1,6,Fungicide,Fungicide,1,0.166666666666667
+length_Carboxin,length_Arsenic_trioxide,1,2,Fungicide,Metal,1,0.5
+length_Silver_nitrate_7_8,length_Chlorothalonil,3,6,Metal,Fungicide,2,0.285714285714286
+length_Atrazine,length_Chlorothalonil,1,6,Herbicide,Fungicide,1,0.166666666666667
+length_Chlorothalonil,length_Nickel_dichloride,6,2,Fungicide,Metal,1,0.142857142857143
+length_Chlorothalonil,length_Arsenic_trioxide,6,2,Fungicide,Metal,3,0.6

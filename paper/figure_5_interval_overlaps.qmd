@@ -1,0 +1,185 @@
+---
+title: "Plot intervals and highlight overlaps"
+format: html
+---
+
+```{r}
+#| label: plot-interval-overlaps-setup
+library(tidyverse)
+today <- format(Sys.time(), "%Y%m%d")
+
+# source functions
+source("bin/functions.R")
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
+
+# Inputs
+```{r}
+#| label: plot-interval-overlaps-inputs
+
+# Path to neamscan output directory
+ns_dir <- "data/processed/20231116_Analysis_NemaScan"
+
+# toxicant condition metadata
+tox_meta_fn <- "data/processed/tox_data/tox_metadata.csv"
+
+# LD between peak markers output by `pull_overlap_LD.R`
+# inbred_qtl_overlap_peak_ld_fn <- "data/processed/qtl_overlaps/inbred_qtl_overlap_peak_LD.tsv.gz"
+
+# inbred qtl overlaps output by `find_overlaps.R`
+inbred_qtl_overlaps_fn <- "data/processed/interval_overlap/inbred_qtl_overlaps.csv"
+
+chr_lens_fn <- "data/raw/c_elegans_chr_lengths.tsv"
+```
+
+# Main 
+```{r}
+#| label: plot-interval-overlaps-main
+
+chr_lens <- data.table::fread(chr_lens_fn) %>%
+  dplyr::select(CHROM, startPOS = start, endPOS = stop)
+
+tox_meta <- data.table::fread(tox_meta_fn) %>%
+  dplyr::mutate(nice_drug_label2 = stringr::str_replace(nice_drug_label2, pattern = "uM", replacement = "µM"))
+
+
+# Load the Inbred QTL that overlap with another
+# output of find_overlaps.R
+inbred_overlaps <- data.table::fread(inbred_qtl_overlaps_fn)
+
+# Get all unique peak IDs that are involved in overlaps from both sides
+overlapping_peak_ids <- inbred_overlaps %>%
+  dplyr::select(peakidA, peakidB) %>%
+  tidyr::pivot_longer(cols = everything(), values_to = "peakid") %>%
+  dplyr::filter(!is.na(peakid)) %>%
+  dplyr::pull(peakid) %>%
+  unique()
+
+qtl <- data.table::fread(
+  glue::glue("{ns_dir}/INBRED/Mapping/Processed/QTL_peaks_inbred.tsv")
+) %>%
+  dplyr::mutate(
+    var_type = ifelse(stringr::str_detect(trait, pattern = "CV_length"), "CV_length", "length"),
+    join_var = stringr::str_replace_all(trait, pattern = "length_|CV_length_", replacement = "")
+  ) %>%
+  dplyr::rename(POS = peakPOS) %>% # rename to just peak
+  dplyr::filter(var_type == "length") %>%
+  dplyr::distinct() %>%
+  dplyr::left_join(., tox_meta, by = "trait") %>%
+  dplyr::arrange(
+    desc(big_class),
+    desc(nice_drug_label2)
+  ) %>%
+  dplyr::mutate(
+    nice_drug_label2 = factor(
+      nice_drug_label2,
+      levels = unique(nice_drug_label2)
+    )
+  ) %>%
+  dplyr::mutate(overlap = ifelse(marker %in% overlapping_peak_ids, TRUE, FALSE)) %>%
+  dplyr::mutate(big_class = case_when(
+    big_class == "Flame Retardant" ~ "Flame\nRetardant",
+    TRUE ~ big_class
+  ))
+
+# shape chr_lens for plotting
+chr_lens2 <- chr_lens %>%
+  tidyr::pivot_longer(cols = -CHROM, names_to = "poop", values_to = "POS") %>%
+  dplyr::select(-poop) %>% # add in the full extents of the chromosomes
+  dplyr::mutate(
+    trait = tail(qtl$trait, n = 1),
+    nice_drug_label2 = tail(qtl$nice_drug_label2, n = 1),
+    big_class = tail(qtl$big_class, n = 1),
+    var_type = "length"
+  )
+
+
+class.pal.df <- tibble::tibble(
+  col = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
+  big_class = c("Control", "Flame\nRetardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
+)
+
+# class colors for y
+man_pal <- qtl %>%
+  dplyr::distinct(big_class) %>%
+  dplyr::left_join(class.pal.df) %>%
+  dplyr::pull(col)
+
+strip_y <- ggh4x::strip_themed(background_y = ggh4x::elem_list_rect(fill = man_pal))
+shape.pal <- c("TRUE" = 23, "FALSE" = 21)
+
+qtl_overlaps <- ggplot() +
+  theme_bw() +
+  geom_point(
+    data = qtl,
+    mapping = aes(
+      x = POS / 1000000,
+      y = nice_drug_label2,
+      fill = log10p,
+      shape = overlap
+    ),
+    size = 4,
+    stroke = 0.5 # ,
+    # position = ggstance::position_dodgev(height = 0.5)
+  ) +
+  scale_shape_manual(values = shape.pal) +
+  ggplot2::geom_segment(
+    data = qtl,
+    mapping = ggplot2::aes(
+      x = startPOS / 1e6,
+      xend = endPOS / 1e6,
+      y = nice_drug_label2,
+      yend = nice_drug_label2
+    ),
+    colour = "black",
+    linewidth = 1.5
+  ) +
+  geom_point(data = chr_lens2, mapping = aes(x = POS / 1000000, y = nice_drug_label2), alpha = 0.0) +
+  ggh4x::facet_grid2(
+    big_class ~ CHROM,
+    scales = "free",
+    space = "free",
+    strip = strip_y
+  ) +
+  theme(
+    strip.text.y.right = element_text(angle = 0, family = "Helvetica", size = 9, face = "bold", lineheight = 0.9),
+    strip.text.x = element_text(family = "Helvetica", size = 10, face = "bold"),
+    axis.text.y = element_text(family = "Helvetica", size = 10, face = "bold"),
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(family = "Helvetica", size = 10, face = "bold"),
+    axis.text = element_text(family = "Helvetica", size = 10),
+    legend.text = element_text(family = "Helvetica", size = 10),
+    legend.title = element_text(family = "Helvetica", size = 10, face = "bold"),
+    legend.position = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    strip.background.x = ggplot2::element_rect(
+      color = "black", fill = "white", linewidth = 0.5, linetype = "solid"
+    ),
+    plot.margin = unit(c(7.5, 7.5, 0, 7.5), "pt")
+  ) +
+  scale_fill_gradient(
+    low = "lightblue", high = "darkred",
+    name = expression(-log[10](italic(p)))
+  ) +
+  labs(
+    x = "Genomic position (Mb)",
+    shape = "Physical\noverlap"
+  ) +
+  guides(shape = guide_legend(reverse = TRUE))
+
+```
+
+
+```{r}
+#| label: plot-interval-overlaps-output
+save_plot(
+  qtl_overlaps,
+  figure_fns$qtl_overlaps,
+  w_in = 7.5,
+  h_in = 5
+)
+```
