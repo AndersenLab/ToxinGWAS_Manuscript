@@ -75,7 +75,11 @@ qtl <- data.table::fread(
       levels = unique(nice_drug_label2)
     )
   ) %>%
-  dplyr::mutate(overlap = ifelse(marker %in% overlapping_peak_ids, TRUE, FALSE))
+  dplyr::mutate(overlap = ifelse(marker %in% overlapping_peak_ids, TRUE, FALSE)) %>%
+  dplyr::mutate(big_class = case_when(
+    big_class == "Flame Retardant" ~ "Flame\nRetardant",
+    TRUE ~ big_class
+  ))
 
 # shape chr_lens for plotting
 chr_lens2 <- chr_lens %>%
@@ -91,7 +95,7 @@ chr_lens2 <- chr_lens %>%
 
 class.pal.df <- tibble::tibble(
   col = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
-  big_class = c("Control", "Flame Retardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
+  big_class = c("Control", "Flame\nRetardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
 )
 
 # class colors for y
@@ -137,7 +141,7 @@ qtl_overlaps <- ggplot() +
     strip = strip_y
   ) +
   theme(
-    strip.text.y.right = element_text(angle = 0, family = "Helvetica", size = 10, face = "bold"),
+    strip.text.y.right = element_text(angle = 0, family = "Helvetica", size = 9, face = "bold"),
     strip.text.x = element_text(family = "Helvetica", size = 10, face = "bold"),
     axis.text.y = element_text(family = "Helvetica", size = 10, face = "bold"),
     axis.title.y = element_blank(),
@@ -145,6 +149,7 @@ qtl_overlaps <- ggplot() +
     axis.text = element_text(family = "Helvetica", size = 10),
     legend.text = element_text(family = "Helvetica", size = 10),
     legend.title = element_text(family = "Helvetica", size = 10, face = "bold"),
+    legend.position = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     panel.grid.minor.y = element_blank(),
