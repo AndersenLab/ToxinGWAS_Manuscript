@@ -72,7 +72,12 @@ plot_data <- tox_meta %>%
       nice_drug_label2,
       levels = unique(nice_drug_label2)
     )
-  )
+  ) %>%
+  # adjust FR name so it is broken onto two lines in the plot
+  dplyr::mutate(big_class = case_when(
+    big_class == "Flame Retardant" ~ "Flame\nRetardant",
+    TRUE ~ big_class
+  ))
 
 head(plot_data)
 ```
@@ -92,7 +97,7 @@ chr_lens2 <- chr_lens %>%
 
 class.pal.df <- tibble::tibble(
   col = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
-  big_class = c("Control", "Flame Retardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
+  big_class = c("Control", "Flame\nRetardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
 )
 
 # class colors for y
