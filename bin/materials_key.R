@@ -28,8 +28,7 @@ tables <- list(
 figures <- list(
   # main figures
   heritability_all_classes = "figure_1",
-  # phenotyp correlations are figure_2
-  # [] update to use this output methods
+  phenotype_correlations = "figure_2",
   # manhattan plots - `manhattanPlots.R`
   manhattan_plots = "figure_3",
   # effect sizes - `interval_effect_sizes.R`
