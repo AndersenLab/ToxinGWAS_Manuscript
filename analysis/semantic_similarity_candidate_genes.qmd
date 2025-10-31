@@ -27,7 +27,7 @@ candidate_out_name <- "data/processed/interval_genes/candidate_genes/inbred_cand
 #| label: semsim_candidate_genes_outputs
 
 # Output directory for semantic similarity results
-out_dir <- "data/processed/interval_genes/semantic_similarity"
+out_dir <- "data/processed/semantic_similarity"
 out_fn <- "candidate_semSim.rds"
 
 # check if the output directory exists, if not create it
