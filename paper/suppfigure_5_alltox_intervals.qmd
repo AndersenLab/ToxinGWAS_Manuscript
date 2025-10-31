@@ -112,7 +112,7 @@ strip_y <- ggh4x::strip_themed(background_y = ggh4x::elem_list_rect(fill = man_p
 # Create plot
 ```{r}
 # Create plot
-qtl_p <- ggplot() +
+all_tox_intervals <- ggplot() +
   theme_bw() +
   geom_point(
     data = plot_data %>% dplyr::filter(!is.na(POS)), # Filter NAs here
@@ -174,5 +174,15 @@ qtl_p <- ggplot() +
 ```{r}
 #| fig-width: 7
 #| fig-height: 10
-qtl_p
+all_tox_intervals
+```
+
+```{r}
+#| label: plot-interval-overlaps-output
+save_plot(
+  all_tox_intervals,
+  figure_fns$all_tox_intervals,
+  w_in = 7.5,
+  h_in = 10
+)
 ```
