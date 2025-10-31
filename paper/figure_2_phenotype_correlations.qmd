@@ -246,6 +246,8 @@ create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_co
     fontsize_number = 12,
     display_numbers = significance_matrix,
     cluster_rows = row_hclust,
+    cluster_cols = FALSE,
+    cutree_rows = 2,
     silent = TRUE
   )
   return(p)
