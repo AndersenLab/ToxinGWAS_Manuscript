@@ -118,7 +118,7 @@ qtl_p <- ggplot() +
     ),
     size = 4,
     stroke = 0.5,
-    shape = 21
+    shape = 24
   ) +
   ggplot2::geom_segment(
     data = plot_data %>% dplyr::filter(!is.na(startPOS)), # Filter NAs here
