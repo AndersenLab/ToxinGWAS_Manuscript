@@ -68,7 +68,7 @@ corr_coef_df <- as_tibble(init_corr_coef, rownames = "trait1") %>%
   pivot_longer(-trait1, names_to = "trait2", values_to = "r_value")
 
 # calculate the average correlation
-pheno_corr_all_avg <- pheno_corr_all_val_df %>%
+pheno_corr_all_avg <- corr_coef_df %>%
   dplyr::filter(trait1 != trait2) %>%
   dplyr::summarise(
     mean_r = mean(r_value, na.rm = TRUE),
@@ -138,6 +138,7 @@ lower_proc <- dplyr::left_join(lower_r_proc, lower_p_proc) %>%
     pos_sig_n = sum(r > 0 & `raw_p<0.05` == T),
     neg_sig_n = sum(r < 0 & `raw_p<0.05` == T)
   )
+
 ```
 
 Upper triangle with Bonferroni corrected p-values
@@ -168,6 +169,7 @@ top_proc <- dplyr::left_join(top_r_proc, top_p_proc) %>%
     pos_sig_n = sum(r > 0 & `BF_p<0.05` == T),
     neg_sig_n = sum(r < 0 & `BF_p<0.05` == T)
   )
+top_proc
 ```
 
 ```{r}
@@ -253,6 +255,7 @@ create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_co
 phenotype_correlations <- create_phenotype_heatmap(
   similarity_matrix = pheno_corr_all_r,
   con_metadata_df = moa_anno_df,
+  significance_matrix = pheno_corr_all_p_symbol,
   anno_cols = anno_cols
 )
 phenotype_correlations
