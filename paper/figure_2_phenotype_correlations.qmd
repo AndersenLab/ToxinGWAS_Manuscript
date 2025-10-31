@@ -60,13 +60,35 @@ tox_data <- data.table::fread(file.path(project_root, "data/processed/tox_data/c
 strain_means_pivot_matrix <- readRDS(file.path(project_root, "data/processed/phenotypes/strain_means_matrix.rds"))
 ```
 
+Report out the average correlation across all toxicant conditions
+```{r}
+init_corr_coef <- pheno_corr_all$r
+
+corr_coef_df <- as_tibble(init_corr_coef, rownames = "trait1") %>%
+  pivot_longer(-trait1, names_to = "trait2", values_to = "r_value")
+
+# calculate the average correlation
+pheno_corr_all_avg <- pheno_corr_all_val_df %>%
+  dplyr::filter(trait1 != trait2) %>%
+  dplyr::summarise(
+    mean_r = mean(r_value, na.rm = TRUE),
+    sd_r = sd(r_value, na.rm = TRUE),
+    q1_r = quantile(r_value, probs = 0.25, na.rm = TRUE),
+    q3_r = quantile(r_value, probs = 0.75, na.rm = TRUE),
+    upper_threshold_r = q3_r + 1.5 * (q3_r - q1_r),
+    lower_threshold_r = q1_r - 1.5 * (q3_r - q1_r)
+  )
+pheno_corr_all_avg
+````
+
 To annotate the cells of the clustered heatmap reprocess the correlation data after performing the clustering so that the annotation matricies align with the clusterd conditions
+
 ```{r}
 # perform clustering on pairwise Spearman correlation coefficients
-clust <- pheatmap::pheatmap(pheno_corr_all_val)
+clust <- pheatmap::pheatmap(init_corr_coef)
 
 # get the clustered order of the toxicants
-desired_order <- rownames(pheno_corr_all_val)[clust$tree_row$order]
+desired_order <- rownames(init_corr_coef)[clust$tree_row$order]
 
 # reshape the strain matrix to match cluster order
 strain_means_pivot_matrix2 <- strain_means_pivot_matrix[, desired_order]
