@@ -182,6 +182,6 @@ save_plot(
   all_tox_intervals_p,
   sup_figure_fns$all_tox_intervals,
   w_in = 7.5,
-  h_in = 10
+  h_in = 7
 )
 ```
