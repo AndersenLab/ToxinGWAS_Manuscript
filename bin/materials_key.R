@@ -44,7 +44,6 @@ sup_figures <- list(
   n_outlier_hist = "figure_S3",
   # heritability comparison to Widmayer et al. 2022 - `suppfigure_4_heritability_comp.qmd`'
   heritability_comp = "figure_S4",
-  # all toxicant intervals - `suppfigure_5_alltox_intervals.qmd`
   all_tox_intervals = "figure_S5",
   # interval enrichment dotplot
   int_enrich_sim_dp = "figure_S6",
