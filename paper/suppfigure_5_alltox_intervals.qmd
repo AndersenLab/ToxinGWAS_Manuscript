@@ -12,7 +12,6 @@ library(data.table)
 set.seed(123)
 
 # source functions
-source("bin/functions.R")
 source("bin/outs.R")
 source("bin/materials_key.R")
 
@@ -112,7 +111,7 @@ strip_y <- ggh4x::strip_themed(background_y = ggh4x::elem_list_rect(fill = man_p
 # Create plot
 ```{r}
 # Create plot
-all_tox_intervals <- ggplot() +
+all_tox_intervals_p <- ggplot() +
   theme_bw() +
   geom_point(
     data = plot_data %>% dplyr::filter(!is.na(POS)), # Filter NAs here
@@ -174,14 +173,14 @@ all_tox_intervals <- ggplot() +
 ```{r}
 #| fig-width: 7
 #| fig-height: 10
-all_tox_intervals
+all_tox_intervals_p
 ```
 
 ```{r}
 #| label: plot-interval-overlaps-output
 save_plot(
-  all_tox_intervals,
-  figure_fns$all_tox_intervals,
+  all_tox_intervals_p,
+  sup_figure_fns$all_tox_intervals,
   w_in = 7.5,
   h_in = 10
 )
