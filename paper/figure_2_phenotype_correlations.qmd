@@ -195,7 +195,7 @@ tox_cols <- tox_data %>%
   dplyr::select(drug, nice_drug_label2, big_class, moa_class, col) %>%
   dplyr::rename(MoA = moa_class, Use = big_class) %>%
   # In moa_class column replace Other|unknown with "Other / unknown"
-  dplyr::mutate(MoA = stringr::str_replace(MoA, pattern = "Other|unknown", replacement = "Other / unknown"))
+  dplyr::mutate(MoA = stringr::str_replace(MoA, pattern = "Other\\|unknown", replacement = "Other / unknown"))
 
 # Create a mapping from drug to nice_drug_label2
 drug_to_label <- setNames(tox_cols$nice_drug_label2, tox_cols$drug)
