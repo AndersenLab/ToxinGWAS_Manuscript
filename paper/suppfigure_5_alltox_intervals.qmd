@@ -61,23 +61,34 @@ qtl_clean <- qtl_raw %>%
 
 plot_data <- tox_meta %>%
   dplyr::select(trait, big_class, nice_drug_label2) %>%
-  dplyr::left_join(., qtl_clean, by = "trait")
+  dplyr::left_join(., qtl_clean, by = "trait") %>%
+  # Arrange to match the factor ordering you want
+  dplyr::arrange(
+    desc(big_class),
+    desc(nice_drug_label2)
+  ) %>%
+  dplyr::mutate(
+    nice_drug_label2 = factor(
+      nice_drug_label2,
+      levels = unique(nice_drug_label2)
+    )
+  )
 
 head(plot_data)
 ```
 
 # Create accessory data frames for plot formatting
 ```{r}
+# Create chr_lens2 with ALL toxicant levels
 chr_lens2 <- chr_lens %>%
   tidyr::pivot_longer(cols = -CHROM, names_to = "poop", values_to = "POS") %>%
-  dplyr::select(-poop) %>% # add in the full extents of the chromosomes
-  dplyr::mutate(
-    trait = tail(plot_data$trait, n = 1),
-    nice_drug_label2 = tail(plot_data$nice_drug_label2, n = 1),
-    big_class = tail(plot_data$big_class, n = 1),
-    var_type = "length"
+  dplyr::select(-poop) %>%
+  # create a row for every combination to ensure y-axis levels are represented
+  tidyr::crossing(
+    .,
+    plot_data %>%
+      dplyr::distinct(nice_drug_label2, big_class, trait)
   )
-
 
 class.pal.df <- tibble::tibble(
   col = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
@@ -120,7 +131,7 @@ qtl_p <- ggplot() +
     linewidth = 1.5
   ) +
   geom_point(data = chr_lens2, mapping = aes(x = POS / 1000000, y = nice_drug_label2), alpha = 0.0) +
-  ggplot2::scale_y_discrete(drop = FALSE) +
+  # ggplot2::scale_y_discrete(drop = FALSE) +
   ggh4x::facet_grid2(
     big_class ~ CHROM,
     scales = "free",
