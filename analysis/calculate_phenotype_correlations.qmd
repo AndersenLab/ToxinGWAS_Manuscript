@@ -35,6 +35,9 @@ pheno_corr_all <- psych::corr.test(
   method = "spearman"
 )
 
+# Save the pivoted strain means for future use
+saveRDS(strain_means_pivot_matrix, "data/processed/phenotypes/strain_means_matrix.rds")
+
 # Extract correlation coefficients and p-values
 # Save outputs
 saveRDS(pheno_corr_all, "data/processed/phenotypes/pheno_corr_all.Rds")
