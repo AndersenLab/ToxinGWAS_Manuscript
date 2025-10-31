@@ -106,21 +106,22 @@ strip_y <- ggh4x::strip_themed(background_y = ggh4x::elem_list_rect(fill = man_p
 
 # Create plot
 ```{r}
+# Create plot
 qtl_p <- ggplot() +
   theme_bw() +
   geom_point(
-    data = plot_data,
+    data = plot_data %>% dplyr::filter(!is.na(POS)), # Filter NAs here
     mapping = aes(
       x = POS / 1000000,
       y = nice_drug_label2,
       fill = log10p
     ),
     size = 4,
-    stroke = 0.5 # ,
-    # position = ggstance::position_dodgev(height = 0.5)
+    stroke = 0.5,
+    shape = 21
   ) +
   ggplot2::geom_segment(
-    data = plot_data,
+    data = plot_data %>% dplyr::filter(!is.na(startPOS)), # Filter NAs here
     mapping = ggplot2::aes(
       x = startPOS / 1e6,
       xend = endPOS / 1e6,
@@ -131,7 +132,6 @@ qtl_p <- ggplot() +
     linewidth = 1.5
   ) +
   geom_point(data = chr_lens2, mapping = aes(x = POS / 1000000, y = nice_drug_label2), alpha = 0.0) +
-  # ggplot2::scale_y_discrete(drop = FALSE) +
   ggh4x::facet_grid2(
     big_class ~ CHROM,
     scales = "free",
