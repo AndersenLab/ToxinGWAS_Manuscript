@@ -44,10 +44,11 @@ sup_figures <- list(
   n_outlier_hist = "figure_S3",
   # heritability comparison to Widmayer et al. 2022 - `suppfigure_4_heritability_comp.qmd`'
   heritability_comp = "figure_S4",
+  all_tox_intervals = "figure_S5",
   # interval enrichment dotplot
-  int_enrich_sim_dp = "figure_S5",
-  physical_overlaps = "figure_S6",
-  sem_sim_heatmap = "figure_S7"
+  int_enrich_sim_dp = "figure_S6",
+  physical_overlaps = "figure_S7",
+  sem_sim_heatmap = "figure_S8"
 )
 
 # Generate file names for the tables
