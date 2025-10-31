@@ -53,6 +53,11 @@ if (is.null(project_root)) {
 ```
 
 ```{r}
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
+
+```{r}
 #| include: false
 # Load correlation data
 pheno_corr_all <- readRDS(file.path(project_root, "data/processed/phenotypes/pheno_corr_all.Rds"))
@@ -254,11 +259,11 @@ create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_co
 }
 ```
 
+
 ```{r}
 #| label: fig-phenotype-correlations
 #| fig-width: 7.5
 #| fig-height: 6
-#| fig-cap: Correlations between differences in susceptibility to toxicant conditions. The pairwise Spearman correlation coefficient (ρ) between all toxicant conditions is displayed as a heatmap. Spearman’s rank order correlation coefficients (colored cells), were calculated using the normalized animal length measurements for all strains. Significant correlations (p-value ≤ 0.05) are denoted with an asterisk (*). The top triangle shows significance symbols after Bonferroni multiple testing correction, and the bottom triangle shows uncorrected significance symbols. On the left, columns of colored tiles denote the mechanism of action (MoA) and class of each toxicant. The traits are arranged by hierarchical clustering performed with correlation coefficients. More similar toxicant conditions are grouped together. The similarity between toxicants is represented by the branch lengths in the dendrograms plotted to the left of the heatmap.
 phenotype_correlations <- create_phenotype_heatmap(
   similarity_matrix = pheno_corr_all_r,
   con_metadata_df = moa_anno_df,
@@ -268,3 +273,12 @@ phenotype_correlations <- create_phenotype_heatmap(
 phenotype_correlations
 ```
 
+Save publication figure
+```{r}
+save_plot(
+  tplot = phenotype_correlations,
+  fn_list = figure_fns$phenotype_correlations,
+  w_in = 7.5,
+  h_in = 5
+)
+```
