@@ -57,8 +57,96 @@ if (is.null(project_root)) {
 # Load correlation data
 pheno_corr_all <- readRDS(file.path(project_root, "data/processed/phenotypes/pheno_corr_all.Rds"))
 tox_data <- data.table::fread(file.path(project_root, "data/processed/tox_data/con_metadata.csv"))
+strain_means_pivot_matrix <- readRDS(file.path(project_root, "data/processed/phenotypes/strain_means_matrix.rds"))
 ```
 
+To annotate the cells of the clustered heatmap reprocess the correlation data after performing the clustering so that the annotation matricies align with the clusterd conditions
+```{r}
+# perform clustering on pairwise Spearman correlation coefficients
+clust <- pheatmap::pheatmap(pheno_corr_all_val)
+
+# get the clustered order of the toxicants
+desired_order <- rownames(pheno_corr_all_val)[clust$tree_row$order]
+
+# reshape the strain matrix to match cluster order
+strain_means_pivot_matrix2 <- strain_means_pivot_matrix[, desired_order]
+
+pheno_corr_all2 <- psych::corr.test(
+  strain_means_pivot_matrix2,
+  use = "pairwise",
+  adjust = "bonferroni",
+  method = "spearman"
+)
+
+# get the reordered correlation coefficients and p-values
+pheno_corr_all_r <- pheno_corr_all2$r
+pheno_corr_all_p <- pheno_corr_all2$p
+pheno_corr_all_p_symbol <- ifelse(round(pheno_corr_all2$p, digits = 3) <= 0.05, "*", " ")
+```
+
+Check to identify significant correlations:
+
+Lower triangle with un-corrected p-valyes
+```{r}
+# pull the lower and top diagonals for detailed analysis
+# 299 pos, 26 neg
+# lower raw
+# 185 pos, 2 neg sig raw
+lower_r_raw <- pheno_corr_all2$r
+lower_r_raw[upper.tri(lower_r_raw, diag = T)] <- NA_real_
+lower_r_proc <- as_tibble(lower_r_raw) %>%
+  dplyr::mutate(y_trait = row.names(lower_r_raw)) %>%
+  tidyr::pivot_longer(cols = -y_trait, names_to = "x_trait", values_to = "r") %>%
+  dplyr::filter(!is.na(r)) %>%
+  dplyr::mutate(
+    neg_n = sum(r < 0),
+    pos_n = sum(r > 0)
+  )
+
+lower_p_raw <- pheno_corr_all2$p
+lower_p_raw[upper.tri(lower_p_raw, diag = T)] <- NA_real_
+lower_p_proc <- as_tibble(lower_p_raw) %>%
+  dplyr::mutate(y_trait = row.names(lower_p_raw)) %>%
+  tidyr::pivot_longer(cols = -y_trait, names_to = "x_trait", values_to = "raw_p") %>%
+  dplyr::filter(!is.na(raw_p)) %>%
+  dplyr::mutate(`raw_p<0.05` = ifelse(raw_p < 0.05, T, F))
+
+lower_proc <- dplyr::left_join(lower_r_proc, lower_p_proc) %>%
+  dplyr::mutate(
+    pos_sig_n = sum(r > 0 & `raw_p<0.05` == T),
+    neg_sig_n = sum(r < 0 & `raw_p<0.05` == T)
+  )
+```
+
+Upper triangle with Bonferroni corrected p-values
+```{r}
+# top or bonferroni corrected
+# 88 pos, 0 neg sig
+top_r_raw <- pheno_corr_all2$r
+top_r_raw[lower.tri(top_r_raw, diag = T)] <- NA_real_
+top_r_proc <- as_tibble(top_r_raw) %>%
+  dplyr::mutate(y_trait = row.names(top_r_raw)) %>%
+  tidyr::pivot_longer(cols = -y_trait, names_to = "x_trait", values_to = "r") %>%
+  dplyr::filter(!is.na(r)) %>%
+  dplyr::mutate(
+    neg_n = sum(r < 0),
+    pos_n = sum(r > 0)
+  )
+
+top_p_raw <- pheno_corr_all2$p
+top_p_raw[lower.tri(top_p_raw, diag = T)] <- NA_real_
+top_p_proc <- as_tibble(top_p_raw) %>%
+  dplyr::mutate(y_trait = row.names(top_p_raw)) %>%
+  tidyr::pivot_longer(cols = -y_trait, names_to = "x_trait", values_to = "BF_p") %>%
+  dplyr::filter(!is.na(BF_p)) %>%
+  dplyr::mutate(`BF_p<0.05` = ifelse(BF_p < 0.05, T, F))
+
+top_proc <- dplyr::left_join(top_r_proc, top_p_proc) %>%
+  dplyr::mutate(
+    pos_sig_n = sum(r > 0 & `BF_p<0.05` == T),
+    neg_sig_n = sum(r < 0 & `BF_p<0.05` == T)
+  )
+```
 
 ```{r}
 #| include: false
@@ -85,10 +173,6 @@ tox_cols <- tox_data %>%
 # Create a mapping from drug to nice_drug_label2
 drug_to_label <- setNames(tox_cols$nice_drug_label2, tox_cols$drug)
 
-# Get correlation coefficients and p-values
-pheno_corr_all_r <- pheno_corr_all$r
-pheno_corr_all_p <- pheno_corr_all$p
-pheno_corr_all_p_symbol <- ifelse(round(pheno_corr_all$p, digits = 3) <= 0.05, "*", " ")
 
 # Update row and column names of correlation matrices
 rownames(pheno_corr_all_r) <- drug_to_label[rownames(pheno_corr_all_r)]
@@ -114,7 +198,7 @@ anno_cols <- list(Class = cols)
 
 ```{r}
 #| include: false
-create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_cols) {
+create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_cols, significance_matrix) {
   # Perform hierarchical clustering on rows to get the dendrogram
   row_dist <- dist(similarity_matrix)
   row_hclust <- hclust(row_dist)
@@ -131,7 +215,7 @@ create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_co
     breaks = seq(-1, 1, length.out = (1000 + 1)),
     show_colnames = TRUE,
     fontsize_number = 12,
-    display_numbers = pheno_corr_all_p_symbol,
+    display_numbers = significance_matrix,
     cluster_rows = row_hclust,
     silent = TRUE
   )
