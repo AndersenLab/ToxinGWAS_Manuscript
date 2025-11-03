@@ -191,11 +191,18 @@ Relevant columns in candidate table:
 - `MARKER`: SNV ID in each candidate gene in `CHROM_POS` format (e.g. `V_14554027`) corresponse to the SNP column in the fine mapping data
 
 Lets simplify the finemapping data to just the columns we need. We will also have to modify the SNP (CHROM:POS) column to match the MARKER format in the candidate table (CHROM_POS). We have to also convert the CHROM from numeric to Roman numeral format to match the candidate table. 
+
+Luckily, there is a function in the repo `convert_marker()`, defined in `bin/general.R` that can do this for us.
+
 ```{r}
+source("bin/general.R")
+
 finemap_snvs <- filtered_inbred_finemap_data %>%
     select(trait, SNP, BETA) %>%
     rename(MARKER = SNP, beta_coefficient = BETA) %>%
-    mutate(MARKER = gsub(":", "_", MARKER))
+    mutate(MARKER = sapply(MARKER, convert_marker, to_marker = "RM", from_marker = "NUM"))%>%
+    mutate(MARKER = stringr::str_replace_all(MARKER, ":", "_"))
+
 head(finemap_snvs)
 ```
 Now we can join the candidate table with the finemapping SNV data to get the beta-coefficients for each candidate gene SNV
