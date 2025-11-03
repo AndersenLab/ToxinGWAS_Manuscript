@@ -1,0 +1,160 @@
+---
+title: "Testing code to integrate the beta-coefficients from SNV finemappings into the candidate table"
+---
+
+```{r}
+#| include: false
+#| echo: false
+
+library(tidyverse)
+library(data.table)
+```
+# Load the candidate table
+```{r}
+candidate_table_fn <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes.tsv"
+candidate_table <- data.table::fread(candidate_table_fn)
+head(candidate_table)
+```
+# Load all of the finemappings
+Testing a function from the Analysis Repo that creates a data frame with all of the finemapping file paths and associated metadata.
+This is the main function that does the loading and there some other helper functions defined in the script
+```{r}
+# # Helper functions to extract information from the finemap file names
+# get_trait_value <- function(fn_name) {
+#   # get trait value from file name
+#   trait_value <- str_extract(fn_name, "(?<=length_)[^.]+")
+#   return(trait_value)
+# }
+
+# Helper functions to extract information from the finemap file names
+get_trait_value <- function(fn_name) {
+  # get trait value from file name (keeping the length_ prefix)
+  trait_value <- str_extract(fn_name, "length_[^.]+")
+  return(trait_value)
+}
+
+get_chromosome <- function(fn_name) {
+    # get chromosome from file name
+    chromosome <- str_extract(fn_name, "\\b(I|II|III|IV|V|X)\\b")
+    return(chromosome)
+}
+
+get_positions <- function(fn_name) {
+    # get start and stop positions from file name
+    positions <- str_extract_all(fn_name, "\\d{7,}")
+    startPOS <- as.numeric(positions[[1]][1])
+    stopPOS <- as.numeric(positions[[1]][2])
+    return(list(startPOS = startPOS, stopPOS = stopPOS))
+}
+
+# Main function
+aggregate_finemappings <- function(finemap_dir) {
+    finemap_files <- list.files(
+        path = finemap_dir,
+        pattern = "finemap_inbred.(inbred|loco).fastGWA",
+        full.names = TRUE,
+        recursive = TRUE
+    ) %>%
+    .[basename(.) %>% str_detect("^length")]
+
+    finemap_df <- data.frame(
+        trait_value = character(),
+        CHROM = character(),
+        startPOS = numeric(),
+        endPOS = numeric(),
+        file_name = character(),
+        file_path = character(),
+        stringsAsFactors = FALSE
+    )
+
+    for (fn in finemap_files) {
+        fn_name <- basename(fn)
+        trait_value <- get_trait_value(fn_name)
+        chromosome <- get_chromosome(fn_name)
+        positions <- get_positions(fn_name)
+        
+        finemap_df <- finemap_df %>% 
+            add_row(
+                trait_value = trait_value,
+                CHROM = chromosome,
+                startPOS = positions$startPOS,
+                endPOS = positions$stopPOS,
+                file_name = fn_name,
+                file_path = fn
+            )
+    }
+    
+    return(finemap_df)
+}
+```
+
+Now lets test creating an output for QTL detected by the Inbred Algorithm
+```{r}
+#### Inputs ####
+ns_folder <- "data/processed/20231116_Analysis_NemaScan"
+
+#### Load finemapping files ####
+
+inbred_finemap_dir <- 
+    glue::glue("{ns_folder}/INBRED/Fine_Mappings/Data")
+
+inbred_finemap_df <- aggregate_finemappings(inbred_finemap_dir)
+head(inbred_finemap_df)
+```
+
+Now we can use the `combine_files_with_peak_info()` function also defined in the Analysis Repo to load all the fine mapping data into a single dataframe.
+```{r}
+combine_files_with_peak_info <- function(file_df) {
+    combined_df <- file_df %>%
+        rowwise() %>%
+        mutate(
+            data = list(data.table::fread(file_path) %>%
+                        mutate(trait = trait_value, 
+                                peakID = paste0(CHROM, "_", peakPOS)))
+        ) %>%
+        tidyr::unnest(cols = c(data))
+    
+    return(combined_df)
+}
+```
+
+```{r}
+#| error: true
+inbred_finemap_data <- combine_files_with_peak_info(inbred_finemap_df)
+head(inbred_finemap_data)
+```
+
+So the frist attempt at running the function threw an error because the `peakPOS` column is not in the finemapping data. We shouldn't actually need it, so lets define a new function that doesn't rely on it and has a better name `combine_finemapping_files()`
+```{r}
+combine_finemapping_files <- function(file_df) {
+    combined_df <- file_df %>%
+        rowwise() %>%
+        mutate(
+            data = list(data.table::fread(file_path) %>%
+                        mutate(trait = trait_value))
+        ) %>%
+        tidyr::unnest(cols = c(data))
+    
+    return(combined_df)
+}
+```
+
+```{r}
+inbred_finemap_data <- combine_finemapping_files(inbred_finemap_df)
+head(inbred_finemap_data)
+```
+
+# Pulling information for candidate gene SNVs
+Okay now, we are going to use the information in the candidate gene table to attach a beta-coedifcceitn to each SNV
+
+Relevant columns in candidate table: 
+
+- `trait`: name of the trait (`length_2_4_D`), corresponds to `trait_value` col in `inbred_finemap_data` 
+
+- `interval`: interval coordinates (`13865698-15025162`), correspond to `startPOS`-`endPOS` values in the finemap_data
+
+- `MARKER`: SNV ID in each candidate gene in `CHROM_POS` format (e.g. `V_14554027`)
+
+Relevant columns in the finemap data:
+
+- `trait_value`: name of the trait of interest (e.g. `2_4_D`)
