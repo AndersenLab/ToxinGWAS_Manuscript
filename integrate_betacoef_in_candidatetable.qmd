@@ -15,6 +15,12 @@ candidate_table_fn <- "data/processed/interval_genes/candidate_genes/inbred_cand
 candidate_table <- data.table::fread(candidate_table_fn)
 head(candidate_table)
 ```
+
+Peak at the column names
+```{r}
+colnames(candidate_table)
+```
+
 # Load all of the finemappings
 Testing a function from the Analysis Repo that creates a data frame with all of the finemapping file paths and associated metadata.
 This is the main function that does the loading and there some other helper functions defined in the script
@@ -211,3 +217,127 @@ candidate_table_with_betas <- candidate_table %>%
     left_join(finemap_snvs, by = c("trait", "MARKER"))
 head(candidate_table_with_betas)
 ```
+
+Lets double check to make sure we have beta-coefficients for all candidate SNVs
+```{r}
+n_missing_betas <- candidate_table_with_betas %>%
+    filter(is.na(beta_coefficient)) %>%
+    nrow()
+n_missing_betas
+```
+
+## Checking missing beta-coefficients
+To check why some candidate SNVs are missing beta-coefficients, we can look at the candidate SNVs that are missing beta-coefficients and see if there are any patterns.
+```{r}
+missing_betas <- candidate_table_with_betas %>%
+    filter(is.na(beta_coefficient))
+head(missing_betas)
+```
+
+Lets see the unique traits and intervals for the missing beta-coefficients
+```{r}
+missing_intervals <- missing_betas %>%
+    select(trait, interval) %>%
+    distinct()
+missing_intervals
+```
+
+Looks like we are missing beta-coefficients for candidate genes for `length_Arsenic_trioxide` and `length_Methyl_mercury`.
+
+Lets check if these traits and intervals are present in the filtered finemapping data
+```{r}
+filtered_finemap_df %>%
+    filter(trait_value %in% missing_intervals$trait) %>%
+    select(trait_value, interval)
+```
+
+It looks like the filtered finemapping data does contain finemapping files for these traits, but NOT the intervals that correspond to each candidate. This suggests we have an issue with the interval definitions, or are missing some finemapping files from our analysis.
+
+Lets check the original finemapping dataframe to see if these intervals are present
+```{r}
+inbred_finemap_df_m %>%
+    filter(trait_value %in% missing_intervals$trait) %>%
+    select(trait_value, interval)
+```
+
+It looks like the original finemapping dataframe has information about the finemappings of intervals associated with these traits that have an incorrect `interval` column value - they include NA values. This suggests that there was an issue with the interval definitions when we created the `interval` column in the finemapping dataframe.
+
+Lets check the full finemapping filename for these traits to see if we can manually identify the correct intervals
+```{r}
+inbred_finemap_df_m %>%
+    filter(trait_value %in% missing_intervals$trait) %>%
+    select(trait_value, interval, file_name)
+```
+
+In the finemapping filenames for these traits, we can see that the intervals are defined e.g. `length_Arsenic_trioxide.III.28947.2527992.finemap_inbred.inbred.fastGWA` it looks like the code to pull the interval positions from the filename in the helper function `get_positions()` is not working correctly for these files. 
+
+Lets test this
+```{r}
+get_positions("length_Arsenic_trioxide.III.28947.2527992.finemap_inbred.inbred.fastGWA")
+```
+
+Yup this isn't working correctly because the start and end positions are only 5 digits long, and our regex is looking for 7 or more digits. Since the number of digits in the positions can vary, we want a function that is not dependent on the number of digits. 
+
+We can modify the `get_positions()` function to look for any sequence of digits that are separated by a period in the filename but that won't always work. In the file names, the positions are always the 3rd and 4th set of digits when splitting by period. So we can modify the function to split the filename by period and then extract the 3rd and 4th elements as the start and end positions.
+```{r}
+get_positions <- function(fn_name) {
+    # split the filename by period
+    parts <- str_split(fn_name, "\\.")[[1]]
+    startPOS <- as.numeric(parts[3])
+    stopPOS <- as.numeric(parts[4])
+    return(list(startPOS = startPOS, stopPOS = stopPOS))
+}
+
+# Test the modified function
+get_positions("length_Arsenic_trioxide.III.28947.2527992.finemap_inbred.inbred.fastGWA")
+```
+
+That works for the problem file with arsenic trioxide now lets check for methyl mercury problem file `length_Methyl_mercury.II.7007.910200.finemap_inbred.inbred.fastGWA`
+
+```{r}
+get_positions("length_Methyl_mercury.II.7007.910200.finemap_inbred.inbred.fastGWA")
+```
+
+# Re-running with modified get_positions function
+Now that we have modified the `get_positions()` function, we can re-run the code to create the finemapping dataframe and see if we can now get beta-coefficients for all candidate SNVs
+```{r}
+inbred_finemap_df <- aggregate_finemappings(inbred_finemap_dir)
+inbred_finemap_df_m <- inbred_finemap_df %>%
+    mutate(interval = paste0(startPOS, "-", endPOS))
+
+filtered_finemap_df <- inbred_finemap_df_m %>%
+    inner_join(candidate_intervals, by = c("trait_value" = "trait", "interval" = "interval"))
+
+filtered_inbred_finemap_data <- combine_finemapping_files(filtered_finemap_df)
+```
+
+```{r}
+finemap_snvs <- filtered_inbred_finemap_data %>%
+    select(trait, SNP, BETA) %>%
+    rename(MARKER = SNP, beta_coefficient = BETA) %>%
+    mutate(MARKER = sapply(MARKER, convert_marker, to_marker = "RM", from_marker = "NUM"))%>%
+    mutate(MARKER = stringr::str_replace_all(MARKER, ":", "_"))
+
+head(finemap_snvs)
+```
+
+Now we can join the candidate table with the finemapping SNV data to get the beta-coefficients for each candidate gene SNV
+```{r}
+candidate_table_with_betas <- candidate_table %>%
+    left_join(finemap_snvs, by = c("trait", "MARKER"))
+head(candidate_table_with_betas)
+```
+
+Lets double check to make sure we have beta-coefficients for all candidate SNVs
+```{r}
+n_missing_betas <- candidate_table_with_betas %>%
+    filter(is.na(beta_coefficient)) %>%
+    nrow()
+n_missing_betas
+```
+
+# Checking the direction of effect
+
+We want to check that the direction of the beta-coefficent, corresponds with the phenotypes we measured for strains with different alleles at the candidate SNVs. 
+
+In the candidate gene table, there are multiple rows for each SNP. Each row denotes strains (listed in the ``)
