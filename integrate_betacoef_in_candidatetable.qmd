@@ -144,17 +144,63 @@ inbred_finemap_data <- combine_finemapping_files(inbred_finemap_df)
 head(inbred_finemap_data)
 ```
 
+## Instead of loading all of the finemapping data lets try and just filter to the files that contain candidate genes
+
+To do this, we will need to create a list of unique trait_value and interval combinations from the candidate table that correspond to column values in the finemapping data for the `trait_value`. We will also need to create an interval column in the finemapping data that will match the `interval` column in the candidate table.
+
+First, create an interval column in the finemapping data
+
+```{r}
+inbred_finemap_df_m <- inbred_finemap_df %>%
+    mutate(interval = paste0(startPOS, "-", endPOS))
+head(inbred_finemap_df_m)
+```
+
+Next, create a table of unique trait and interval combinations from the candidate table
+
+```{r}
+candidate_intervals <- candidate_table %>%
+    select(trait, interval) %>%
+    distinct()
+head(candidate_intervals)
+```
+
+Now filter the finemapping dataframe to only include files that match the candidate intervals
+```{r}
+filtered_finemap_df <- inbred_finemap_df_m %>%
+    inner_join(candidate_intervals, by = c("trait_value" = "trait", "interval" = "interval"))
+head(filtered_finemap_df)
+nrow(filtered_finemap_df)
+```
+
+Now that we have filtered the finemapping files to only those that contain candidate genes, we can load the data from these files and the data should be much smaller
+```{r}
+filtered_inbred_finemap_data <- combine_finemapping_files(filtered_finemap_df)
+head(filtered_inbred_finemap_data)
+```
+
 # Pulling information for candidate gene SNVs
-Okay now, we are going to use the information in the candidate gene table to attach a beta-coedifcceitn to each SNV
+Okay now, we are going to use the information in the candidate gene table to attach a beta-coefficient to each SNV
 
 Relevant columns in candidate table: 
 
 - `trait`: name of the trait (`length_2_4_D`), corresponds to `trait_value` col in `inbred_finemap_data` 
 
-- `interval`: interval coordinates (`13865698-15025162`), correspond to `startPOS`-`endPOS` values in the finemap_data
+- `interval`: interval coordinates (`13865698-15025162`), correspond to `interval` column created when filtering finemapping files to just those relevant to candidate genes
 
-- `MARKER`: SNV ID in each candidate gene in `CHROM_POS` format (e.g. `V_14554027`)
+- `MARKER`: SNV ID in each candidate gene in `CHROM_POS` format (e.g. `V_14554027`) corresponse to the SNP column in the fine mapping data
 
-Relevant columns in the finemap data:
-
-- `trait_value`: name of the trait of interest (e.g. `2_4_D`)
+Lets simplify the finemapping data to just the columns we need. We will also have to modify the SNP (CHROM:POS) column to match the MARKER format in the candidate table (CHROM_POS). We have to also convert the CHROM from numeric to Roman numeral format to match the candidate table. 
+```{r}
+finemap_snvs <- filtered_inbred_finemap_data %>%
+    select(trait, SNP, BETA) %>%
+    rename(MARKER = SNP, beta_coefficient = BETA) %>%
+    mutate(MARKER = gsub(":", "_", MARKER))
+head(finemap_snvs)
+```
+Now we can join the candidate table with the finemapping SNV data to get the beta-coefficients for each candidate gene SNV
+```{r}
+candidate_table_with_betas <- candidate_table %>%
+    left_join(finemap_snvs, by = c("trait", "MARKER"))
+head(candidate_table_with_betas)
+```
