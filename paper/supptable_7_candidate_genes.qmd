@@ -139,6 +139,9 @@ candidate_simple <- candidate_anno_rank %>%
     VARIANT_LOG10p,
     VARIANT_LD_WITH_PEAK_MARKER,
     MAF_variant,
+    beta_coefficient,
+    effect_allele,
+    other_allele,
     rank
   ) %>%
   dplyr::distinct()
@@ -154,6 +157,9 @@ candidate_pre_table <- candidate_simple %>%
     VARIANT_LOG10p,
     VARIANT_LD_WITH_PEAK_MARKER,
     MAF_variant,
+    beta_coefficient,
+    effect_allele,
+    other_allele,
     rank
   ) %>%
   # create a combined column for the drug and marker
@@ -166,6 +172,7 @@ candidate_max_log10p <- max_log10p_candidates(candidate_anno_rank)
 candidate_flex_table_pre <- candidate_pre_table %>%
   dplyr::select(
     drug_marker,
+    MARKER,
     SYMBOL,
     GENENAME,
     WBGeneID,
@@ -182,6 +189,10 @@ candidate_ft <- candidate_flex_table_pre %>%
     col_keys = c(
       "SYMBOL",
       "GENENAME",
+      "MARKER",
+      "beta_coefficient",
+      "effect_allele",
+      "other_allele",
       "max_log10p",
       "max_marker_ld",
       "max_marker_maf",
@@ -192,6 +203,10 @@ candidate_ft <- candidate_flex_table_pre %>%
   flextable::set_header_labels(
     SYMBOL = "Gene",
     GENENAME = "Details",
+    MARKER = "Marker",
+    beta_coefficient = "Beta Coefficient",
+    effect_allele = "Effect Allele",
+    other_allele = "Other Allele",
     max_log10p = "Log10p",
     max_marker_ld = "R2",
     max_marker_maf = "MAF",
@@ -224,4 +239,8 @@ candidate_ft <- candidate_flex_table_pre %>%
 # docx_fn <- fns$docx
 
 # flextable::save_as_docx(candidate_ft, path = docx_fn)
+```
+
+```{r}
+candidate_ft
 ```
