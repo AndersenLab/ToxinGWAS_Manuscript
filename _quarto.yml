@@ -13,6 +13,8 @@ project:
     - analysis/candidate_gene_identification.qmd
     - analysis/candidate_gene_GO.qmd
     - analysis/candidate_gene_effects.qmd
+    - analysis/candidate_gene_organization.qmd
+    - analysis/candidate_gene_orthologs.qmd
     - paper/
 execute: 
   freeze: false
