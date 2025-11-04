@@ -8,9 +8,12 @@ Based on original candidate gene identification script from analysis repository 
 ```{r}
 #| label: candidate-genes-table-setup
 #| include: false
+
 library(dplyr)
 library(data.table)
 library(flextable)
+
+set.seed(123)
 
 # source the helper functions
 source("bin/general.R")
