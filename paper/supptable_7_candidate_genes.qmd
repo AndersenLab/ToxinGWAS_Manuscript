@@ -26,7 +26,7 @@ source("bin/candidate_groupGO.R")
 ```{r}
 #| label: candidate-genes-table-input
 
-candidate_out_name <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes.tsv.gz"
+candidate_out_name <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes_with_betas.tsv.gz"
 tox_meta_fn <- "data/processed/tox_data/tox_metadata.csv"
 
 # Path to ranked QTL data
@@ -50,7 +50,10 @@ max_log10p_candidates <- function(candidate_raw) {
       max_log10p = VARIANT_LOG10p,
       max_marker = MARKER,
       max_marker_ld = VARIANT_LD_WITH_PEAK_MARKER,
-      max_marker_maf = MAF_variant
+      max_marker_maf = MAF_variant,
+      beta_coefficient = beta_coefficient,
+      effect_allele = effect_allele,
+      other_allele = other_allele
     ) %>%
     dplyr::ungroup()
 
