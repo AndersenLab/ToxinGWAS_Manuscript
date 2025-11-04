@@ -4,6 +4,7 @@ project:
   execute-dir: project
   render: 
     - analysis/organize_tox_metadata.qmd
+    - analysis/trait_generate_mapping_inputs.qmd
     - analysis/organize_strain_means.qmd
     - analysis/organize_strain_outliers.qmd
     - analysis/calculate_phenotype_correlations.qmd
