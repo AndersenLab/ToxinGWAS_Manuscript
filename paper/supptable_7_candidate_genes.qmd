@@ -7,7 +7,7 @@ Based on original candidate gene identification script from analysis repository 
 
 ```{r}
 #| label: candidate-genes-table-setup
-
+#| include: false
 library(dplyr)
 library(data.table)
 library(flextable)
@@ -170,6 +170,11 @@ candidate_pre_table <- candidate_simple %>%
 candidate_max_log10p <- max_log10p_candidates(candidate_anno_rank)
 
 candidate_flex_table_pre <- candidate_pre_table %>%
+  # Keep only the SNV with max log10p for each gene
+  dplyr::group_by(WBGeneID) %>%
+  dplyr::arrange(desc(VARIANT_LOG10p)) %>%
+  dplyr::slice(1) %>%
+  dplyr::ungroup() %>%
   dplyr::select(
     drug_marker,
     MARKER,
@@ -178,8 +183,8 @@ candidate_flex_table_pre <- candidate_pre_table %>%
     WBGeneID,
     rank
   ) %>%
-  # join the max log10 p-value to the candidate gene table
-  dplyr::left_join(candidate_max_log10p, by = c("WBGeneID")) %>%
+  # join the max log10 p-value to the candidate gene table using both WBGeneID and MARKER
+  dplyr::left_join(candidate_max_log10p, by = c("WBGeneID", "MARKER" = "max_marker")) %>%
   dplyr::distinct() %>%
   dplyr::arrange(desc(max_log10p)) %>%
   # rename columns to match desired output names
@@ -196,8 +201,16 @@ candidate_flex_table_pre <- candidate_pre_table %>%
     Interval = drug_marker,
     `Interval Rank` = rank
   )
+```
 
+Look at the number of candidate genes
+```{r}
+n_candidates <- nrow(candidate_flex_table_pre)
+n_candidates
+```
 
+Create a flexttable
+```{r}
 candidate_ft <- candidate_flex_table_pre %>%
   flextable::flextable(
     col_keys = c(
