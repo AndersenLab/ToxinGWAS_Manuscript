@@ -181,47 +181,45 @@ candidate_flex_table_pre <- candidate_pre_table %>%
   # join the max log10 p-value to the candidate gene table
   dplyr::left_join(candidate_max_log10p, by = c("WBGeneID")) %>%
   dplyr::distinct() %>%
-  dplyr::arrange(desc(max_log10p))
+  dplyr::arrange(desc(max_log10p)) %>%
+  # rename columns to match desired output names
+  dplyr::rename(
+    Gene = SYMBOL,
+    Details = GENENAME,
+    Marker = MARKER,
+    `Beta Coefficient` = beta_coefficient,
+    `Effect Allele` = effect_allele,
+    `Other Allele` = other_allele,
+    Log10p = max_log10p,
+    R2 = max_marker_ld,
+    MAF = max_marker_maf,
+    Interval = drug_marker,
+    `Interval Rank` = rank
+  )
 
 
 candidate_ft <- candidate_flex_table_pre %>%
   flextable::flextable(
     col_keys = c(
-      "SYMBOL",
-      "GENENAME",
-      "MARKER",
-      "beta_coefficient",
-      "effect_allele",
-      "other_allele",
-      "max_log10p",
-      "max_marker_ld",
-      "max_marker_maf",
-      "drug_marker",
-      "rank"
+      "Gene",
+      "Details",
+      "Marker",
+      "Beta Coefficient",
+      "Effect Allele",
+      "Other Allele",
+      "Log10p",
+      "R2",
+      "MAF",
+      "Interval",
+      "Interval Rank"
     ),
   ) %>%
-  flextable::set_header_labels(
-    SYMBOL = "Gene",
-    GENENAME = "Details",
-    MARKER = "Marker",
-    beta_coefficient = "Beta Coefficient",
-    effect_allele = "Effect Allele",
-    other_allele = "Other Allele",
-    max_log10p = "Log10p",
-    max_marker_ld = "R2",
-    max_marker_maf = "MAF",
-    drug_marker = "Interval",
-    rank = "Interval Rank"
-  ) %>%
   # make the gene name bold and italic
-  flextable::italic(j = 1, i = ~ !is.na(SYMBOL), part = "body") %>%
+  flextable::italic(j = 1, i = ~ !is.na(Gene), part = "body") %>%
   # center the rank column
-  flextable::align(j = "rank", align = "center", part = "all") %>%
+  flextable::align(j = "Interval Rank", align = "center", part = "all") %>%
   # replace NA values with "N/a"
-  flextable::compose(j = "rank", value = as_paragraph(ifelse(is.na(rank), "N/a", rank))) %>%
-  # add vertical line before interval column
-  flextable::vline(i = 1, j = 5, part = "header", border = officer::fp_border(color = "black")) %>%
-  flextable::vline(j = 5, part = "body", border = officer::fp_border(color = "black")) %>%
+  flextable::compose(j = "Interval Rank", value = as_paragraph(ifelse(is.na(`Interval Rank`), "N/a", `Interval Rank`))) %>%
   flextable::set_table_properties(layout = "autofit") %>%
   flextable::line_spacing(space = 1, part = "all") %>%
   flextable::align(align = "left", part = "all") %>%
@@ -231,7 +229,7 @@ candidate_ft <- candidate_flex_table_pre %>%
     opts_word = list(split = FALSE, keep_with_next = TRUE)
   ) %>%
   flextable::paginate(
-    group = "SYMBOL",
+    group = "Gene",
     group_def = c("rle")
   )
 
@@ -243,4 +241,10 @@ candidate_ft <- candidate_flex_table_pre %>%
 
 ```{r}
 candidate_ft
+```
+
+Save the tabels with standard functions
+```{r}
+save_supp_table_csv(candidate_flex_table_pre, "candidate_genes")
+save_supp_table_flextable(candidate_ft, "candidate_genes")
 ```
