@@ -277,9 +277,9 @@ save(pheno.df, file = pheno_df_output)
 message(glue::glue("Saved pheno.df to: {pheno_df_output}"))
 ```
 
-## Compare with existing file
+<!-- ## Compare with existing file -->
 
-```{r}
+<!-- ```{r}
 #| label: compare-versions
 
 # Load the old version for comparison
@@ -344,5 +344,5 @@ if (file.exists(old_pheno_path)) {
 } else {
   message(glue::glue("\nOld version not found at {old_pheno_path}, skipping comparison"))
 }
-```
+``` -->
 
