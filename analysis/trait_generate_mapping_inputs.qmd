@@ -66,6 +66,10 @@ trait_info <- con_metadata %>%
   dplyr::mutate(
     # Remove "length_" prefix to get the trait name used in filenames
     trait_filename = stringr::str_replace(trait, "^length_", ""),
+    # Fix decimal point issues: convert underscore before decimal numbers back to period
+    # e.g., "Paraquat_62_5" -> "Paraquat_62.5"
+    # This handles cases like: Paraquat_62.5, Silver_nitrate_7.8, Triphenyl_phosphate_6.25
+    trait_filename = stringr::str_replace(trait_filename, "_(\\d+)_(\\d+)$", "_\\1.\\2"),
     # Construct expected filename
     filename = glue::glue("{date_prefix}_{trait_filename}_traitfile.tsv")
   )
@@ -138,6 +142,7 @@ process_trait_file <- function(df, trait_name) {
   }
 
   # Select strain and length column, rename length column to match trait name
+  # Note: trait_name should already have the "length_" prefix and underscores instead of periods
   result <- df %>%
     dplyr::select(strain, !!sym(length_col)) %>%
     dplyr::rename(!!trait_name := !!sym(length_col))
