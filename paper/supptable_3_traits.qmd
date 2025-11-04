@@ -125,5 +125,5 @@ print(glue::glue("  {table_fns$trait_table$csv}"))
 #| label: preview-table
 
 # Display the first few rows
-print(trait_ft)
+trait_ft
 ```
