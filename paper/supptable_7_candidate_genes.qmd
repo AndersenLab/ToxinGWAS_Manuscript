@@ -7,10 +7,13 @@ Based on original candidate gene identification script from analysis repository 
 
 ```{r}
 #| label: candidate-genes-table-setup
+#| include: false
 
 library(dplyr)
 library(data.table)
 library(flextable)
+
+set.seed(123)
 
 # source the helper functions
 source("bin/general.R")
@@ -26,7 +29,7 @@ source("bin/candidate_groupGO.R")
 ```{r}
 #| label: candidate-genes-table-input
 
-candidate_out_name <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes.tsv.gz"
+candidate_out_name <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes_with_betas.tsv.gz"
 tox_meta_fn <- "data/processed/tox_data/tox_metadata.csv"
 
 # Path to ranked QTL data
@@ -50,7 +53,10 @@ max_log10p_candidates <- function(candidate_raw) {
       max_log10p = VARIANT_LOG10p,
       max_marker = MARKER,
       max_marker_ld = VARIANT_LD_WITH_PEAK_MARKER,
-      max_marker_maf = MAF_variant
+      max_marker_maf = MAF_variant,
+      beta_coefficient = beta_coefficient,
+      effect_allele = effect_allele,
+      other_allele = other_allele
     ) %>%
     dplyr::ungroup()
 
@@ -136,6 +142,9 @@ candidate_simple <- candidate_anno_rank %>%
     VARIANT_LOG10p,
     VARIANT_LD_WITH_PEAK_MARKER,
     MAF_variant,
+    beta_coefficient,
+    effect_allele,
+    other_allele,
     rank
   ) %>%
   dplyr::distinct()
@@ -151,6 +160,9 @@ candidate_pre_table <- candidate_simple %>%
     VARIANT_LOG10p,
     VARIANT_LD_WITH_PEAK_MARKER,
     MAF_variant,
+    beta_coefficient,
+    effect_allele,
+    other_allele,
     rank
   ) %>%
   # create a combined column for the drug and marker
@@ -161,49 +173,69 @@ candidate_pre_table <- candidate_simple %>%
 candidate_max_log10p <- max_log10p_candidates(candidate_anno_rank)
 
 candidate_flex_table_pre <- candidate_pre_table %>%
+  # Keep only the SNV with max log10p for each gene
+  dplyr::group_by(WBGeneID) %>%
+  dplyr::arrange(desc(VARIANT_LOG10p)) %>%
+  dplyr::slice(1) %>%
+  dplyr::ungroup() %>%
   dplyr::select(
     drug_marker,
+    MARKER,
     SYMBOL,
     GENENAME,
     WBGeneID,
     rank
   ) %>%
-  # join the max log10 p-value to the candidate gene table
-  dplyr::left_join(candidate_max_log10p, by = c("WBGeneID")) %>%
+  # join the max log10 p-value to the candidate gene table using both WBGeneID and MARKER
+  dplyr::left_join(candidate_max_log10p, by = c("WBGeneID", "MARKER" = "max_marker")) %>%
   dplyr::distinct() %>%
-  dplyr::arrange(desc(max_log10p))
+  dplyr::arrange(desc(max_log10p)) %>%
+  # rename columns to match desired output names
+  dplyr::rename(
+    Gene = SYMBOL,
+    Details = GENENAME,
+    Marker = MARKER,
+    `Beta Coefficient` = beta_coefficient,
+    `Effect Allele` = effect_allele,
+    `Other Allele` = other_allele,
+    Log10p = max_log10p,
+    R2 = max_marker_ld,
+    MAF = max_marker_maf,
+    Interval = drug_marker,
+    `Interval Rank` = rank
+  )
+```
 
+Look at the number of candidate genes
+```{r}
+n_candidates <- nrow(candidate_flex_table_pre)
+n_candidates
+```
 
+Create a flexttable
+```{r}
 candidate_ft <- candidate_flex_table_pre %>%
   flextable::flextable(
     col_keys = c(
-      "SYMBOL",
-      "GENENAME",
-      "max_log10p",
-      "max_marker_ld",
-      "max_marker_maf",
-      "drug_marker",
-      "rank"
+      "Gene",
+      "Details",
+      "Marker",
+      "Beta Coefficient",
+      "Effect Allele",
+      "Other Allele",
+      "Log10p",
+      "R2",
+      "MAF",
+      "Interval",
+      "Interval Rank"
     ),
   ) %>%
-  flextable::set_header_labels(
-    SYMBOL = "Gene",
-    GENENAME = "Details",
-    max_log10p = "Log10p",
-    max_marker_ld = "R2",
-    max_marker_maf = "MAF",
-    drug_marker = "Interval",
-    rank = "Interval Rank"
-  ) %>%
   # make the gene name bold and italic
-  flextable::italic(j = 1, i = ~ !is.na(SYMBOL), part = "body") %>%
+  flextable::italic(j = 1, i = ~ !is.na(Gene), part = "body") %>%
   # center the rank column
-  flextable::align(j = "rank", align = "center", part = "all") %>%
+  flextable::align(j = "Interval Rank", align = "center", part = "all") %>%
   # replace NA values with "N/a"
-  flextable::compose(j = "rank", value = as_paragraph(ifelse(is.na(rank), "N/a", rank))) %>%
-  # add vertical line before interval column
-  flextable::vline(i = 1, j = 5, part = "header", border = officer::fp_border(color = "black")) %>%
-  flextable::vline(j = 5, part = "body", border = officer::fp_border(color = "black")) %>%
+  flextable::compose(j = "Interval Rank", value = as_paragraph(ifelse(is.na(`Interval Rank`), "N/a", `Interval Rank`))) %>%
   flextable::set_table_properties(layout = "autofit") %>%
   flextable::line_spacing(space = 1, part = "all") %>%
   flextable::align(align = "left", part = "all") %>%
@@ -213,7 +245,7 @@ candidate_ft <- candidate_flex_table_pre %>%
     opts_word = list(split = FALSE, keep_with_next = TRUE)
   ) %>%
   flextable::paginate(
-    group = "SYMBOL",
+    group = "Gene",
     group_def = c("rle")
   )
 
@@ -221,4 +253,14 @@ candidate_ft <- candidate_flex_table_pre %>%
 # docx_fn <- fns$docx
 
 # flextable::save_as_docx(candidate_ft, path = docx_fn)
+```
+
+```{r}
+candidate_ft
+```
+
+Save the tabels with standard functions
+```{r}
+save_supp_table_csv(candidate_flex_table_pre, "candidate_genes")
+save_supp_table_flextable(candidate_ft, "candidate_genes")
 ```
