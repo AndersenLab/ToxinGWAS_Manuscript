@@ -23,7 +23,7 @@ source("bin/candidate_groupGO.R")
 ```
 
 # Inputs
-`candidate_out_name` - path to the candidate file output by `analysis/call_candidate_genes.qmd`
+`candidate_out_name` - path to the candidate file output by `analysis/call_candidate_genes.qmd` and then modified in `analysis/candidate_gene_effects.qmd`
 `tox_meta_fn` - path to the toxin metadata file 
 `ranked_qtl_fn` - path to the ranked QTL data output by `analysis/rank_regions.qmd`
 ```{r}
