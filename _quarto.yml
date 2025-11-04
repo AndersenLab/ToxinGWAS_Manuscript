@@ -12,6 +12,7 @@ project:
     - analysis/hdr_calculate_region_overlaps.qmd
     - analysis/candidate_gene_identification.qmd
     - analysis/candidate_gene_GO.qmd
+    - analysis/candidate_gene_effects.qmd
     - paper/
 execute: 
   freeze: false

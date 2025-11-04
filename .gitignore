@@ -6,3 +6,5 @@ data/processed/20231116_Analysis_NemaScan
 .Rproj.user
 .Rhistory
 ToxinGWAS_Manuscript.Rproj
+notebooks/
+notebooks/*
