@@ -25,6 +25,7 @@ This script will pull the trait files from the data cleaning repo for the toxica
 
 The input format is a file where the rownames represent strain names, and the columns represent the traits to be mapped. The first column is the strain names, and the subsequent columns are the trait values.
 
+
 # Inputs
 ```{r}
 #| label: inputs
@@ -182,4 +183,166 @@ save_tsv(
 
 print(glue::glue("Saved aggregated traits to: {output_fn}"))
 ```
+
+# Generate pheno.df.rda file
+
+The `pheno.df.rda` file contains the full phenotype data for all wells and is used in various downstream analyses. This section downloads the cleaned data from the data cleaning GitHub repository and filters it to include only toxicant conditions (excluding controls).
+
+## Download cleaned .Rdata file
+
+```{r}
+#| label: download-rdata-file
+
+# Define paths
+rdata_url <- glue::glue("https://raw.githubusercontent.com/{github_repo}/{github_branch}/data/processed/{date_prefix}_FINAL_cleaned_GWA.Rdata")
+rdata_local_path <- glue::glue("data/raw/{date_prefix}_FINAL_cleaned_GWA.Rdata")
+pheno_df_output <- "data/processed/phenotypes/pheno.df.rda"
+
+# Download .Rdata file if it doesn't exist locally
+if (!file.exists(rdata_local_path)) {
+  message(glue::glue("Downloading {date_prefix}_FINAL_cleaned_GWA.Rdata from GitHub..."))
+
+  response <- httr::GET(rdata_url)
+
+  if (httr::status_code(response) == 200) {
+    # Write binary content to file
+    writeBin(httr::content(response, "raw"), rdata_local_path)
+    message(glue::glue("  ✓ Successfully downloaded to {rdata_local_path}"))
+  } else {
+    stop(glue::glue("  ✗ Failed to download .Rdata file: HTTP {httr::status_code(response)}"))
+  }
+} else {
+  message(glue::glue("Using existing file: {rdata_local_path}"))
+}
+```
+
+## Process phenotype data
+
+```{r}
+#| label: process-pheno-data
+
+# Load the .Rdata file
+message("Loading cleaned GWA data...")
+load(rdata_local_path)
+
+# Check that the expected object exists
+if (!exists("final.QC.GWA.df")) {
+  stop("Expected object 'final.QC.GWA.df' not found in .Rdata file")
+}
+
+message(glue::glue("Loaded data with {nrow(final.QC.GWA.df)} rows"))
+
+# Get list of toxicants from metadata (exclude controls)
+# The new con_metadata only contains toxicants, so we can use it directly
+tox_list <- con_metadata %>%
+  dplyr::filter(type == "Toxicant") %>%
+  dplyr::pull(drug) %>%
+  unique()
+
+message(glue::glue("Filtering to {length(tox_list)} toxicants"))
+
+# Process the phenotype data
+# Join with toxicant metadata and filter to only include toxicants
+pheno.df <- final.QC.GWA.df %>%
+  dplyr::filter(drug %in% tox_list) %>%
+  dplyr::mutate(
+    # Create well.id from Assay_Bleach, Metadata_Plate, and Metadata_Well
+    well.id = paste(Assay_Bleach, Metadata_Plate, Metadata_Well, sep = "_"),
+    # Replace PD1074 strain name with N2
+    strain = ifelse(strain == "PD1074", "N2", strain)
+  )
+
+message(glue::glue("Processed phenotype data:"))
+message(glue::glue("  Rows: {nrow(pheno.df)}"))
+message(glue::glue("  Strains: {length(unique(pheno.df$strain))}"))
+message(glue::glue("  Drugs: {length(unique(pheno.df$drug))}"))
+message(glue::glue("  Columns: {ncol(pheno.df)}"))
+```
+
+## Save pheno.df.rda
+
+```{r}
+#| label: save-pheno-df
+
+# Create output directory if it doesn't exist
+output_dir <- dirname(pheno_df_output)
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+  message(glue::glue("Created directory: {output_dir}"))
+}
+
+# Save the pheno.df object
+save(pheno.df, file = pheno_df_output)
+
+message(glue::glue("Saved pheno.df to: {pheno_df_output}"))
+```
+
+<!-- ## Compare with existing file -->
+
+<!-- ```{r}
+#| label: compare-versions
+
+# Load the old version for comparison
+old_pheno_path <- "data/raw/phenotypes/pheno.df.rda"
+
+if (file.exists(old_pheno_path)) {
+  message("\nComparing new version with existing file...")
+
+  # Load old version
+  load(old_pheno_path)
+  old_pheno.df <- pheno.df
+
+  # Load new version
+  load(pheno_df_output)
+  new_pheno.df <- pheno.df
+
+  # Compare dimensions
+  message(glue::glue("Old version: {nrow(old_pheno.df)} rows × {ncol(old_pheno.df)} columns"))
+  message(glue::glue("New version: {nrow(new_pheno.df)} rows × {ncol(new_pheno.df)} columns"))
+
+  # Compare columns
+  old_cols <- colnames(old_pheno.df)
+  new_cols <- colnames(new_pheno.df)
+
+  missing_cols <- setdiff(old_cols, new_cols)
+  extra_cols <- setdiff(new_cols, old_cols)
+
+  if (length(missing_cols) > 0) {
+    message(glue::glue("\nColumns in old but not in new: {paste(missing_cols, collapse=', ')}"))
+  }
+
+  if (length(extra_cols) > 0) {
+    message(glue::glue("\nColumns in new but not in old: {paste(extra_cols, collapse=', ')}"))
+  }
+
+  if (length(missing_cols) == 0 && length(extra_cols) == 0) {
+    message("\n✓ Column names match perfectly!")
+  }
+
+  # Compare unique drugs
+  old_drugs <- sort(unique(old_pheno.df$drug))
+  new_drugs <- sort(unique(new_pheno.df$drug))
+
+  missing_drugs <- setdiff(old_drugs, new_drugs)
+  extra_drugs <- setdiff(new_drugs, old_drugs)
+
+  if (length(missing_drugs) > 0) {
+    message(glue::glue("\nDrugs in old but not in new: {paste(missing_drugs, collapse=', ')}"))
+  }
+
+  if (length(extra_drugs) > 0) {
+    message(glue::glue("\nDrugs in new but not in old: {paste(extra_drugs, collapse=', ')}"))
+  }
+
+  if (length(missing_drugs) == 0 && length(extra_drugs) == 0) {
+    message("\n✓ Drug lists match perfectly!")
+  }
+
+  # Compare unique strains
+  message(glue::glue("\nOld version strains: {length(unique(old_pheno.df$strain))}"))
+  message(glue::glue("New version strains: {length(unique(new_pheno.df$strain))}"))
+} else {
+  message(glue::glue("\nOld version not found at {old_pheno_path}, skipping comparison"))
+}
+``` -->
 
