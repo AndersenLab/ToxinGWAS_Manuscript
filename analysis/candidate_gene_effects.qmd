@@ -1,0 +1,208 @@
+---
+title: "Integrate finemapping beta coefficient with candidate gene data"
+---
+```{r}
+library(dplyr)
+library(stringr)
+library(data.table)
+
+source("bin/outs.R")
+source("bin/general.R")
+```
+
+# Overview
+This script integrates the beta coefficient from the finemapping results with the candidate genes identifed in `candidate_gene_identification.qmd`.
+
+# Inputs
+File paths:
+```{r}
+candidate_table_fn <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes.tsv.gz"
+ns_folder <- "data/processed/20231116_Analysis_NemaScan"
+```
+
+## Candidate gene table
+
+The candidate gene table generated in `candidate_gene_identification.qmd` contains information about SNVs located within candidate genes, along with allele and divergence information.
+
+```{r}
+candidate_table <- data.table::fread(candidate_table_fn)
+head(candidate_table)
+```
+
+The candidate table from candidate_gene_identification.qmd has duplicate rows for the same SNV (Single Nucleotide Variant at a specific genomic position). These duplicates exist because the table includes:
+
+* ALLELE - the genotype (REF or ALT)
+* divergent - divergence classification
+* n - count of strains
+
+This means a single SNV in a specific gene appears multiple times - once for each combination of allele type and divergence status.
+
+Since this script is adding beta coefficients and allele information from the finemapping data (which already contains detailed allele info), it doesn't need the genotype breakdown anymore
+
+```{r}
+n_row_before <- nrow(candidate_table)
+print(n_row_before)
+
+candidate_table <- candidate_table %>%
+  dplyr::select(-c(ALLELE, divergent, n)) %>%
+  dplyr::distinct()
+head(candidate_table)
+n_row_after <- nrow(candidate_table)
+print(n_row_after)
+```
+
+## Finemapping data
+
+Load all of the finemapping data so that we can merge the beta coefficients into the candidate table.
+
+First define the functions to load the finemappings
+```{r}
+# Helper functions to extract information from the finemap file names
+get_trait_value <- function(fn_name) {
+  # get trait value from file name (keeping the length_ prefix)
+  trait_value <- stringr::str_extract(fn_name, "length_[^.]+")
+  return(trait_value)
+}
+
+get_chromosome <- function(fn_name) {
+  # get chromosome from file name
+  chromosome <- stringr::str_extract(fn_name, "\\b(I|II|III|IV|V|X)\\b")
+  return(chromosome)
+}
+
+get_positions <- function(fn_name) {
+  # split the filename by period
+  parts <- stringr::str_split(fn_name, "\\.")[[1]]
+  startPOS <- as.numeric(parts[3])
+  stopPOS <- as.numeric(parts[4])
+  return(list(startPOS = startPOS, stopPOS = stopPOS))
+}
+
+# Main function
+aggregate_finemappings <- function(finemap_dir) {
+  finemap_files <- list.files(
+    path = finemap_dir,
+    pattern = "finemap_inbred.(inbred|loco).fastGWA",
+    full.names = TRUE,
+    recursive = TRUE
+  ) %>%
+    .[basename(.) %>% stringr::str_detect("^length")]
+
+  finemap_df <- data.frame(
+    trait_value = character(),
+    CHROM = character(),
+    startPOS = numeric(),
+    endPOS = numeric(),
+    file_name = character(),
+    file_path = character(),
+    stringsAsFactors = FALSE
+  )
+
+  for (fn in finemap_files) {
+    fn_name <- basename(fn)
+    trait_value <- get_trait_value(fn_name)
+    chromosome <- get_chromosome(fn_name)
+    positions <- get_positions(fn_name)
+
+    finemap_df <- finemap_df %>%
+      add_row(
+        trait_value = trait_value,
+        CHROM = chromosome,
+        startPOS = positions$startPOS,
+        endPOS = positions$stopPOS,
+        file_name = fn_name,
+        file_path = fn
+      )
+  }
+
+  return(finemap_df)
+}
+```
+
+```{r}
+inbred_finemap_dir <-
+  glue::glue("{ns_folder}/INBRED/Fine_Mappings/Data")
+
+inbred_finemap_df <- aggregate_finemappings(inbred_finemap_dir)
+head(inbred_finemap_df)
+```
+
+This data frame contains the paths to all of the inbred finemapping results. Next we will filter to just the finemappings that correspond to the candidate genes in our candidate table and then read in those finemapping results into a single data frame.
+
+```{r}
+# Create a column in the finemap df that matches the interval in the candidate table
+inbred_finemap_df_m <- inbred_finemap_df %>%
+  dplyr::mutate(interval = paste0(startPOS, "-", endPOS))
+head(inbred_finemap_df_m)
+```
+
+Create a table of unique trait and interval combinations from the candidate table
+
+```{r}
+candidate_intervals <- candidate_table %>%
+  dplyr::select(trait, interval) %>%
+  dplyr::distinct()
+head(candidate_intervals)
+```
+
+Filter the finemapping data frame to only include files that match the candidate intervals
+
+```{r}
+filtered_finemap_df <- inbred_finemap_df_m %>%
+  dplyr::inner_join(candidate_intervals, by = c("trait_value" = "trait", "interval" = "interval"))
+head(filtered_finemap_df)
+nrow(filtered_finemap_df)
+```
+
+Read in all of the filtered finemapping results and combine them into a single data frame
+
+```{r}
+combine_finemapping_files <- function(file_df) {
+  combined_df <- file_df %>%
+    rowwise() %>%
+    mutate(
+      data = list(data.table::fread(file_path) %>%
+        mutate(trait = trait_value))
+    ) %>%
+    tidyr::unnest(cols = c(data))
+
+  return(combined_df)
+}
+
+filtered_inbred_finemap_data <- combine_finemapping_files(filtered_finemap_df)
+head(filtered_inbred_finemap_data)
+```
+
+Now format and pull the relevant columns from the combined finemapping data. Pulling the SNP genotypes (A1, A2) from the finemapping output. Per [GCTA inbred output docs](https://yanglab.westlake.edu.cn/software/gcta/#fastGWA)
+
+```{r}
+finemap_snvs <- filtered_inbred_finemap_data %>%
+  dplyr::select(trait, SNP, BETA, A1, A2) %>%
+  dplyr::rename(
+    MARKER = SNP,
+    beta_coefficient = BETA,
+    effect_allele = A1,
+    other_allele = A2
+  ) %>%
+  dplyr::mutate(MARKER = sapply(MARKER, convert_marker, to_marker = "RM", from_marker = "NUM")) %>%
+  dplyr::mutate(MARKER = stringr::str_replace_all(MARKER, ":", "_"))
+
+head(finemap_snvs)
+```
+
+# Main
+
+Join the candidate table with the finemapping SNV data to add the beta coefficients and allele information
+
+```{r}
+candidate_table_with_betas <- candidate_table %>%
+  dplyr::left_join(finemap_snvs, by = c("trait", "MARKER"))
+head(candidate_table_with_betas)
+```
+
+# Outputs
+Save the candidate table with beta coefficients
+```{r}
+candidate_table_betas_outfn <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes_with_betas.tsv.gz"
+save_compressed_tsv(candidate_table_with_betas, candidate_table_betas_outfn)
+```
