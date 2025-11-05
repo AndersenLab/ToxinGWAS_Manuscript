@@ -1,5 +1,5 @@
 ---
-title: "Table S1: Strain Information"
+title: "Table S1. Strains selected for the GWAS panel"
 format: html
 ---
 
@@ -8,41 +8,19 @@ format: html
 library(tidyverse)
 library(dplyr)
 library(data.table)
+```
 
-# Source the portable project setup function
-script_dir <- tryCatch(
-  dirname(normalizePath(knitr::current_input())),
-  error = function(e) getwd()
-)
-
-setup_file <- file.path(script_dir, "..", "bin", "setup_project_here.R")
-
-if (file.exists(setup_file)) {
-  source(setup_file)
-  project_root <- setup_toxin_project_here()
-} else {
-  setup_file <- file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R")
-  if (file.exists(setup_file)) {
-    source(setup_file)
-    project_root <- setup_toxin_project_here()
-  } else {
-    stop("Could not find setup_project_here.R")
-  }
-}
-
-if (is.null(project_root)) {
-  stop("Could not locate ToxinGWAS_Manuscript project root.")
-}
-
-
+```{r}
 # source the helper functions
 source(file.path(project_root, "bin", "general.R"))
 
 source(file.path(project_root, "bin", "outs.R"))
 source(file.path(project_root, "bin", "materials_key.R"))
+```
 
+```{r}
 # get the list of strains in the GWAS
-load(file.path(project_root, "data", "raw", "phenotypes", "pheno.df.rda"))
+load(file.path("data", "processed", "phenotypes", "pheno.df.rda"))
 
 # Read the strain means data
 strains <- unique(pheno.df$strain)

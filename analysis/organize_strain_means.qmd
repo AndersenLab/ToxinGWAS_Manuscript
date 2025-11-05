@@ -20,7 +20,7 @@ source("bin/materials_key.R")
 ```{r}
 #### Inputs ####
 # path to .rda file with phenotype data
-pheno_path <- "data/raw/phenotypes/pheno.df.rda"
+pheno_path <- "data/processed/phenotypes/pheno.df.rda"
 
 # toxicant condition metadata
 tox_meta_fn <- "data/processed/tox_data/tox_metadata.csv"
