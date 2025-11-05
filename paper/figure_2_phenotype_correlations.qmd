@@ -1,6 +1,5 @@
 ---
 execute:
-  echo: false
   warning: false
   message: false
 ---
@@ -14,45 +13,9 @@ library(glue)
 library(here)
 ```
 
-```{r}
-# Source the portable project setup function
-script_dir <- tryCatch(
-  dirname(normalizePath(knitr::current_input())),
-  error = function(e) getwd()
-)
-
-# Try multiple possible locations for the setup file
-setup_file_paths <- c(
-  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
-  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
-  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
-)
-
-setup_file <- NULL
-for (path in setup_file_paths) {
-  if (file.exists(path)) {
-    setup_file <- path
-    break
-  }
-}
-
-if (!is.null(setup_file)) {
-  source(setup_file)
-  project_root <- setup_toxin_project_here()
-} else {
-  stop(
-    "Could not find setup_project_here.R in any of the expected locations: ",
-    paste(setup_file_paths, collapse = ", ")
-  )
-}
-
-if (is.null(project_root)) {
-  stop("Could not locate ToxinGWAS_Manuscript project root.")
-}
-
-```
 
 ```{r}
+#| include: false
 source("bin/outs.R")
 source("bin/materials_key.R")
 ```
@@ -60,9 +23,9 @@ source("bin/materials_key.R")
 ```{r}
 #| include: false
 # Load correlation data
-pheno_corr_all <- readRDS(file.path(project_root, "data/processed/phenotypes/pheno_corr_all.Rds"))
-tox_data <- data.table::fread(file.path(project_root, "data/processed/tox_data/con_metadata.csv"))
-strain_means_pivot_matrix <- readRDS(file.path(project_root, "data/processed/phenotypes/strain_means_matrix.rds"))
+pheno_corr_all <- readRDS(file.path("data/processed/phenotypes/pheno_corr_all.Rds"))
+tox_data <- data.table::fread(file.path("data/processed/tox_data/con_metadata.csv"))
+strain_means_pivot_matrix <- readRDS(file.path("data/processed/phenotypes/strain_means_matrix.rds"))
 ```
 
 Report out the average correlation across all toxicant conditions
@@ -84,7 +47,7 @@ pheno_corr_all_avg <- corr_coef_df %>%
     lower_threshold_r = q1_r - 1.5 * (q3_r - q1_r)
   )
 pheno_corr_all_avg
-````
+```
 
 To annotate the cells of the clustered heatmap reprocess the correlation data after performing the clustering so that the annotation matricies align with the clusterd conditions
 
