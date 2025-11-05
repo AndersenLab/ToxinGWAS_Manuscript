@@ -1,0 +1,134 @@
+---
+title: "Table S10. Prioritization of actionable susceptibility-associated regions detected by GWAS"
+---
+
+```{r}
+#| label: interval-ranking-setup
+#| include: false
+
+library(tidyverse)
+library(flextable)
+library(data.table)
+
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
+
+# Inputs
+
+```{r}
+#| label: interval-ranking-inputs
+
+# Load the ranked QTL data
+inbred_ranked_fn <- "data/processed/qtl_ranking/inbred/ranked_qtl.tsv"
+
+# Load the tox condition metadata
+tox_metadata_fn <- "data/processed/tox_data/con_metadata.csv"
+```
+
+# Main
+
+```{r}
+#| label: interval-ranking-main
+
+# Load the ranked intervals
+inbred_ranked <- data.table::fread(inbred_ranked_fn)
+
+# Load the tox condition metadata
+tox_metadata <- data.table::fread(tox_metadata_fn) %>%
+  dplyr::filter(type == "Toxicant") %>%
+  dplyr::select(trait, nice_drug_label2, big_class, class, moa_class) %>%
+  # adjust the uM to µM
+  dplyr::mutate(nice_drug_label2 = dplyr::case_when(
+    nice_drug_label2 == "uM" ~ "µM",
+    TRUE ~ nice_drug_label2
+  ))
+
+# Join tox metadata with QTL data
+inbred_ranked <- inbred_ranked %>%
+  dplyr::left_join(tox_metadata, by = c("trait" = "trait"))
+
+# Calculate proportions and format data
+inbred_ranked <- inbred_ranked %>%
+  dplyr::mutate(
+    condition_marker = paste0(nice_drug_label2, " (", marker, ")"),
+    prop_strains_ref = n_strains_ref / total_strains,
+    prop_strains_alt = n_strains_alt / total_strains,
+    # Ensure numeric columns are properly typed and rounded
+    log10p = round(as.numeric(log10p), 3),
+    strain_freq = paste0(round(prop_strains_ref, 3), "/", round(prop_strains_alt, 3)),
+    prop_alt_overlap = round(as.numeric(prop_alt_overlap), 3)
+  )
+```
+
+# Create Flextable
+
+```{r}
+#| label: interval-ranking-flextable
+
+# Create flextable
+inbred_qtl_ranking_ft <- flextable(
+  inbred_ranked,
+  col_keys = c(
+    "rank",
+    "condition_marker",
+    "log10p",
+    "Fine Mapping LD Structure",
+    "strain_freq",
+    "prop_alt_overlap"
+  )
+) %>%
+  flextable::set_header_labels(
+    values = list(
+      "rank" = "Rank",
+      "condition_marker" = "Condition (Peak Marker)",
+      "log10p" = "-log10(p-value)",
+      "Fine Mapping LD Structure" = "Fine Mapping LD Structure",
+      "strain_freq" = "REF/ALT freq.",
+      "prop_alt_overlap" = "Prop ALT strains HVR"
+    )
+  ) %>%
+  # Make header bold
+  flextable::bold(part = "header") %>%
+  flextable::line_spacing(space = 1, part = "all") %>%
+  flextable::set_table_properties(
+    layout = "autofit",
+    width = 1,
+    opts_word = list(
+      split = FALSE,
+      keep_with_next = TRUE
+    )
+  ) %>%
+  # Add vertical line after the first column
+  flextable::vline(j = 1, part = "body")
+
+inbred_qtl_ranking_ft
+```
+
+# Save Tables
+
+```{r}
+#| label: interval-ranking-save
+
+# Prepare CSV output with nice column names
+inbred_ranked_csv <- inbred_ranked %>%
+  dplyr::select(
+    rank,
+    condition_marker,
+    log10p,
+    `Fine Mapping LD Structure`,
+    strain_freq,
+    prop_alt_overlap
+  ) %>%
+  dplyr::rename(
+    "Rank" = rank,
+    "Condition (Peak Marker)" = condition_marker,
+    "-log10(p-value)" = log10p,
+    "REF/ALT freq." = strain_freq,
+    "Prop ALT strains HVR" = prop_alt_overlap
+  )
+
+# Save the flextable and CSV using standardized naming
+save_supp_table_flextable(inbred_qtl_ranking_ft, "inbred_qtl_ranking_ft")
+save_supp_table_csv(inbred_ranked_csv, "inbred_qtl_ranking_ft")
+```
