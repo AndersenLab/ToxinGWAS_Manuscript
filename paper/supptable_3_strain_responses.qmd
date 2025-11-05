@@ -1,26 +1,23 @@
 ---
-title: "Supplementary Table S3: Trait Data"
+title: "Table S3. Strain specific toxicant response data"
 ---
 
 # Setup
 ```{r}
 #| label: setup
-
 library(data.table)
 library(dplyr)
 library(flextable)
 library(glue)
-
+```
+```{r}
+#| include: false
 source("bin/outs.R")
 source("bin/materials_key.R")
 ```
 
-# Overview
-
-This script generates Supplementary Table S3, which contains the trait data for all strains across all toxicants. The column names are formatted with nice labels from the toxicant metadata.
 
 # Inputs
-
 ```{r}
 #| label: inputs
 
@@ -31,8 +28,8 @@ traits_fn <- "data/processed/aggregated_toxicant_traits.tsv"
 tox_metadata_fn <- "data/processed/tox_data/tox_metadata.csv"
 ```
 
-# Load data
-
+# Main 
+## Load data
 ```{r}
 #| label: load-data
 
@@ -46,7 +43,7 @@ print(glue::glue("Loaded traits data: {nrow(traits_df)} strains × {ncol(traits_
 print(glue::glue("Loaded metadata for {nrow(tox_metadata)} toxicant conditions"))
 ```
 
-# Rename columns with nice labels
+## Rename columns with nice labels
 
 ```{r}
 #| label: rename-columns
@@ -76,7 +73,7 @@ print(glue::glue("Renamed columns:"))
 print(names(traits_renamed))
 ```
 
-# Create flextable
+## Create flextable
 
 ```{r}
 #| label: create-flextable
@@ -88,12 +85,7 @@ trait_ft <- flextable::flextable(traits_renamed) %>%
   flextable::align(align = "center", part = "all") %>%
   flextable::align(j = 1, align = "left", part = "all") %>%
   flextable::bold(part = "header") %>%
-  flextable::set_caption(
-    caption = "Supplementary Table S3. Toxicant response trait values for all C. elegans strains. Values represent normalized phenotype measurements (length) for each strain under each toxicant condition."
-  ) %>%
   flextable::autofit()
-
-print("Flextable created successfully")
 ```
 
 # Save table

@@ -1,23 +1,32 @@
 ---
-title: "Table S3: Strain responses"
+title: "Table S4. Differences in susceptibility to toxicant conditions among strains"
 format: html
 ---
 
 ```{r}
 # code to generate a table summarizing the phenotype data
-
 library(tidyverse)
 library(flextable)
 library(officer)
+```
 
-# Load required data
-strain_means_anno <- read.csv("data/processed/phenotypes/strain_means_anno.csv")
-
+```{r}
+#| include: false
 # Source the output functions
 source("bin/outs.R")
 source("bin/materials_key.R")
+```
+
+# Inputs
+```{r}
+# Load required data
+strain_means_anno <- read.csv("data/processed/phenotypes/strain_means_anno.csv")
+```
+
+# Main
 
 # Create summary table by toxicant class
+```{r}
 outlier_summary <- strain_means_anno %>%
   dplyr::group_by(nice_drug_label2) %>%
   dplyr::summarise(
