@@ -7,53 +7,17 @@ execute:
 ```{r}
 library(tidyverse)
 library(ggh4x)
-library(here)
-
-script_dir <- tryCatch(
-  dirname(normalizePath(knitr::current_input())),
-  error = function(e) getwd()
-)
-
-# Try multiple possible locations for the setup file
-setup_file_paths <- c(
-  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
-  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
-  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
-)
-
-setup_file <- NULL
-for (path in setup_file_paths) {
-  if (file.exists(path)) {
-    setup_file <- path
-    break
-  }
-}
-
-if (!is.null(setup_file)) {
-  source(setup_file)
-  project_root <- setup_toxin_project_here()
-} else {
-  stop(
-    "Could not find setup_project_here.R in any of the expected locations: ",
-    paste(setup_file_paths, collapse = ", ")
-  )
-}
-
-if (is.null(project_root)) {
-  stop("Could not locate ToxinGWAS_Manuscript project root.")
-}
 
 ```
 
 ```{r}
-#| include: false
 
-source(file.path(project_root, "bin", "tox_colors.R"))
-source(file.path(project_root, "bin", "outs.R"))
-source(file.path(project_root, "bin", "materials_key.R"))
+source(file.path("bin", "tox_colors.R"))
+source(file.path("bin", "outs.R"))
+source(file.path("bin", "materials_key.R"))
 
 
-ns_folder <- file.path(project_root, "data/processed/20231116_Analysis_NemaScan")
+ns_folder <- file.path("data/processed/20231116_Analysis_NemaScan")
 
 # get define the examples together
 ex <- c(
@@ -64,11 +28,11 @@ ex <- c(
   "paraquat" = glue::glue("{ns_folder}/INBRED/Mapping/Processed/processed_length_Paraquat_62_5_AGGREGATE_mapping_inbred.tsv")
 )
 
-total_independent_tests <- read.table(file.path(project_root, "data/processed/20231116_Analysis_NemaScan/Genotype_Matrix/total_independent_tests.txt"), quote = "\"", comment.char = "", stringsAsFactors = FALSE)
+total_independent_tests <- read.table(file.path("data/processed/20231116_Analysis_NemaScan/Genotype_Matrix/total_independent_tests.txt"), quote = "\"", comment.char = "", stringsAsFactors = FALSE)
 
 
 # load classes
-tox <- data.table::fread(file.path(project_root, "data/processed/tox_data/con_metadata.csv")) %>%
+tox <- data.table::fread(file.path("data/processed/tox_data/con_metadata.csv")) %>%
   dplyr::select(trait, nice_drug_label2, big_class) %>%
   # adjust the uM to µM
   dplyr::mutate(nice_drug_label2 = dplyr::case_when(
@@ -79,7 +43,6 @@ tox <- data.table::fread(file.path(project_root, "data/processed/tox_data/con_me
 
 ```{r}
 #| label: manhattan-plot-function
-#| include: false
 
 # ==============================================================================#
 # Manhattan Plot
@@ -184,7 +147,6 @@ manPlot <- function(dataPath,
 
 ```{r}
 #| label: prep-manhattan-plots
-#| include: false
 
 # load them all
 d.list <- NULL
@@ -244,8 +206,6 @@ highlight_regions <- d.all2 %>%
 
 ```{r}
 #| label: create-base-manhattan-plots
-#| include: false
-
 
 manhattan_plots <- ggplot(d.all2) +
   theme_bw() +
