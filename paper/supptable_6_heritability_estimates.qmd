@@ -1,21 +1,24 @@
 ---
-title: "Table of Toxicant response H2 and h2 estimates"
+title: "Table S6. Heritability estimates for toxicant conditions"
 format: html
 ---
 
 ```{r}
-
 library(dplyr)
 library(data.table)
 library(flextable)
+```
+
+```{r}
+#| include: false
 
 # load the functions to save the output
-source("bin/gsheets.R")
 source("bin/outs.R")
 source("bin/materials_key.R")
+```
 
-#### Inputs ####
-
+# Inputs 
+```{r}
 # load H2 and h2 rdata files
 load("data/processed/heritability/h2.list.mean.rda")
 
@@ -25,23 +28,12 @@ load("data/processed/heritability/H2.parametric.boot.list.10000.rda")
 # load the tox data
 tox <- data.table::fread("data/processed/tox_data/con_metadata.csv") %>%
   dplyr::filter(type == "Toxicant")
+```
 
+# Main
 
-#### Outputs ####
-
-table_out_name <- "tables/table_S5/table_S5.tsv"
-
-table_out_dir <- dirname(table_out_name)
-
-# create the output directory if it doesn't exist
-if (!dir.exists(table_out_dir)) {
-  dir.create(table_out_dir, recursive = TRUE)
-}
-
-#### Create dataframes from calc out ####
-
+```{r}
 ## H2 ##
-
 # setup as data frame
 H2.df.list <- NULL
 for (i in 1:length(H2.list)) {
