@@ -1,80 +1,31 @@
 ---
-title: "Table S4: Toxicant group comparison"
+title: "Table S5: Comparison of the mean standard deviation of normalized animal lengths across toxicant groups"
 format: html
-execute: 
-  echo: false
 ---
 
 ```{r}
 #| label: toxicant-group-response-comparison-project-setup
-#| include: false
-
 library(tidyverse)
 library(flextable)
-library(here)
-
-# Source the portable project setup function
-script_dir <- tryCatch(
-  dirname(normalizePath(knitr::current_input())),
-  error = function(e) getwd()
-)
-
-# Try multiple possible locations for the setup file
-setup_file_paths <- c(
-  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
-  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
-  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
-)
-
-setup_file <- NULL
-for (path in setup_file_paths) {
-  if (file.exists(path)) {
-    setup_file <- path
-    break
-  }
-}
-
-if (!is.null(setup_file)) {
-  source(setup_file)
-  project_root <- setup_toxin_project_here()
-} else {
-  stop(
-    "Could not find setup_project_here.R in any of the expected locations: ",
-    paste(setup_file_paths, collapse = ", ")
-  )
-}
-
-if (is.null(project_root)) {
-  stop("Could not locate ToxinGWAS_Manuscript project root.")
-}
 ```
 
+```{r}
+#| include: false
+# Source the output functions
+source(file.path("bin/outs.R"))
+source(file.path("bin/materials_key.R"))
+```
+
+# Inputs 
 ```{r}
 #| label: toxicant-group-response-comparison-input
-#| include: false
-
 # Load required data
-drug_means <- readRDS(file.path(project_root, "data/processed/phenotypes/drug_means.rds"))
-
-# Source the output functions
-source(file.path(project_root, "bin/outs.R"))
-source(file.path(project_root, "bin/materials_key.R"))
+drug_means <- readRDS(file.path("data/processed/phenotypes/drug_means.rds"))
 ```
 
-
+# Main
 ```{r}
 #| label: toxicant-group-response-comparison-calculations
-#| include: false
-
-# Calculate summary statistics for both Use and MoA groups
-use_group_summary <- drug_means %>%
-  dplyr::group_by(group = big_class) %>%
-  dplyr::summarise(
-    group_type = "Use",
-    avg_sd = mean(sd_NormLength),
-    sd_avg_sd = sd(sd_NormLength)
-  )
-
 
 # Calculate summary statistics for both Use and MoA groups
 use_group_summary <- drug_means %>%
@@ -100,7 +51,6 @@ group_summary <- dplyr::bind_rows(use_group_summary, moa_group_summary) %>%
 
 ```{r}
 #| label: tbl-toxicant-group-response-comparison
-#| echo: false
 group_summary
 ```
 
@@ -163,8 +113,11 @@ group_pheno_ft <- as_flextable(
       keep_with_next = TRUE
     )
   )
+```
 
-# # Save the table using standardized functions
-# save_supp_table_csv(group_summary, "group_summary")
-# save_supp_table_flextable(group_pheno_ft, "group_summary")
+# Output
+```{r}
+# Save the table using standardized functions
+save_supp_table_csv(group_summary, "group_summary")
+save_supp_table_flextable(group_pheno_ft, "group_summary")
 ```
