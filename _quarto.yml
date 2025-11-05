@@ -12,13 +12,17 @@ project:
     - analysis/organize_strain_outliers.qmd
     - analysis/calculate_phenotype_correlations.qmd
     - analysis/calculate_enrich_each_interval.qmd
+    - analysis/interval_overlap_identification.qmd
     - analysis/hdr_summarize_strain.qmd
     - analysis/hdr_calculate_region_overlaps.qmd
+    - analysis/rank_regions.qmd
     - analysis/candidate_gene_identification.qmd
     - analysis/candidate_gene_GO.qmd
     - analysis/candidate_gene_effects.qmd
     - analysis/candidate_gene_organization.qmd
     - analysis/candidate_gene_orthologs.qmd
+    - analysis/semantic_similarity_all_genes.qmd
+    - analysis/semantic_similarity_candidate_genes.qmd
     - paper/
     - paper/aggregate_supplementary_tables.qmd
 execute: 
