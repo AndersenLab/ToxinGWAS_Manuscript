@@ -1,5 +1,5 @@
 ---
-title: GOterm enrichment for each intervals
+title: "Analysis 8: GO Enrichment for Intervals"
 ---
 
 ```{r}

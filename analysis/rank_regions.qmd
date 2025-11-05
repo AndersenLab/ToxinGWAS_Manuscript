@@ -1,5 +1,5 @@
 ---
-title: "Rank intervals detected with Inbred"
+title: "Analysis 12: Rank Regions"
 ---
 
 ```{r}

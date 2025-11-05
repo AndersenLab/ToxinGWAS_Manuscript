@@ -1,5 +1,5 @@
 ---
-title: Calculate means for different groupings
+title: "Analysis 5: Organize Strain Means"
 ---
 
 ```{r}

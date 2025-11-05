@@ -1,5 +1,5 @@
 ---
-title: "Summarize Mapping Panel HDRs"
+title: "Analysis 10: Summarize Strain HDRs"
 ---
 
 Filter to HDR regions present in GWA mapping panel strains

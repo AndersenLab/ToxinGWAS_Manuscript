@@ -1,5 +1,5 @@
 ---
-title: "Format candidate gene data with rankings and format gene names"
+title: "Analysis 16: Organize Candidate Genes"
 ---
 
 ```{r}

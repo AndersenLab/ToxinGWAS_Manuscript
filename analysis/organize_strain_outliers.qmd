@@ -1,5 +1,5 @@
 ---
-title: Identify strains with outlier responses
+title: "Analysis 6: Organize Strain Outliers"
 ---
 
 ```{r}

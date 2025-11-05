@@ -1,5 +1,5 @@
 ---
-title: "Semantic Similarity for candidate genes in Each Interval"
+title: "Analysis 19: Semantic Similarity for Candidate Genes"
 ---
 
 ```{r}

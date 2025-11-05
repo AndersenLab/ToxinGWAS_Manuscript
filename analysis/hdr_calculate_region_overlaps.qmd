@@ -1,5 +1,5 @@
 ---
-title: "Calculate Susceptibility-Associated Region HDR Overlaps"
+title: "Analysis 11: Calculate Region HDR Overlaps"
 ---
 
 Based on `DivergentRegion_Overlaps.R` script from Analysis GitHub repo.

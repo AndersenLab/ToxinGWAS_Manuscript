@@ -1,5 +1,5 @@
 ---
-title: "Decompress NemaScan Output"
+title: "Analysis 2: Decompress NemaScan Output"
 format: html
 ---
 

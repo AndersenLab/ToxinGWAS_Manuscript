@@ -1,5 +1,5 @@
 ---
-title: "Integrate finemapping beta coefficient with candidate gene data"
+title: "Analysis 15: Candidate Gene Effects"
 ---
 ```{r}
 library(dplyr)

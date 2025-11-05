@@ -1,5 +1,5 @@
 ---
-title: "Add human orthologs to the candidate genes"
+title: "Analysis 17: Candidate Gene Orthologs"
 ---
 
 # Setup

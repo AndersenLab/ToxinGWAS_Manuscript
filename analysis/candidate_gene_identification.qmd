@@ -1,5 +1,5 @@
 ---
-title: Identification of candidate genes
+title: "Analysis 13: Identify Candidate Genes"
 ---
 ```{r}
 #| label: call-candidate-genes-setup

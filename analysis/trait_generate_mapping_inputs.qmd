@@ -1,5 +1,5 @@
 ---
-title: "Code to load cleaned cell-profile data and generate mapping inputs"
+title: "Analysis 4: Generate Mapping Inputs"
 ---
 
 # Setup

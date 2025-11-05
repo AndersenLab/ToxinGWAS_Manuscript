@@ -1,5 +1,5 @@
 ---
-title: Tagging candidate genes with GO terms using clusterProfiler groupGO function
+title: "Analysis 14: Candidate Gene GO Terms"
 ---
 
 ```{r}

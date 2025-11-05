@@ -1,5 +1,5 @@
 ---
-title: Calculate phenotype correlations across toxicant conditions
+title: "Analysis 7: Calculate Phenotype Correlations"
 ---
 
 ```{r}

@@ -1,5 +1,5 @@
 ---
-title: "NemaScan Pipeline Documentation"
+title: "Analysis 1: NemaScan Pipeline Documentation"
 format: html
 execute:
   enabled: false
