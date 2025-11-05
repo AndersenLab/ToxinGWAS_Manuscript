@@ -2,7 +2,10 @@
 **/*.quarto_ipynb
 _products/*
 **/.DS_Store
+
+# Decompressed NemaScan output (keep compressed version only)
 data/processed/20231116_Analysis_NemaScan
+
 .Rproj.user
 .Rhistory
 ToxinGWAS_Manuscript.Rproj

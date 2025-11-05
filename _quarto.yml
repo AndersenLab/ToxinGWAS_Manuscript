@@ -3,6 +3,8 @@ project:
   output-dir: _products
   execute-dir: project
   render: 
+    - analysis/nemascan_pipeline_documentation.qmd
+    - analysis/decompress_nemascan_output.qmd
     - analysis/organize_tox_metadata.qmd
     - analysis/trait_generate_mapping_inputs.qmd
     - analysis/organize_strain_means.qmd

@@ -1,0 +1,56 @@
+---
+title: "Decompress NemaScan Output"
+format: html
+---
+
+This script decompresses the pre-computed NemaScan GWAS mapping results.
+
+```{r setup}
+library(tools)
+```
+
+```{r decompress}
+# Define paths
+archive_path <- "data/raw/nemascan_output/20231116_Analysis_NemaScan.tar.xz"
+output_dir <- "data/processed"
+expected_dir <- file.path(output_dir, "20231116_Analysis_NemaScan")
+
+# Check if archive exists
+if (!file.exists(archive_path)) {
+  stop(
+    "Archive not found: ", archive_path,
+    "\nPlease ensure the compressed NemaScan output is present."
+  )
+}
+
+# Check if already decompressed
+if (dir.exists(expected_dir)) {
+  message("NemaScan output already exists at: ", expected_dir)
+  message("Skipping decompression. Delete the directory to re-extract.")
+} else {
+  message("Decompressing NemaScan output...")
+  message("This may take several minutes (~6 GB of data)...")
+
+  # Decompress
+  untar(archive_path, exdir = output_dir)
+
+  # Validate decompression
+  if (!dir.exists(expected_dir)) {
+    stop("Decompression failed: expected directory not found at ", expected_dir)
+  }
+
+  # Basic validation - check for key subdirectories
+  required_dirs <- c("INBRED/Mapping", "LOCO/Mapping", "Phenotypes", "Genotype_Matrix")
+  missing_dirs <- required_dirs[!dir.exists(file.path(expected_dir, required_dirs))]
+
+  if (length(missing_dirs) > 0) {
+    warning("Some expected directories are missing: ", paste(missing_dirs, collapse = ", "))
+  } else {
+    message("✓ Decompression successful and validated")
+  }
+
+  # Count files for reference
+  n_files <- length(list.files(expected_dir, recursive = TRUE))
+  message("✓ Extracted ", n_files, " files")
+}
+```
