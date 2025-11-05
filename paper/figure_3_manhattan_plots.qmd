@@ -1,6 +1,5 @@
 ---
 execute:
-  echo: false
   warning: false
   message: false
 ---
@@ -290,5 +289,19 @@ manhattan_plots <- ggplot(d.all2) +
 ```
 
 ```{r}
-saveRDS(manhattan_plots, file = "_shared/manhattan_plots.rds")
+#| label: plot-manhattan-plots
+#| fig-width: 7.5
+#| fig-height: 5
+
+manhattan_plots
+```
+
+Save the plot as a figure
+```{r}
+save_plot(
+  manhattan_plots,
+  figure_fns$manhattan_plots,
+  w_in = 7.5,
+  h_in = 5
+)
 ```
