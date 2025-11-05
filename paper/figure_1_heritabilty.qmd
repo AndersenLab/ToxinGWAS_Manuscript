@@ -1,6 +1,6 @@
 ---
+title: "Figure 1. Heritability of toxicant susceptibilities"
 execute:
-  echo: false
   warning: false
   message: false
 ---

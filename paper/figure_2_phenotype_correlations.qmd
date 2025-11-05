@@ -1,4 +1,5 @@
 ---
+title: "Figure 2. Correlations between differences in susceptibility to toxicant conditions"
 execute:
   warning: false
   message: false

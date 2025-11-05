@@ -1,5 +1,5 @@
 ---
-title: "Plot intervals and highlight overlaps"
+title: "Figure 5. Physical overlaps of genomic regions associated with susceptibility across toxicants"
 format: html
 ---
 
