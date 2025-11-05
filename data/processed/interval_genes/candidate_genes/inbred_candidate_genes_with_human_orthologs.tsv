@@ -1,4 +1,4 @@
-Interval	Marker	Gene	Details	WBGeneID	Interval Rank	Log10p	R2	MAF	Beta Coefficient	Effect Allele	Other Allele	Locus ID	Common Name	WormBase ID	Ahringer RNAi Clone Location	Ensembl ID	HGNC Symbol	No. of Programs	Databases	SMART IDs	InterPro Domains	OMIM Phenotypes
+Interval	Marker	Gene	Details	WBGeneID	Interval Rank	Log10p	LD (r2)	MAF	Beta Coefficient	Reference Allele	Alternative Allele	Locus ID	Common Name	WormBase ID	Ahringer RNAi Clone Location	Ensembl ID	HGNC Symbol	No. of Programs	Databases	SMART IDs	InterPro Domains	OMIM Phenotypes
 Chlorothalonil (III:4478684)	III:7137768	B0280.11	Putative tyrosine-protein phosphatase B0280.11	WBGene00015106	9	10.3755893814641	0.890227	0.348718	-7.10739	T	C	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
 Paraquat 62.5 uM (II:13675568)	II:13776518	C01B9.1	Uncharacterized protein	WBGene00007220	16	6.98219869200524	0.927938	0.158974	14.5559	G	T	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
 Chlorothalonil (III:4478684)	III:7004710	C06E8.5	Uncharacterized protein	WBGene00015544	9	10.8699038398178	0.850514	0.358974	-7.23409	T	C	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
