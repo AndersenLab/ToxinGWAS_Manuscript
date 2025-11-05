@@ -1,0 +1,109 @@
+---
+title: "Aggregate Supplementary Tables into Excel Workbook"
+---
+
+# Setup
+
+```{r}
+#| label: setup
+#| include: false
+
+library(data.table)
+library(openxlsx)
+library(here)
+```
+
+```{r}
+#| include: false
+source("bin/materials_key.R")
+```
+
+# Main
+
+## Define table mapping
+
+```{r}
+#| label: define-tables
+
+# Define the table numbers and their sheet names
+table_info <- data.frame(
+  table_folder = paste0("table_S", 1:11),
+  sheet_name = paste0("Table S", 1:11),
+  stringsAsFactors = FALSE
+)
+
+print("Tables to aggregate:")
+print(table_info)
+```
+
+## Load and aggregate tables
+
+```{r}
+#| label: aggregate-tables
+
+# Create a new workbook
+wb <- openxlsx::createWorkbook()
+
+# Loop through each table and add it as a sheet
+for (i in 1:nrow(table_info)) {
+  table_folder <- table_info$table_folder[i]
+  sheet_name <- table_info$sheet_name[i]
+
+  # Construct the CSV file path
+  csv_path <- here::here("tables", table_folder, paste0(table_folder, ".csv"))
+
+  # Check if the file exists
+  if (file.exists(csv_path)) {
+    # Read the CSV
+    table_data <- data.table::fread(csv_path)
+
+    # Add worksheet
+    openxlsx::addWorksheet(wb, sheetName = sheet_name)
+
+    # Write data to worksheet
+    openxlsx::writeData(
+      wb,
+      sheet = sheet_name,
+      x = table_data,
+      startRow = 1,
+      startCol = 1,
+      headerStyle = openxlsx::createStyle(
+        textDecoration = "bold",
+        border = "bottom"
+      )
+    )
+
+    # Auto-size columns for better readability
+    openxlsx::setColWidths(
+      wb,
+      sheet = sheet_name,
+      cols = 1:ncol(table_data),
+      widths = "auto"
+    )
+
+    # Freeze the header row
+    openxlsx::freezePane(wb, sheet = sheet_name, firstRow = TRUE)
+
+    message(sprintf("Added %s to workbook (%d rows)", sheet_name, nrow(table_data)))
+  } else {
+    warning(sprintf("CSV file not found: %s", csv_path))
+  }
+}
+```
+
+## Save Excel workbook
+
+```{r}
+#| label: save-workbook
+
+# Define output path
+output_path <- here::here("tables", "supplementary_tables.xlsx")
+
+# Save the workbook
+openxlsx::saveWorkbook(wb, output_path, overwrite = TRUE)
+
+message(sprintf("\nExcel workbook saved to: %s", output_path))
+message(sprintf("Total sheets: %d", length(openxlsx::sheets(wb))))
+```
+
+

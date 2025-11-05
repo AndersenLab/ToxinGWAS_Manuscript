@@ -1,6 +1,5 @@
 /.quarto/
 **/*.quarto_ipynb
-_products/*
 **/.DS_Store
 
 # Decompressed NemaScan output (keep compressed version only)
