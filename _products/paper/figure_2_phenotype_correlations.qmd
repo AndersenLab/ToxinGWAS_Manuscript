@@ -1,0 +1,248 @@
+---
+title: "Figure 02. Correlations between differences in susceptibility to toxicant conditions"
+execute:
+  warning: false
+  message: false
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+library(pheatmap)
+library(cowplot)
+library(glue)
+library(here)
+```
+
+
+```{r}
+#| include: false
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
+
+```{r}
+#| include: false
+# Load correlation data
+pheno_corr_all <- readRDS(file.path("data/processed/phenotypes/pheno_corr_all.Rds"))
+tox_data <- data.table::fread(file.path("data/processed/tox_data/con_metadata.csv"))
+strain_means_pivot_matrix <- readRDS(file.path("data/processed/phenotypes/strain_means_matrix.rds"))
+```
+
+Report out the average correlation across all toxicant conditions
+```{r}
+init_corr_coef <- pheno_corr_all$r
+
+corr_coef_df <- as_tibble(init_corr_coef, rownames = "trait1") %>%
+  pivot_longer(-trait1, names_to = "trait2", values_to = "r_value")
+
+# calculate the average correlation
+pheno_corr_all_avg <- corr_coef_df %>%
+  dplyr::filter(trait1 != trait2) %>%
+  dplyr::summarise(
+    mean_r = mean(r_value, na.rm = TRUE),
+    sd_r = sd(r_value, na.rm = TRUE),
+    q1_r = quantile(r_value, probs = 0.25, na.rm = TRUE),
+    q3_r = quantile(r_value, probs = 0.75, na.rm = TRUE),
+    upper_threshold_r = q3_r + 1.5 * (q3_r - q1_r),
+    lower_threshold_r = q1_r - 1.5 * (q3_r - q1_r)
+  )
+pheno_corr_all_avg
+```
+
+To annotate the cells of the clustered heatmap reprocess the correlation data after performing the clustering so that the annotation matricies align with the clusterd conditions
+
+```{r}
+# perform clustering on pairwise Spearman correlation coefficients
+clust <- pheatmap::pheatmap(init_corr_coef)
+
+# get the clustered order of the toxicants
+desired_order <- rownames(init_corr_coef)[clust$tree_row$order]
+
+# reshape the strain matrix to match cluster order
+strain_means_pivot_matrix2 <- strain_means_pivot_matrix[, desired_order]
+
+pheno_corr_all2 <- psych::corr.test(
+  strain_means_pivot_matrix2,
+  use = "pairwise",
+  adjust = "bonferroni",
+  method = "spearman"
+)
+
+# get the reordered correlation coefficients and p-values
+pheno_corr_all_r <- pheno_corr_all2$r
+pheno_corr_all_p <- pheno_corr_all2$p
+pheno_corr_all_p_symbol <- ifelse(round(pheno_corr_all2$p, digits = 3) <= 0.05, "*", " ")
+```
+
+Check to identify significant correlations:
+
+Lower triangle with un-corrected p-valyes
+```{r}
+# pull the lower and top diagonals for detailed analysis
+# 299 pos, 26 neg
+# lower raw
+# 185 pos, 2 neg sig raw
+lower_r_raw <- pheno_corr_all2$r
+lower_r_raw[upper.tri(lower_r_raw, diag = T)] <- NA_real_
+lower_r_proc <- as_tibble(lower_r_raw) %>%
+  dplyr::mutate(y_trait = row.names(lower_r_raw)) %>%
+  tidyr::pivot_longer(cols = -y_trait, names_to = "x_trait", values_to = "r") %>%
+  dplyr::filter(!is.na(r)) %>%
+  dplyr::mutate(
+    neg_n = sum(r < 0),
+    pos_n = sum(r > 0)
+  )
+
+lower_p_raw <- pheno_corr_all2$p
+lower_p_raw[upper.tri(lower_p_raw, diag = T)] <- NA_real_
+lower_p_proc <- as_tibble(lower_p_raw) %>%
+  dplyr::mutate(y_trait = row.names(lower_p_raw)) %>%
+  tidyr::pivot_longer(cols = -y_trait, names_to = "x_trait", values_to = "raw_p") %>%
+  dplyr::filter(!is.na(raw_p)) %>%
+  dplyr::mutate(`raw_p<0.05` = ifelse(raw_p < 0.05, T, F))
+
+lower_proc <- dplyr::left_join(lower_r_proc, lower_p_proc) %>%
+  dplyr::mutate(
+    pos_sig_n = sum(r > 0 & `raw_p<0.05` == T),
+    neg_sig_n = sum(r < 0 & `raw_p<0.05` == T)
+  )
+
+```
+
+Upper triangle with Bonferroni corrected p-values
+```{r}
+# top or bonferroni corrected
+# 88 pos, 0 neg sig
+top_r_raw <- pheno_corr_all2$r
+top_r_raw[lower.tri(top_r_raw, diag = T)] <- NA_real_
+top_r_proc <- as_tibble(top_r_raw) %>%
+  dplyr::mutate(y_trait = row.names(top_r_raw)) %>%
+  tidyr::pivot_longer(cols = -y_trait, names_to = "x_trait", values_to = "r") %>%
+  dplyr::filter(!is.na(r)) %>%
+  dplyr::mutate(
+    neg_n = sum(r < 0),
+    pos_n = sum(r > 0)
+  )
+
+top_p_raw <- pheno_corr_all2$p
+top_p_raw[lower.tri(top_p_raw, diag = T)] <- NA_real_
+top_p_proc <- as_tibble(top_p_raw) %>%
+  dplyr::mutate(y_trait = row.names(top_p_raw)) %>%
+  tidyr::pivot_longer(cols = -y_trait, names_to = "x_trait", values_to = "BF_p") %>%
+  dplyr::filter(!is.na(BF_p)) %>%
+  dplyr::mutate(`BF_p<0.05` = ifelse(BF_p < 0.05, T, F))
+
+top_proc <- dplyr::left_join(top_r_proc, top_p_proc) %>%
+  dplyr::mutate(
+    pos_sig_n = sum(r > 0 & `BF_p<0.05` == T),
+    neg_sig_n = sum(r < 0 & `BF_p<0.05` == T)
+  )
+top_proc
+```
+
+```{r}
+#| include: false
+# Create the color palette and annotation data
+
+
+# Set color palette for annotations
+class.pal.df <- tibble::tibble(
+  col = c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
+  big_class = c("Flame Retardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
+)
+
+# filter the meta data to include only toxicant and join to the class palette
+tox_cols <- tox_data %>%
+  # remove the controls
+  dplyr::filter(big_class != "Control") %>%
+  dplyr::select(drug, nice_drug_label2, big_class, moa_class) %>%
+  # Clean up to have special character for plotting
+  dplyr::mutate(nice_drug_label2 = stringr::str_replace(nice_drug_label2, pattern = "uM", replacement = "µM")) %>%
+  # join to the class palette
+  dplyr::left_join(., class.pal.df, by = c("big_class" = "big_class")) %>%
+  dplyr::select(drug, nice_drug_label2, big_class, moa_class, col) %>%
+  dplyr::rename(MoA = moa_class, Use = big_class) %>%
+  # In moa_class column replace Other|unknown with "Other / unknown"
+  dplyr::mutate(MoA = stringr::str_replace(MoA, pattern = "Other\\|unknown", replacement = "Other / unknown"))
+
+# Create a mapping from drug to nice_drug_label2
+drug_to_label <- setNames(tox_cols$nice_drug_label2, tox_cols$drug)
+
+
+# Update row and column names of correlation matrices
+rownames(pheno_corr_all_r) <- drug_to_label[rownames(pheno_corr_all_r)]
+colnames(pheno_corr_all_r) <- drug_to_label[colnames(pheno_corr_all_r)]
+rownames(pheno_corr_all_p_symbol) <- drug_to_label[rownames(pheno_corr_all_p_symbol)]
+colnames(pheno_corr_all_p_symbol) <- drug_to_label[colnames(pheno_corr_all_p_symbol)]
+
+moa_anno_df <- tox_cols %>%
+  # set the row names to the nice drug label
+  tibble::column_to_rownames(var = "nice_drug_label2") %>%
+  # rename the big class column to Class
+  # dplyr::rename(Class = Use) %>%
+  # remove the drug and color columns
+  dplyr::select(-drug, -col)
+# In moa_class column replace Other|unknown with "Other / unknown"
+# dplyr::mutate(moa_class = stringr::str_replace(moa_class, pattern = "Other|unknown", replacement = "Other / unknown")) %>%
+# dplyr::rename(MoA = moa_class, Use = Class)
+
+
+# Create annotation colors
+cols <- unique(class.pal.df$col)
+names(cols) <- unique(class.pal.df$big_class)
+anno_cols <- list(Use = cols)
+```
+
+```{r}
+#| include: false
+create_phenotype_heatmap <- function(similarity_matrix, con_metadata_df, anno_cols, significance_matrix) {
+  # Perform hierarchical clustering on rows to get the dendrogram
+  row_dist <- dist(similarity_matrix)
+  row_hclust <- hclust(row_dist)
+
+  # Use the same clustering order for both rows and columns
+  # (since it's a symmetric similarity matrix)
+  p <- pheatmap::pheatmap(
+    similarity_matrix,
+    annotation_row = con_metadata_df,
+    annotation_colors = anno_cols,
+    width = 7.5,
+    height = 6,
+    color = colorRampPalette(c("navy", "white", "darkred"))(1000),
+    breaks = seq(-1, 1, length.out = (1000 + 1)),
+    show_colnames = TRUE,
+    fontsize_number = 12,
+    display_numbers = significance_matrix,
+    cluster_rows = row_hclust,
+    cluster_cols = FALSE,
+    cutree_rows = 2,
+    silent = TRUE
+  )
+  return(p)
+}
+```
+
+
+```{r}
+#| label: fig-phenotype-correlations
+#| fig-width: 7.5
+#| fig-height: 6
+phenotype_correlations <- create_phenotype_heatmap(
+  similarity_matrix = pheno_corr_all_r,
+  con_metadata_df = moa_anno_df,
+  significance_matrix = pheno_corr_all_p_symbol,
+  anno_cols = anno_cols
+)
+phenotype_correlations
+```
+
+Save publication figure
+```{r}
+save_plot(
+  tplot = phenotype_correlations,
+  fn_list = figure_fns$phenotype_correlations,
+  w_in = 7.5,
+  h_in = 5
+)
+```

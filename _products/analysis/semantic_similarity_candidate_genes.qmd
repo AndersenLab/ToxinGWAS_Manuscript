@@ -1,0 +1,166 @@
+---
+title: "Analysis 19: Semantic Similarity for Candidate Genes"
+---
+
+```{r}
+#| label: semsim_candidate_genes_setup
+
+library(dplyr)
+library(data.table)
+library(glue)
+
+source("bin/SemSim.R")
+source("bin/genes.R")
+```
+
+# Inputs
+```{r}
+#| label: semsim_candidate_genes_inputs
+# path to NS output directory
+
+# Candidate gene output from `finemapping_curation` script
+candidate_out_name <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes.tsv.gz"
+```
+
+# Outputs
+```{r}
+#| label: semsim_candidate_genes_outputs
+
+# Output directory for semantic similarity results
+out_dir <- "data/processed/semantic_similarity"
+out_fn <- "candidate_semSim.rds"
+
+# check if the output directory exists, if not create it
+if (!dir.exists(out_dir)) {
+  dir.create(out_dir, recursive = TRUE)
+}
+```
+
+# Functions
+```{r}
+#| label: semsim_candidate_genes_functions
+
+#' Prepare candidate gene clusters for semantic similarity analysis
+#' @param candidate_df A dataframe with candidate gene data
+#' @return A list of gene clusters by trait
+prepare_trait_clusters <- function(candidate_df) {
+  trait.clusters <- NULL
+
+  # Get unique traits
+  traits <- unique(candidate_df$trait)
+
+  for (trait_id in traits) {
+    # Get genes for this trait
+    genes <- candidate_df %>%
+      dplyr::filter(trait == trait_id) %>%
+      dplyr::pull(WBGeneID) %>%
+      unique()
+
+    # Convert WBGeneID to Entrez IDs
+    genes.entrez <- clusterProfiler::bitr(
+      geneID = genes,
+      fromType = "ENSEMBL",
+      toType = "ENTREZID",
+      OrgDb = "org.Ce.eg.db"
+    ) %>%
+      dplyr::pull(ENTREZID)
+
+    # Add to list
+    trait.clusters[[trait_id]] <- genes.entrez
+  }
+
+  return(trait.clusters)
+}
+
+#' Calculate semantic similarity between gene clusters
+#' @param gene_clusters List of gene clusters by trait
+#' @return Matrix of semantic similarity scores
+calculate_semantic_similarity <- function(gene_clusters) {
+  # Create GO data object
+  cEGO <- GOSemSim::godata("org.Ce.eg.db", ont = "BP")
+
+  # Calculate semantic similarity
+  semSim <- GOSemSim::mclusterSim(
+    gene_clusters,
+    semData = cEGO,
+    measure = "Wang",
+    combine = "BMA"
+  )
+
+  return(semSim)
+}
+
+#' Generate summary statistics for GO term coverage
+#' @param candidate_df A dataframe with candidate gene data
+#' @return A dataframe with GO term coverage statistics
+generate_go_coverage_stats <- function(candidate_df) {
+  # Get unique traits
+  traits <- unique(candidate_df$trait)
+
+  # Initialize results list
+  stats <- list()
+
+  for (trait_id in traits) {
+    # Get genes for this trait
+    genes <- candidate_df %>%
+      dplyr::filter(trait == trait_id) %>%
+      dplyr::pull(WBGeneID) %>%
+      unique()
+
+    # Convert to Entrez IDs
+    genes.entrez <- clusterProfiler::bitr(
+      geneID = genes,
+      fromType = "ENSEMBL",
+      toType = "ENTREZID",
+      OrgDb = "org.Ce.eg.db"
+    )
+
+    # Calculate statistics
+    stats[[trait_id]] <- data.frame(
+      trait = trait_id,
+      total_genes = length(genes),
+      genes_with_entrez = nrow(genes.entrez),
+      proportion_with_entrez = nrow(genes.entrez) / length(genes)
+    )
+  }
+
+  # Combine results
+  stats_df <- do.call(rbind, stats)
+  return(stats_df)
+}
+```
+
+# Main
+```{r}
+#| label: semsim_candidate_genes_go_covergage
+
+candidate_raw <- data.table::fread(candidate_out_name)
+
+# Generate GO term coverage statistics
+coverage_stats <- generate_go_coverage_stats(candidate_raw)
+
+# Print coverage statistics
+print("GO term coverage statistics:")
+print(coverage_stats)
+```
+
+```{r}
+#| label: semsim_candidate_genes_main
+
+# Prepare gene clusters for semantic similarity analysis
+candidate_gene_clusters <- prepare_trait_clusters(candidate_raw)
+
+# Calculate semantic similarity
+candidate_semSim <- GOSemSim::mclusterSim(
+  candidate_gene_clusters,
+  semData = cEGO,
+  measure = "Wang",
+  combine = "BMA"
+)
+
+# save as rds file
+saveRDS(candidate_semSim, file = glue::glue("{out_dir}/{out_fn}"))
+
+# print message
+message(glue::glue("Candidate genes semantic similarity saved to {out_dir}/{out_fn}"))
+```

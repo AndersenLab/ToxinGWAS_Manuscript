@@ -1,0 +1,79 @@
+---
+title: "Figure S03. Number of strains with extreme susceptibility profiles across 26 toxicant exposures"
+execute:
+  warning: false
+  message: false
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+library(ggplot2)
+
+# Source the output functions
+source(file.path("bin", "outs.R"))
+source(file.path("bin", "materials_key.R"))
+```
+
+# Inputs
+```{r}
+# Load the outlier summary data
+outlier_summary_df <- read.csv(file.path("data", "processed", "phenotypes", "outlier_summary_df.csv"))
+```
+
+# Main
+```{r}
+# Plot the histogram of the number of times a strain is designated an outlier
+n_outlier_hist <- outlier_summary_df %>%
+  ggplot2::ggplot(
+    aes(
+      x = Count,
+      fill = Outlier_Type,
+      group = Outlier_Type
+    )
+  ) +
+  ggplot2::geom_histogram(
+    binwidth = 1,
+    position = "dodge",
+    color = "black"
+  ) +
+  ggplot2::scale_fill_manual(
+    values = c("n_HighResponder" = "red", "n_LowResponder" = "blue"),
+    labels = c("n_HighResponder" = "Highly susceptible", "n_LowResponder" = "Minimally susceptible")
+  ) +
+  ggplot2::labs(
+    x = "Number of conditions with same susceptibility",
+    y = "Strains",
+    fill = "Susceptibility"
+  ) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    # remove internal grid lines
+    panel.grid = ggplot2::element_blank(),
+    legend.position = "inside",
+    legend.position.inside = c(0.85, 0.90),
+    text = element_text(size = 10),
+    legend.title = element_text(face = "bold"),
+    axis.title.x = element_text(face = "bold"),
+    axis.title.y = element_text(face = "bold")
+  ) +
+  ggplot2::scale_x_continuous(breaks = 1:max(outlier_summary_df$Count))
+
+```
+
+
+```{r}
+#| label: fig-n_outlier_hist
+#| fig-width: 7.5
+#| fig-height: 7.5
+n_outlier_hist
+```
+
+```{r}
+# Save the strain means plot as supplementary figure 2
+save_plot(
+  n_outlier_hist,
+  sup_figure_fns$n_outlier_hist,
+  w_in = 7.5, h_in = 7.5
+)
+```

@@ -1,0 +1,111 @@
+---
+title: "Table S02. Environmental toxicants and exposure conditions assayed"
+format: html
+---
+
+```{r}
+library(data.table)
+library(dplyr)
+library(flextable)
+library(glue)
+```
+
+```{r}
+#| include: false
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
+
+# inputs
+```{r}
+tox_metadata_fn <- "data/processed/tox_data/tox_metadata.csv"
+con_data_fn <- "data/processed/tox_data/con_metadata.csv"
+```
+
+# main
+```{r}
+# load the tox and the con metadata
+tox_metadata <- data.table::fread(tox_metadata_fn)
+con_data <- data.table::fread(con_data_fn)
+
+
+## Create the toxicant summary table ##
+# prepare the tox metadata for the table
+tox_table_pre <- tox_metadata %>%
+  dplyr::select(
+    PREFERRED_NAME,
+    cas,
+    cat_num,
+    source,
+    stock_mM,
+    concentration_um,
+    diluent,
+    big_class,
+    moa_class
+  ) %>%
+  # make the stock_mM a character
+  dplyr::mutate(
+    stock_mM = as.character(stock_mM)
+  ) %>%
+  dplyr::distinct() %>%
+  dplyr::mutate(
+    cas = as.character(cas),
+    source = "Sigma-Aldrich",
+    source_cat = cat_num
+  ) %>%
+  dplyr::select(-source, -cat_num) %>%
+  dplyr::rename(
+    "Toxicant" = PREFERRED_NAME,
+    "CAS" = cas,
+    "Sigma Catalog Number" = source_cat,
+    "Stock (mM)" = stock_mM,
+    "Use Group" = big_class,
+    "MoA Group" = moa_class
+  )
+
+
+tox_table_ft <- flextable::flextable(
+  tox_table_pre,
+  col_keys = c(
+    "Toxicant",
+    "CAS",
+    "Sigma Catalog Number",
+    "Stock (mM)",
+    "concentration_um",
+    "diluent",
+    "Use Group",
+    "MoA Group"
+  )
+) %>%
+  flextable::set_header_labels(
+    values = list(
+      "Toxicant" = "Toxicant",
+      "CAS" = "CAS",
+      "Sigma Catalog Number" = "Sigma Catalog Number",
+      "Stock (mM)" = "Stock (mM)",
+      concentration_um = "Concentration µM",
+      diluent = "Diluent",
+      "Use Group" = "Use Group",
+      "MoA Group" = "MoA Group"
+    )
+  ) %>%
+  flextable::line_spacing(space = 1, part = "all") %>%
+  flextable::align(j = 1, align = "left") %>%
+  flextable::align(j = 2, align = "center") %>%
+  flextable::align(j = 3, align = "center") %>%
+  flextable::align(j = 4, align = "right") %>%
+  flextable::bold(part = "header") %>%
+  flextable::bold(j = "Toxicant") %>%
+  flextable::set_table_properties(
+    layout = "autofit",
+    width = 1,
+    opts_word = list(
+      split = FALSE,
+      keep_with_next = TRUE
+    )
+  )
+
+# save the table as a flextable and a csv
+save_supp_table_csv(tox_table_pre, "tox_table_ft")
+save_supp_table_flextable(tox_table_ft, "tox_table_ft")
+```

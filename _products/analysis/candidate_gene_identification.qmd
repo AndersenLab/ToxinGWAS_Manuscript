@@ -1,0 +1,309 @@
+---
+title: "Analysis 13: Identify Candidate Genes"
+---
+```{r}
+#| label: call-candidate-genes-setup
+library(data.table)
+library(tidyverse)
+library(magrittr)
+library(valr)
+library(stringr)
+
+set.seed(123)
+
+source("bin/outs.R")
+```
+
+# Inputs
+
+`ns_dir` - Path containing the NemaScan output directory. Used to load the BCSQ fine-mapping results
+`divergent_strain_bed` - Path to a divergent regions strain bed file
+
+```{r}
+#| label: call-candidate-genes-inputs
+ns_dir <- "data/processed/20231116_Analysis_NemaScan"
+divergent_strain_bed <- "data/raw/HDR/20240408_c_elegans_divergent_regions.bed"
+```
+
+# Outputs
+
+```{r}
+#| label: call-candidate-genes-outputs
+inbred_candidates_df_out_name <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes.tsv.gz"
+```
+
+# Functions
+```{r}
+#| label: call-candidate-genes-functions
+
+#### Functions ####
+
+joinDivergence <- function(pos.data, div.data, pos.strain) {
+  intersect <- valr::bed_intersect(
+    pos.data,
+    div.data
+  )
+  if (nrow(intersect) == 0) {
+    pos.data %>%
+      dplyr::mutate(
+        divergent = "NOT_DIVERGENT",
+        strain = pos.strain
+      )
+  } else {
+    intersect %>%
+      dplyr::mutate(divergent = "DIVERGENT") %>%
+      dplyr::select(chrom, start.x, end.x, divergent) %>%
+      dplyr::mutate(strain = pos.strain) %>%
+      dplyr::rename(
+        start = start.x,
+        end = end.x
+      )
+  }
+}
+
+# Function to get trait name from the file path
+get_traitname <- function(x) {
+  # get the name of the file
+  fn <- basename(x)
+
+  # remove the extension and file type info
+  id <- gsub("_bcsq_genes_inbred.tsv", "", fn)
+  # print(id)
+
+
+  # Regular expression to match Roman numerals
+  chrom_pattern <- "(?<=_)(I|II|III|IV|V|VI|X)(?=_)"
+
+  # Split the string at the Roman numeral
+  parts <- strsplit(id, chrom_pattern, perl = TRUE)
+
+  # Extract the parts before and after the Roman numeral
+  trait <- sapply(parts, `[`, 1)
+  interval <- sapply(parts, `[`, 2)
+
+  # Remove the last underscore from 'before' and the first underscore from 'after'
+  trait <- sub("_$", "", trait)
+  interval <- sub("^_", "", interval)
+
+  # Extract the Roman numeral
+  chrom <- regmatches(x, regexpr(chrom_pattern, x, perl = TRUE))
+
+  # Return a list of before, after, and roman parts
+  list(trait = trait, interval = interval, chrom = chrom)
+}
+
+# # # test with just one value
+# values <- "data/processed/20231116_Analysis_NemaScan/INBRED/Fine_Mappings/Data/length_Paraquat_62_5_X_2674396-4285086"
+# result <- get_traitname(values)
+# print(result$trait)
+# print(result$interval)
+# print(result$chrom)
+
+
+summarize.gene.candidates <- function(bcsq.file, LD, MAF, logPthresh, algorithm) {
+  # BCSQ data for a single QTL
+
+  # get the QTL information from the file path
+  trait_info <- get_traitname(bcsq.file)
+
+
+  bcsq.data <- data.table::fread(bcsq.file) %>%
+    dplyr::filter(
+      VARIANT_LD_WITH_PEAK_MARKER > LD,
+      MAF_variant > MAF,
+      VARIANT_IMPACT == "HIGH",
+      VARIANT_LOG10p > logPthresh
+    )
+
+  if (nrow(bcsq.data) == 0) {
+    print("no markers pass filter")
+  } else {
+    # Nest by marker genotype - what is the breakdown of divergence within each genotype class?
+    nest.for.div <- bcsq.data %>%
+      dplyr::select(CHROM, POS, MARKER, STRAIN_GENOTYPE, STRAIN) %>%
+      dplyr::group_by(MARKER, STRAIN_GENOTYPE) %>%
+      tidyr::nest()
+
+    # x <- nest.for.div$data[[2]]
+    # nest.marker <- nest.for.div$MARKER[[2]]
+    # nest.genotype <- nest.for.div$STRAIN_GENOTYPE[[2]]
+    QTLdivergence <- function(x, nest.marker, nest.genotype) {
+      # lengthen for each strain and nest
+      marker.data <- data.frame(stringr::str_split(x$STRAIN, pattern = ",")[[1]]) %>%
+        `colnames<-`(c("strain")) %>%
+        cbind(x %>% dplyr::select(-STRAIN), .) %>%
+        dplyr::rename(chrom = CHROM) %>%
+        dplyr::mutate(
+          start = POS,
+          end = POS
+        ) %>%
+        dplyr::select(-POS) %>%
+        dplyr::filter(strain != "N2") %>%
+        dplyr::group_by(strain) %>%
+        tidyr::nest()
+
+      # pull divergent regions for each strain
+      div.test <- divergent_strain %>%
+        dplyr::filter(strain %in% unique(marker.data$strain)) %>%
+        dplyr::arrange(strain) %>%
+        dplyr::group_by(strain) %>%
+        tidyr::nest()
+
+      # # for testing
+      # out <- list()
+      # for(i in 1:length(marker.data$data)){
+      #   out[[i]] <- joinDivergence(pos.data = marker.data$data[[i]],
+      #                              div.data = div.test$data[[i]],
+      #                              pos.strain = marker.data$strain[[i]])
+      # }
+      # data.frame(Reduce(rbind, out)) %>%
+      #   dplyr::group_by(divergent) %>%
+      #   dplyr::count()
+
+
+      out <- purrr::pmap(
+        list(
+          marker.data$data,
+          div.test$data,
+          marker.data$strain
+        ),
+        joinDivergence
+      ) %>%
+        Reduce(rbind, .) %>%
+        dplyr::mutate(
+          MARKER = nest.marker,
+          ALLELE = nest.genotype
+        )
+      return(data.frame(out))
+    }
+    divergence.for.marker <- purrr::pmap(
+      .l = list(
+        nest.for.div$data,
+        nest.for.div$MARKER,
+        nest.for.div$STRAIN_GENOTYPE
+      ),
+      .f = QTLdivergence
+    ) %>%
+      Reduce(rbind, .) %>%
+      dplyr::group_by(MARKER, ALLELE, divergent) %>%
+      dplyr::count()
+
+    div.bcsq.data <- bcsq.data %>%
+      dplyr::distinct(MARKER, CHROM, POS, GENE_NAME, WBGeneID, PEAK_MARKER, VARIANT_LD_WITH_PEAK_MARKER, MAF_variant, VARIANT_IMPACT, VARIANT_LOG10p) %>%
+      dplyr::mutate(
+        trait = trait_info$trait,
+        interval = trait_info$interval,
+      ) %>%
+      # dplyr::arrange(-VARIANT_LOG10p, QTL) %>%
+      dplyr::left_join(., divergence.for.marker)
+    return(div.bcsq.data)
+  }
+}
+
+alleleDivergence <- function(data, marker, qtl) {
+  n.strains <- sum(data$n)
+  divergent.annotated <- data %>%
+    dplyr::mutate(
+      MARKER = marker,
+      QTL = qtl
+    ) %>%
+    dplyr::group_by(CHROM, POS, MAF_variant, GENE_NAME, WBGeneID, PEAK_MARKER, VARIANT_IMPACT, VARIANT_LD_WITH_PEAK_MARKER, VARIANT_LOG10p, MARKER, QTL, ALLELE) %>%
+    tidyr::pivot_wider(names_from = divergent, values_from = n)
+  divergent.annotated[is.na(divergent.annotated)] <- 0
+
+  if ("DIVERGENT" %in% colnames(divergent.annotated)) {
+    divergent.annotated %>%
+      dplyr::mutate(pct.allele.divergent = (DIVERGENT / (DIVERGENT + NOT_DIVERGENT)) * 100) %>%
+      dplyr::select(-DIVERGENT, -NOT_DIVERGENT) %>%
+      tidyr::pivot_wider(
+        id_cols = c(CHROM, POS, MAF_variant, GENE_NAME, WBGeneID, PEAK_MARKER, VARIANT_IMPACT, VARIANT_LD_WITH_PEAK_MARKER, VARIANT_LOG10p, QTL),
+        names_from = ALLELE,
+        values_from = pct.allele.divergent
+      ) %>%
+      dplyr::rename(
+        pct.divergent.ALT = ALT,
+        pct.divergent.REF = REF
+      )
+  } else {
+    divergent.annotated %>%
+      dplyr::ungroup() %>%
+      dplyr::distinct(CHROM, POS, MAF_variant, GENE_NAME, WBGeneID, PEAK_MARKER, VARIANT_IMPACT, VARIANT_LD_WITH_PEAK_MARKER, VARIANT_LOG10p, QTL) %>%
+      dplyr::mutate(
+        pct.divergent.ALT = 0,
+        pct.divergent.REF = 0
+      )
+  }
+}
+
+
+```
+
+# Main 
+```{r}
+#| label: call-candidate-genes-main
+# Pull the BCSQ files for LOCO and INBRED QTL fine mapping
+# This is confusing terms the LOCO files are loco QTL that have been fine mapped by inbred in NS pipeline
+# bcsq.loco <- list.files(
+#   path= glue::glue("{ns_dir}/LOCO/Fine_Mappings/Data"),
+#   pattern = "genes_loco"
+#   )
+
+bcsq.inbred <- list.files(
+  path = glue::glue("{ns_dir}/INBRED/Fine_Mappings/Data"),
+  pattern = "genes_inbred",
+  recursive = T,
+  full.names = T
+)
+
+n_bcsq.inbred <- length(bcsq.inbred)
+
+print(
+  glue::glue("Found {n_bcsq.inbred} INBRED fine mapping BCSQ files")
+)
+
+# Remove the CV_length_{trait} files keeping only length_{trait} files
+# bcsq.loco <- bcsq.loco[!grepl("CV_length", bcsq.loco)]
+
+bcsq.inbred <- bcsq.inbred[!grepl("CV_length", bcsq.inbred)]
+
+print(
+  glue::glue("Filtered to {length(bcsq.inbred)} INBRED length fine mapping BCSQ files")
+)
+
+divergent_strain <- data.table::fread(
+  divergent_strain_bed
+) %>%
+  dplyr::rename(
+    chrom = V1,
+    start = V2,
+    end = V3,
+    strain = V4
+  )
+## INBRED
+
+inbred_candidates_input <- list(
+  bcsq.inbred,
+  rep(0.75, length(bcsq.inbred)), # LD threshold
+  rep(0.05, length(bcsq.inbred)), # MAF threshold
+  rep(5, length(bcsq.inbred)), # log10p value cutoff
+  rep("inbred", length(bcsq.inbred))
+)
+
+bcsq.inbred.candidates <- purrr::pmap(
+  inbred_candidates_input,
+  summarize.gene.candidates
+)
+# head(bcsq.inbred.candidates)
+
+# remove any elements of the list that are "no markers pass filter"
+bcsq.inbred.candidates_fil <- purrr::keep(bcsq.inbred.candidates, is.data.frame)
+
+# str(bcsq.inbred.candidates_fil[[1]])
+
+# bind the list of dataframes into a single dataframe
+bcsq.inbred.candidates_fil <- Reduce(rbind, bcsq.inbred.candidates_fil)
+
+## Save the data
+save_compressed_tsv(bcsq.inbred.candidates_fil, inbred_candidates_df_out_name)
+
+```

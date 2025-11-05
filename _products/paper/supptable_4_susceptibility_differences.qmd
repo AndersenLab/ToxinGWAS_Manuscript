@@ -1,0 +1,89 @@
+---
+title: "Table S04. Differences in susceptibility to toxicant conditions among strains"
+format: html
+---
+
+```{r}
+# code to generate a table summarizing the phenotype data
+library(tidyverse)
+library(flextable)
+library(officer)
+```
+
+```{r}
+#| include: false
+# Source the output functions
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
+
+# Inputs
+```{r}
+# Load required data
+strain_means_anno <- read.csv("data/processed/phenotypes/strain_means_anno.csv")
+```
+
+# Main
+
+# Create summary table by toxicant class
+```{r}
+outlier_summary <- strain_means_anno %>%
+  dplyr::group_by(nice_drug_label2) %>%
+  dplyr::summarise(
+    mean_response = mean(StrainMean_NormLength),
+    sd_response = sd(StrainMean_NormLength),
+    high_susceptible = paste(unique(strain[HighResponder == 1]), collapse = ", "),
+    low_susceptible = paste(unique(strain[LowResponder == 1]), collapse = ", ")
+  ) %>%
+  dplyr::rename(
+    "Toxicant" = nice_drug_label2,
+    "Mean Response" = mean_response,
+    "SD" = sd_response,
+    "Highly Susceptible Strains" = high_susceptible,
+    "Minimally Susceptible Strains" = low_susceptible
+  ) %>%
+  dplyr::arrange(desc(SD))
+
+# Create flextable
+outlier_ft <- flextable::flextable(
+  outlier_summary,
+  col_keys = c(
+    "Toxicant",
+    "SD",
+    "Highly Susceptible Strains",
+    "Minimally Susceptible Strains"
+  )
+) %>%
+  flextable::set_header_labels(
+    values = list(
+      "Toxicant" = "Toxicant",
+      "SD" = "SD",
+      "Highly Susceptible Strains" = "Highly Susceptible Strains",
+      "Minimally Susceptible Strains" = "Minimally Susceptible Strains"
+    )
+  ) %>%
+  flextable::line_spacing(space = 1, part = "all") %>%
+  flextable::align(j = 1, align = "left") %>%
+  flextable::align(j = 2, align = "center") %>%
+  flextable::align(j = 3, align = "center") %>%
+  flextable::align(j = 4, align = "center") %>%
+  flextable::bold(part = "header") %>%
+  flextable::bold(j = "Toxicant") %>%
+  flextable::hline(part = "body") %>%
+  flextable::set_table_properties(
+    layout = "autofit",
+    width = 1,
+    opts_word = list(
+      split = FALSE,
+      keep_with_next = TRUE
+    )
+  )
+
+# Save the table using standardized functions
+save_supp_table_csv(outlier_summary, "outlier_ft")
+save_supp_table_flextable(outlier_ft, "outlier_ft")
+```
+
+```{r}
+outlier_ft
+```

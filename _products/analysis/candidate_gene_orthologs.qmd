@@ -1,0 +1,106 @@
+---
+title: "Analysis 17: Candidate Gene Orthologs"
+---
+
+# Setup
+```{r}
+library(tidyverse)
+library(data.table)
+```
+
+# Inputs
+`candidate_out_name` - path to the candidate file output by `analysis/call_candidate_genes.qmd` and then modified in `analysis/candidate_gene_effects.qmd`, and finally `analysis/candidate_gene_organization.qmd`
+
+`orthos` - data frame of human orthologs for C. elegans genes downloaded from http://ortholist.shaye-lab.org/
+
+```{r}
+candidate_out_name <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes_table.tsv"
+
+orthos_fn <- "data/raw/orthologs/ortholist_master.xlsx"
+```
+
+# Main
+
+Filter candidates to those in ranked QTL and unqiue genes
+```{r}
+cg <- data.table::fread(candidate_out_name)
+
+fg <- cg %>%
+  dplyr::filter(!is.na(`Interval Rank`)) %>%
+  dplyr::arrange(`Interval Rank`, Interval, Gene)
+
+# get the gene list for human orthos
+genes <- fg$Gene
+```
+
+Load the ortholog data
+```{r}
+# get the ortholist from here: http://ortholist.shaye-lab.org/
+orthos <- readxl::read_xlsx(orthos_fn)
+
+ortho_gens <- fg %>%
+  dplyr::left_join(., orthos, by = c("Gene" = "Common Name")) %>%
+  dplyr::left_join(., orthos, by = c("Gene" = "Locus ID"))
+```
+
+Merge the gene data with the ortholog data
+```{r}
+# A function to merge the .x and .y columns from duplicate joins
+merge_xy <- function(df) {
+  xcols <- grep("\\.x$", names(df), value = TRUE)
+  bases <- sub("\\.x$", "", xcols)
+  ycols <- paste0(bases, ".y")
+
+  # keep only pairs that exist in both .x and .y
+  keep <- ycols %in% names(df)
+  xcols <- xcols[keep]
+  ycols <- ycols[keep]
+  bases <- bases[keep]
+
+  # build merged columns, drop originals
+  for (i in seq_along(bases)) {
+    df[[bases[i]]] <- dplyr::coalesce(df[[xcols[i]]], df[[ycols[i]]])
+  }
+  df %>% dplyr::select(-all_of(c(xcols, ycols)))
+}
+
+ogm <- merge_xy(ortho_gens) %>%
+  dplyr::group_by(Gene) %>%
+  dplyr::arrange(desc(`No. of Programs`), .by_group = T) %>%
+  dplyr::ungroup()
+head(ogm)
+```
+
+Get a summary of orthologs found
+```{r}
+og_sum <- ogm %>%
+  dplyr::group_by(Gene) %>%
+  dplyr::arrange(desc(`No. of Programs`), .by_group = T) %>%
+  dplyr::mutate(
+    hum_ortho = ifelse(!is.na(`No. of Programs`), T, F),
+    max_ortho_conf = max(`No. of Programs`),
+    max_ortho_conf = ifelse(is.na(max_ortho_conf), 0, max_ortho_conf)
+  ) %>%
+  dplyr::distinct(Gene, .keep_all = T) %>%
+  dplyr::ungroup()
+
+# Show distribution of confidence in orthos
+ggplot(og_sum) +
+  aes(x = max_ortho_conf) +
+  geom_histogram(binwidth = .5) +
+  stat_bin(
+    binwidth = 1, geom = "text", aes(label = ..count..),
+    vjust = -0.3
+  ) +
+  scale_x_continuous(breaks = 0:6)
+
+```
+
+# Output
+Write the candidate genes with orthologs to file
+```{r}
+output_fn <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes_with_human_orthologs.tsv"
+
+ogm %>%
+  data.table::fwrite(output_fn, sep = "\t", na = "NA", quote = F)
+```

@@ -1,0 +1,127 @@
+---
+title: "Analysis 18: Semantic Similarity for All Genes"
+---
+
+```{r}
+#| label: semsim_all_genes_setup
+
+library(dplyr)
+library(data.table)
+library(glue)
+library(parallel)
+
+
+source("bin/materials_key.R")
+source("bin/outs.R")
+
+source("bin/SemSim.R")
+source("bin/genes.R")
+```
+# Inputs
+```{r}
+#| label: semsim_all_genes_inputs
+# path to NS output directory
+ns_dir <- "data/processed/20231116_Analysis_NemaScan"
+tox_file <- "data/processed/tox_data/tox_metadata.csv"
+```
+# Outputs
+```{r}
+#| label: semsim_all_genes_outputs
+# path to output directory should be the same name as the dir contain the script
+out_dir <- "data/processed/semantic_similarity"
+out_fn <- "all_genes_semSim.rds"
+# check if the output directory exists, if not create it
+if (!dir.exists(out_dir)) {
+  message(glue("Output directory '{out_dir}' does not exist. Creating it..."))
+  dir.create(out_dir, recursive = TRUE)
+  message(glue("Output directory '{out_dir}' created successfully."))
+} else {
+  message(glue("Output directory '{out_dir}' already exists."))
+}
+```
+# Functions
+```{r}
+#| label: semsim_all_genes_functions
+# Create a function to process each trait
+process_trait <- function(trait_id) {
+  message(glue("Processing trait: {trait_id}"))
+  genes <- get_genes_all_intervals(
+    qtl = inbred,
+    trait_id = trait_id,
+    gff_df = gff,
+    cEGO = cEGO
+  )
+  return(genes)
+}
+```
+
+# Main
+```{r}
+#| label: semsim_all_genes_main
+
+## Load the tox data
+tox <- data.table::fread(tox_file)
+
+# load dataframe with the inbred interval data
+# [ ] - will need a way to connect the trait/drug to the tox metadata
+inbred <- data.table::fread(
+  glue::glue("{ns_dir}/INBRED/Mapping/Processed/QTL_peaks_inbred.tsv"),
+  data.table = F
+) %>%
+  # fix drug names
+  dplyr::mutate(
+    drug = stringr::str_replace(
+      trait,
+      pattern = "^length_",
+      replacement = ""
+    )
+  ) %>%
+  # remove the CV_ length_ traits
+  dplyr::filter(
+    !stringr::str_detect(drug, "CV_")
+  ) %>%
+  dplyr::select(
+    trait,
+    drug,
+    CHROM,
+    marker,
+    startPOS,
+    endPOS
+  ) %>%
+  # create an id to be used in list
+  dplyr::mutate(
+    qtl.id = paste(trait, marker, sep = "_")
+  )
+# Extract all unique combinations of the 'trait' column
+unique_trait_ids <- inbred %>%
+  dplyr::pull(trait) %>%
+  unique()
+
+# Get number of cores (leave one core free for system)
+n_cores <- parallel::detectCores() - 1
+
+# Process all traits in parallel
+message(glue("Processing {length(unique_trait_ids)} traits using {n_cores} cores..."))
+genes_list <- parallel::mclapply(
+  unique_trait_ids,
+  process_trait,
+  mc.cores = n_cores
+)
+
+names(genes_list) <- unique_trait_ids
+
+
+
+all_genes_semSim <- GOSemSim::mclusterSim(
+  genes_list,
+  semData = cEGO,
+  measure = "Wang",
+  combine = "BMA"
+)
+
+# save as rds file
+saveRDS(all_genes_semSim, file = glue::glue("{out_dir}/{out_fn}"))
+
+# print message
+message(glue::glue("All genes semantic similarity saved to {out_dir}/{out_fn}"))
+```

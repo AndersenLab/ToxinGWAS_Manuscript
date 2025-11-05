@@ -1,0 +1,175 @@
+---
+title: "Figure 04. Absolute effect size of susceptibility associated variants by frequency"
+execute:
+  warning: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(ggh4x)
+```
+
+```{r}
+#| label: effect-sizes-inputs
+#| include: false
+
+source("bin/outs.R")
+source("bin/pub_format.R")
+source("bin/tox_colors.R")
+source("bin/gwa_summary.R")
+source("bin/materials_key.R")
+
+#### Functions ####
+
+
+#### Inputs ####
+
+# chrom length data
+chr.lens.fn <- file.path("data/raw/c_elegans_chr_lengths.tsv")
+
+# NemaScan output
+ns_folder <- file.path("data/processed/20231116_Analysis_NemaScan")
+
+# tox meta data
+tox_meta_fn <- file.path("data/processed/tox_data/con_metadata.csv")
+```
+
+
+```{r}
+#| label: prepare-effect-size-figure
+
+# Load the tox data for condition metadata
+tox <- data.table::fread(tox_meta_fn) %>%
+  dplyr::filter(type == "Toxicant") %>%
+  dplyr::select(trait, nice_drug_label2, big_class) %>%
+  # adjust the uM to µM
+  dplyr::mutate(nice_drug_label2 = dplyr::case_when(
+    nice_drug_label2 == "uM" ~ "µM",
+    TRUE ~ nice_drug_label2
+  ))
+
+# Load all mapping files
+all.mappings_inbred <- list.files(
+  path = glue::glue("{ns_folder}/INBRED/Mapping/Processed"),
+  pattern = "AGGREGATE_mapping_inbred",
+  recursive = TRUE,
+  full.names = TRUE
+)
+
+# read in all the mappings
+inbred.mapping.results <- purrr::map(all.mappings_inbred, combine.mappings) %>%
+  Reduce(rbind, .) %>%
+  dplyr::mutate(var_type = stringr::str_extract(trait, pattern = "length|CV_length")) %>%
+  dplyr::filter(var_type != "CV_length") %>%
+  dplyr::filter(trait != "length_water") %>%
+  dplyr::filter(trait != "length_DMSO")
+
+# get the drug classes
+tox.QTL.summary <- inbred.mapping.results %>%
+  dplyr::select(marker, trait, log10p, BETA, AF1, var.exp, algorithm) %>%
+  dplyr::distinct() %>%
+  dplyr::left_join(., tox, by = c("trait" = "trait"))
+
+# setup just for the length trait in inbred algorithm
+L.inbred <- tox.QTL.summary
+
+# get a nice color pal
+class.pal.df <- tibble::tibble(
+  col = c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
+  big_class = c("Flame Retardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
+)
+
+# get a nice color pal
+col.pal <- class.pal.df$col
+names(col.pal) <- class.pal.df$big_class
+
+```
+
+```{r}
+#| label: effect-size-base-figure
+tox.effect.bubble <- L.inbred %>%
+  dplyr::mutate(
+    big_class = factor(
+      big_class,
+      levels = c(
+        "Flame Retardant",
+        "Fungicide",
+        "Herbicide",
+        "Insecticide",
+        "Metal"
+      )
+    )
+  ) %>%
+  ggplot(
+    mapping = aes(
+      y = abs(BETA),
+      x = AF1
+    )
+  ) +
+  geom_point(
+    mapping = aes(
+      fill = big_class,
+      size = var.exp * 100
+    ),
+    shape = 21
+  ) +
+  stat_smooth(
+    se = F,
+    show.legend = F,
+    span = 10,
+    linetype = 2,
+    color = "black",
+    linewidth = 0.75,
+    method = "nls",
+    formula = y ~ a * exp(-b * x),
+    method.args = list(start = list(a = 1, b = 1))
+  ) +
+  scale_fill_manual(values = col.pal) +
+  guides(
+    size = guide_legend(
+      title = "Variation in susceptibility\nexplained by peak marker (%)",
+      order = 2
+    ),
+    fill = guide_legend(
+      title = "Toxicant class",
+      order = 1,
+      override.aes = list(
+        size = 3
+      )
+    )
+  ) +
+  theme_bw() +
+  labs(
+    y = "Absolute effect size µm",
+    x = "Frequency"
+  )
+
+```
+
+```{r}
+tox.effect.bubble
+```
+
+```{r}
+#| label: effect-size-figure-paper
+# Save the plot with appropriate dimensions
+
+pub_figure <- tox.effect.bubble +
+  theme(
+    legend.position = c(0.95, 0.95),
+    legend.justification = c("right", "top"),
+    legend.direction = "vertical",
+    panel.grid = element_blank(),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
+
+save_plot(
+  tplot = pub_figure,
+  fn_list = figure_fns$tox.effect.bubble,
+  w_in = 6,
+  h_in = 5
+)
+```
+

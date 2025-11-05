@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="generator" content="quarto-1.8.23">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+    <title>Analysis 07: Calculate Phenotype Correlations</title>
+    <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      div.columns{display: flex; gap: min(4vw, 1.5em);}
+      div.column{flex: auto; overflow-x: auto;}
+      div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+      ul.task-list{list-style: none;}
+      ul.task-list li input[type="checkbox"] {
+        width: 0.8em;
+        margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+        vertical-align: middle;
+      }
+      /* CSS for syntax highlighting */
+      html { -webkit-text-size-adjust: 100%; }
+      pre > code.sourceCode { white-space: pre; position: relative; }
+      pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+      pre > code.sourceCode > span:empty { height: 1.2em; }
+      .sourceCode { overflow: visible; }
+      code.sourceCode > span { color: inherit; text-decoration: inherit; }
+      div.sourceCode { margin: 1em 0; }
+      pre.sourceCode { margin: 0; }
+      @media screen {
+      div.sourceCode { overflow: auto; }
+      }
+      @media print {
+      pre > code.sourceCode { white-space: pre-wrap; }
+      pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+      }
+      pre.numberSource code
+        { counter-reset: source-line 0; }
+      pre.numberSource code > span
+        { position: relative; left: -4em; counter-increment: source-line; }
+      pre.numberSource code > span > a:first-child::before
+        { content: counter(source-line);
+          position: relative; left: -1em; text-align: right; vertical-align: baseline;
+          border: none; display: inline-block;
+          -webkit-touch-callout: none; -webkit-user-select: none;
+          -khtml-user-select: none; -moz-user-select: none;
+          -ms-user-select: none; user-select: none;
+          padding: 0 4px; width: 4em;
+        }
+      pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+      div.sourceCode
+        {   }
+      @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+      }
+    </style>
+
+    <style>
+      body.hypothesis-enabled #quarto-embed-header {
+        padding-right: 36px;
+      }
+
+      #quarto-embed-header {
+        height: 3em;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: solid 1px;
+      }
+
+      #quarto-embed-header h6 {
+        font-size: 1.1em;
+        padding-top: 0.6em;
+        margin-left: 1em;
+        margin-right: 1em;
+        font-weight: 400;
+      }
+
+      #quarto-embed-header a.quarto-back-link,
+      #quarto-embed-header a.quarto-download-embed {
+        font-size: 0.8em;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        margin-left: 1em;
+        margin-right: 1em;
+      }
+
+      .quarto-back-container {
+        padding-left: 0.5em;
+        display: flex;
+      }
+
+      .headroom {
+          will-change: transform;
+          transition: transform 200ms linear;
+      }
+
+      .headroom--pinned {
+          transform: translateY(0%);
+      }
+
+      .headroom--unpinned {
+          transform: translateY(-100%);
+      }      
+    </style>
+
+    <script>
+    window.document.addEventListener("DOMContentLoaded", function () {
+
+      var header = window.document.querySelector("#quarto-embed-header");
+      const titleBannerEl = window.document.querySelector("body > #title-block-header");
+      if (titleBannerEl) {
+        titleBannerEl.style.paddingTop = header.clientHeight + "px";
+      }
+      const contentEl = window.document.getElementById('quarto-content');
+      for (const child of contentEl.children) {
+        child.style.paddingTop = header.clientHeight + "px";
+        child.style.marginTop = "1em";
+      }
+
+      // Use the article root if the `back` call doesn't work. This isn't perfect
+      // but should typically work
+      window.quartoBackToArticle = () => {
+        var currentUrl = window.location.href;
+        window.history.back();
+        setTimeout(() => {
+            // if location was not changed in 100 ms, then there is no history back
+            if(currentUrl === window.location.href){              
+                // redirect to site root
+                window.location.href = "../index.html";
+            }
+        }, 100);
+      }
+
+      const headroom = new window.Headroom(header, {
+        tolerance: 5,
+        onPin: function () {
+        },
+        onUnpin: function () {
+        },
+      });
+      headroom.init();
+    });
+    </script>
+
+    
+<script src="../site_libs/manuscript-notebook/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1fe81d0376b2c50856e68e651e390326.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-a74871fe4945b66d259aafc266475145.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+     
+      </head>
+
+  <body class="quarto-notebook quarto-light">
+    <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
+      
+      <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link" href=""><i class="bi bi-caret-left"></i> Back to Article</a>
+      <h6><i class="bi bi-journal-code"></i> Analysis 07: Calculate Phenotype Correlations</h6>
+
+            <a href="../analysis/calculate_phenotype_correlations.qmd" class="btn btn-primary quarto-download-embed" download="calculate_phenotype_correlations.qmd">Download Source</a>
+          </div>
+
+     <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Analysis 07: Calculate Phenotype Correlations</h1>
+          </div>
+
+    
+    <div class="quarto-title-meta-container">
+      <div class="quarto-title-meta-column-start">
+        
+        <div class="quarto-title-meta">
+
+                
+          
+                
+              </div>
+      </div>
+      <div class="quarto-title-meta-column-end quarto-other-formats-target">
+      </div>
+    </div>
+
+
+
+    <div class="quarto-other-links-text-target">
+    </div>  </div>
+</header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#inputs" id="toc-inputs" class="nav-link active" data-scroll-target="#inputs">Inputs</a></li>
+  <li><a href="#calculate-correlations" id="toc-calculate-correlations" class="nav-link" data-scroll-target="#calculate-correlations">Calculate correlations</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">      
+
+       <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'data.table'
+
+The following objects are masked from 'package:lubridate':
+
+    hour, isoweek, mday, minute, month, quarter, second, wday, week,
+    yday, year
+
+The following objects are masked from 'package:dplyr':
+
+    between, first, last
+
+The following object is masked from 'package:purrr':
+
+    transpose</code></pre>
+</div>
+</div></div>
+<section id="inputs" class="level1">
+<h1>Inputs</h1>
+<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>strain_means <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/processed/phenotypes/strain_means.rds"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tox_data <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="st">"data/processed/tox_data/con_metadata.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
+</section>
+<section id="calculate-correlations" class="level1">
+<h1>Calculate correlations</h1>
+<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'psych'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:ggplot2':
+
+    %+%, alpha</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>strain_means_pivot <span class="ot">&lt;-</span> strain_means <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">StrainMean =</span> <span class="fu">as.numeric</span>(StrainMean_NormLength)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(strain, drug, StrainMean) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">spread</span>(<span class="at">key =</span> drug, <span class="at">value =</span> StrainMean)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # Convert to matrix with strain as rownames</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>strain_means_pivot_matrix <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(strain_means_pivot[, <span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(strain_means_pivot_matrix) <span class="ot">&lt;-</span> strain_means_pivot<span class="sc">$</span>strain</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate phenotype correlations with NA's</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>pheno_corr_all <span class="ot">&lt;-</span> psych<span class="sc">::</span><span class="fu">corr.test</span>(</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  strain_means_pivot_matrix,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">use =</span> <span class="st">"pairwise"</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">adjust =</span> <span class="st">"bonferroni"</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"spearman"</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the pivoted strain means for future use</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(strain_means_pivot_matrix, <span class="st">"data/processed/phenotypes/strain_means_matrix.rds"</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract correlation coefficients and p-values</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Save outputs</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pheno_corr_all, <span class="st">"data/processed/phenotypes/pheno_corr_all.Rds"</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>pheno_corr_all</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:psych::corr.test(x = strain_means_pivot_matrix, use = "pairwise", 
+    method = "spearman", adjust = "bonferroni")
+Correlation matrix 
+                         2_4-D Aldicarb Arsenic trioxide Atrazine
+2_4-D                     1.00     0.15             0.13     0.21
+Aldicarb                  0.15     1.00             0.12     0.28
+Arsenic trioxide          0.13     0.12             1.00     0.21
+Atrazine                  0.21     0.28             0.21     1.00
+Cadmium dichloride        0.09     0.00             0.29     0.27
+Carbaryl                  0.11     0.37             0.18     0.41
+Carboxin                  0.11     0.31             0.14     0.40
+Chlorfenapyr              0.00     0.11             0.15     0.33
+Chlorothalonil            0.33     0.26             0.15     0.33
+Chlorpyrifos              0.35     0.38             0.14     0.34
+Copper chloride           0.09     0.03             0.08     0.04
+Lead nitrate              0.07     0.14             0.25     0.10
+Malathion                 0.38     0.34             0.02     0.41
+Mancozeb                  0.21     0.11             0.02     0.20
+Methomyl                  0.26     0.30             0.14     0.36
+Methyl mercury            0.17     0.08             0.30     0.14
+Nickel dichloride         0.17     0.05             0.18     0.09
+Paraquat_250              0.14    -0.03             0.16     0.32
+Paraquat_62.5             0.04     0.03             0.19     0.26
+Propoxur                  0.33     0.23             0.03     0.47
+Pyraclostrobin            0.34     0.17             0.20     0.45
+Silver nitrate_250        0.17    -0.08             0.15     0.34
+Silver nitrate_7.8        0.23     0.12             0.24     0.22
+Triphenyl phosphate_50    0.09     0.03             0.13     0.37
+Triphenyl phosphate_6.25  0.29     0.26             0.17     0.34
+Zinc dichloride           0.16     0.21             0.11     0.23
+                         Cadmium dichloride Carbaryl Carboxin Chlorfenapyr
+2_4-D                                  0.09     0.11     0.11         0.00
+Aldicarb                               0.00     0.37     0.31         0.11
+Arsenic trioxide                       0.29     0.18     0.14         0.15
+Atrazine                               0.27     0.41     0.40         0.33
+Cadmium dichloride                     1.00     0.01    -0.10         0.20
+Carbaryl                               0.01     1.00     0.63         0.16
+Carboxin                              -0.10     0.63     1.00         0.08
+Chlorfenapyr                           0.20     0.16     0.08         1.00
+Chlorothalonil                         0.15     0.22     0.14         0.06
+Chlorpyrifos                           0.05     0.44     0.31         0.02
+Copper chloride                        0.36    -0.11    -0.12         0.03
+Lead nitrate                           0.17     0.15     0.11        -0.02
+Malathion                              0.18     0.39     0.30         0.23
+Mancozeb                              -0.10     0.31     0.24        -0.04
+Methomyl                               0.18     0.11    -0.05         0.16
+Methyl mercury                         0.23     0.20     0.19         0.04
+Nickel dichloride                      0.07     0.19     0.08         0.07
+Paraquat_250                           0.48    -0.04    -0.22         0.25
+Paraquat_62.5                          0.07     0.11     0.07         0.10
+Propoxur                               0.01     0.38     0.32         0.09
+Pyraclostrobin                         0.28     0.32     0.24         0.33
+Silver nitrate_250                     0.54    -0.02    -0.16         0.24
+Silver nitrate_7.8                     0.07     0.08     0.14         0.07
+Triphenyl phosphate_50                 0.25     0.24     0.05         0.30
+Triphenyl phosphate_6.25              -0.01     0.53     0.31         0.14
+Zinc dichloride                        0.14     0.06     0.16         0.02
+                         Chlorothalonil Chlorpyrifos Copper chloride
+2_4-D                              0.33         0.35            0.09
+Aldicarb                           0.26         0.38            0.03
+Arsenic trioxide                   0.15         0.14            0.08
+Atrazine                           0.33         0.34            0.04
+Cadmium dichloride                 0.15         0.05            0.36
+Carbaryl                           0.22         0.44           -0.11
+Carboxin                           0.14         0.31           -0.12
+Chlorfenapyr                       0.06         0.02            0.03
+Chlorothalonil                     1.00         0.45            0.13
+Chlorpyrifos                       0.45         1.00           -0.03
+Copper chloride                    0.13        -0.03            1.00
+Lead nitrate                       0.13         0.19            0.01
+Malathion                          0.40         0.49            0.07
+Mancozeb                           0.27         0.42            0.00
+Methomyl                           0.30         0.31            0.18
+Methyl mercury                     0.12         0.10            0.25
+Nickel dichloride                  0.14         0.12            0.21
+Paraquat_250                       0.07         0.07            0.39
+Paraquat_62.5                     -0.08         0.07            0.08
+Propoxur                           0.29         0.39           -0.08
+Pyraclostrobin                     0.42         0.38            0.05
+Silver nitrate_250                 0.13        -0.03            0.38
+Silver nitrate_7.8                 0.19         0.29            0.00
+Triphenyl phosphate_50             0.18         0.27            0.00
+Triphenyl phosphate_6.25           0.29         0.54           -0.06
+Zinc dichloride                    0.40         0.31            0.25
+                         Lead nitrate Malathion Mancozeb Methomyl
+2_4-D                            0.07      0.38     0.21     0.26
+Aldicarb                         0.14      0.34     0.11     0.30
+Arsenic trioxide                 0.25      0.02     0.02     0.14
+Atrazine                         0.10      0.41     0.20     0.36
+Cadmium dichloride               0.17      0.18    -0.10     0.18
+Carbaryl                         0.15      0.39     0.31     0.11
+Carboxin                         0.11      0.30     0.24    -0.05
+Chlorfenapyr                    -0.02      0.23    -0.04     0.16
+Chlorothalonil                   0.13      0.40     0.27     0.30
+Chlorpyrifos                     0.19      0.49     0.42     0.31
+Copper chloride                  0.01      0.07     0.00     0.18
+Lead nitrate                     1.00      0.23     0.21     0.05
+Malathion                        0.23      1.00     0.30     0.30
+Mancozeb                         0.21      0.30     1.00     0.05
+Methomyl                         0.05      0.30     0.05     1.00
+Methyl mercury                   0.23      0.11     0.20     0.13
+Nickel dichloride                0.09      0.05     0.03    -0.11
+Paraquat_250                     0.10      0.16     0.06     0.45
+Paraquat_62.5                    0.00      0.14     0.14     0.19
+Propoxur                         0.01      0.25     0.39     0.30
+Pyraclostrobin                   0.16      0.47     0.29     0.43
+Silver nitrate_250               0.05      0.15     0.01     0.39
+Silver nitrate_7.8               0.65      0.28     0.23     0.14
+Triphenyl phosphate_50           0.07      0.29     0.30     0.30
+Triphenyl phosphate_6.25         0.25      0.34     0.48     0.17
+Zinc dichloride                  0.34      0.21     0.22     0.11
+                         Methyl mercury Nickel dichloride Paraquat_250
+2_4-D                              0.17              0.17         0.14
+Aldicarb                           0.08              0.05        -0.03
+Arsenic trioxide                   0.30              0.18         0.16
+Atrazine                           0.14              0.09         0.32
+Cadmium dichloride                 0.23              0.07         0.48
+Carbaryl                           0.20              0.19        -0.04
+Carboxin                           0.19              0.08        -0.22
+Chlorfenapyr                       0.04              0.07         0.25
+Chlorothalonil                     0.12              0.14         0.07
+Chlorpyrifos                       0.10              0.12         0.07
+Copper chloride                    0.25              0.21         0.39
+Lead nitrate                       0.23              0.09         0.10
+Malathion                          0.11              0.05         0.16
+Mancozeb                           0.20              0.03         0.06
+Methomyl                           0.13             -0.11         0.45
+Methyl mercury                     1.00              0.02         0.24
+Nickel dichloride                  0.02              1.00         0.21
+Paraquat_250                       0.24              0.21         1.00
+Paraquat_62.5                      0.14              0.09         0.42
+Propoxur                           0.16              0.08         0.17
+Pyraclostrobin                     0.28             -0.05         0.30
+Silver nitrate_250                 0.19              0.20         0.83
+Silver nitrate_7.8                 0.16              0.05         0.15
+Triphenyl phosphate_50             0.11              0.05         0.39
+Triphenyl phosphate_6.25           0.20              0.01         0.00
+Zinc dichloride                    0.09              0.28         0.15
+                         Paraquat_62.5 Propoxur Pyraclostrobin
+2_4-D                             0.04     0.33           0.34
+Aldicarb                          0.03     0.23           0.17
+Arsenic trioxide                  0.19     0.03           0.20
+Atrazine                          0.26     0.47           0.45
+Cadmium dichloride                0.07     0.01           0.28
+Carbaryl                          0.11     0.38           0.32
+Carboxin                          0.07     0.32           0.24
+Chlorfenapyr                      0.10     0.09           0.33
+Chlorothalonil                   -0.08     0.29           0.42
+Chlorpyrifos                      0.07     0.39           0.38
+Copper chloride                   0.08    -0.08           0.05
+Lead nitrate                      0.00     0.01           0.16
+Malathion                         0.14     0.25           0.47
+Mancozeb                          0.14     0.39           0.29
+Methomyl                          0.19     0.30           0.43
+Methyl mercury                    0.14     0.16           0.28
+Nickel dichloride                 0.09     0.08          -0.05
+Paraquat_250                      0.42     0.17           0.30
+Paraquat_62.5                     1.00     0.21           0.08
+Propoxur                          0.21     1.00           0.34
+Pyraclostrobin                    0.08     0.34           1.00
+Silver nitrate_250                0.28     0.19           0.31
+Silver nitrate_7.8                0.01     0.12           0.25
+Triphenyl phosphate_50            0.10     0.32           0.63
+Triphenyl phosphate_6.25          0.08     0.42           0.47
+Zinc dichloride                   0.00     0.17           0.20
+                         Silver nitrate_250 Silver nitrate_7.8
+2_4-D                                  0.17               0.23
+Aldicarb                              -0.08               0.12
+Arsenic trioxide                       0.15               0.24
+Atrazine                               0.34               0.22
+Cadmium dichloride                     0.54               0.07
+Carbaryl                              -0.02               0.08
+Carboxin                              -0.16               0.14
+Chlorfenapyr                           0.24               0.07
+Chlorothalonil                         0.13               0.19
+Chlorpyrifos                          -0.03               0.29
+Copper chloride                        0.38               0.00
+Lead nitrate                           0.05               0.65
+Malathion                              0.15               0.28
+Mancozeb                               0.01               0.23
+Methomyl                               0.39               0.14
+Methyl mercury                         0.19               0.16
+Nickel dichloride                      0.20               0.05
+Paraquat_250                           0.83               0.15
+Paraquat_62.5                          0.28               0.01
+Propoxur                               0.19               0.12
+Pyraclostrobin                         0.31               0.25
+Silver nitrate_250                     1.00               0.08
+Silver nitrate_7.8                     0.08               1.00
+Triphenyl phosphate_50                 0.36               0.15
+Triphenyl phosphate_6.25              -0.10               0.32
+Zinc dichloride                        0.15               0.40
+                         Triphenyl phosphate_50 Triphenyl phosphate_6.25
+2_4-D                                      0.09                     0.29
+Aldicarb                                   0.03                     0.26
+Arsenic trioxide                           0.13                     0.17
+Atrazine                                   0.37                     0.34
+Cadmium dichloride                         0.25                    -0.01
+Carbaryl                                   0.24                     0.53
+Carboxin                                   0.05                     0.31
+Chlorfenapyr                               0.30                     0.14
+Chlorothalonil                             0.18                     0.29
+Chlorpyrifos                               0.27                     0.54
+Copper chloride                            0.00                    -0.06
+Lead nitrate                               0.07                     0.25
+Malathion                                  0.29                     0.34
+Mancozeb                                   0.30                     0.48
+Methomyl                                   0.30                     0.17
+Methyl mercury                             0.11                     0.20
+Nickel dichloride                          0.05                     0.01
+Paraquat_250                               0.39                     0.00
+Paraquat_62.5                              0.10                     0.08
+Propoxur                                   0.32                     0.42
+Pyraclostrobin                             0.63                     0.47
+Silver nitrate_250                         0.36                    -0.10
+Silver nitrate_7.8                         0.15                     0.32
+Triphenyl phosphate_50                     1.00                     0.43
+Triphenyl phosphate_6.25                   0.43                     1.00
+Zinc dichloride                            0.06                     0.23
+                         Zinc dichloride
+2_4-D                               0.16
+Aldicarb                            0.21
+Arsenic trioxide                    0.11
+Atrazine                            0.23
+Cadmium dichloride                  0.14
+Carbaryl                            0.06
+Carboxin                            0.16
+Chlorfenapyr                        0.02
+Chlorothalonil                      0.40
+Chlorpyrifos                        0.31
+Copper chloride                     0.25
+Lead nitrate                        0.34
+Malathion                           0.21
+Mancozeb                            0.22
+Methomyl                            0.11
+Methyl mercury                      0.09
+Nickel dichloride                   0.28
+Paraquat_250                        0.15
+Paraquat_62.5                       0.00
+Propoxur                            0.17
+Pyraclostrobin                      0.20
+Silver nitrate_250                  0.15
+Silver nitrate_7.8                  0.40
+Triphenyl phosphate_50              0.06
+Triphenyl phosphate_6.25            0.23
+Zinc dichloride                     1.00
+Sample Size 
+                         2_4-D Aldicarb Arsenic trioxide Atrazine
+2_4-D                      192      191              191      192
+Aldicarb                   191      194              193      194
+Arsenic trioxide           191      193              194      194
+Atrazine                   192      194              194      195
+Cadmium dichloride         187      190              189      190
+Carbaryl                   191      194              193      194
+Carboxin                   190      192              192      193
+Chlorfenapyr               149      152              152      152
+Chlorothalonil             191      193              193      194
+Chlorpyrifos               170      172              172      173
+Copper chloride            191      194              193      194
+Lead nitrate               191      194              193      194
+Malathion                  191      193              193      194
+Mancozeb                   191      193              193      194
+Methomyl                   140      143              143      143
+Methyl mercury             190      192              192      193
+Nickel dichloride          190      193              192      193
+Paraquat_250               189      192              191      192
+Paraquat_62.5              155      154              154      155
+Propoxur                   191      194              193      194
+Pyraclostrobin             191      193              193      194
+Silver nitrate_250         183      186              185      186
+Silver nitrate_7.8         191      193              193      194
+Triphenyl phosphate_50     188      191              190      191
+Triphenyl phosphate_6.25   175      174              174      175
+Zinc dichloride            174      174              173      174
+                         Cadmium dichloride Carbaryl Carboxin Chlorfenapyr
+2_4-D                                   187      191      190          149
+Aldicarb                                190      194      192          152
+Arsenic trioxide                        189      193      192          152
+Atrazine                                190      194      193          152
+Cadmium dichloride                      190      190      188          151
+Carbaryl                                190      194      192          152
+Carboxin                                188      192      193          152
+Chlorfenapyr                            151      152      152          152
+Chlorothalonil                          190      193      192          152
+Chlorpyrifos                            168      172      171          152
+Copper chloride                         190      194      192          152
+Lead nitrate                            190      194      192          152
+Malathion                               189      193      193          152
+Mancozeb                                190      193      192          151
+Methomyl                                139      143      141          126
+Methyl mercury                          189      192      191          151
+Nickel dichloride                       190      193      191          152
+Paraquat_250                            189      192      190          152
+Paraquat_62.5                           150      154      153          132
+Propoxur                                190      194      192          152
+Pyraclostrobin                          190      193      192          152
+Silver nitrate_250                      184      186      184          150
+Silver nitrate_7.8                      190      193      192          152
+Triphenyl phosphate_50                  188      191      189          150
+Triphenyl phosphate_6.25                170      174      173          132
+Zinc dichloride                         170      174      172          132
+                         Chlorothalonil Chlorpyrifos Copper chloride
+2_4-D                               191          170             191
+Aldicarb                            193          172             194
+Arsenic trioxide                    193          172             193
+Atrazine                            194          173             194
+Cadmium dichloride                  190          168             190
+Carbaryl                            193          172             194
+Carboxin                            192          171             192
+Chlorfenapyr                        152          152             152
+Chlorothalonil                      194          172             193
+Chlorpyrifos                        172          173             172
+Copper chloride                     193          172             194
+Lead nitrate                        193          172             194
+Malathion                           193          172             193
+Mancozeb                            193          172             193
+Methomyl                            142          141             143
+Methyl mercury                      192          171             192
+Nickel dichloride                   192          171             193
+Paraquat_250                        191          171             192
+Paraquat_62.5                       154          153             154
+Propoxur                            193          172             194
+Pyraclostrobin                      193          172             193
+Silver nitrate_250                  185          166             186
+Silver nitrate_7.8                  193          172             193
+Triphenyl phosphate_50              191          169             191
+Triphenyl phosphate_6.25            174          153             174
+Zinc dichloride                     173          152             174
+                         Lead nitrate Malathion Mancozeb Methomyl
+2_4-D                             191       191      191      140
+Aldicarb                          194       193      193      143
+Arsenic trioxide                  193       193      193      143
+Atrazine                          194       194      194      143
+Cadmium dichloride                190       189      190      139
+Carbaryl                          194       193      193      143
+Carboxin                          192       193      192      141
+Chlorfenapyr                      152       152      151      126
+Chlorothalonil                    193       193      193      142
+Chlorpyrifos                      172       172      172      141
+Copper chloride                   194       193      193      143
+Lead nitrate                      194       193      193      143
+Malathion                         193       194      193      142
+Mancozeb                          193       193      194      142
+Methomyl                          143       142      142      143
+Methyl mercury                    192       192      192      141
+Nickel dichloride                 193       192      192      142
+Paraquat_250                      192       191      191      141
+Paraquat_62.5                     154       154      154      123
+Propoxur                          194       193      193      143
+Pyraclostrobin                    193       193      193      142
+Silver nitrate_250                186       185      185      137
+Silver nitrate_7.8                193       193      193      142
+Triphenyl phosphate_50            191       190      190      140
+Triphenyl phosphate_6.25          174       174      174      123
+Zinc dichloride                   174       173      173      123
+                         Methyl mercury Nickel dichloride Paraquat_250
+2_4-D                               190               190          189
+Aldicarb                            192               193          192
+Arsenic trioxide                    192               192          191
+Atrazine                            193               193          192
+Cadmium dichloride                  189               190          189
+Carbaryl                            192               193          192
+Carboxin                            191               191          190
+Chlorfenapyr                        151               152          152
+Chlorothalonil                      192               192          191
+Chlorpyrifos                        171               171          171
+Copper chloride                     192               193          192
+Lead nitrate                        192               193          192
+Malathion                           192               192          191
+Mancozeb                            192               192          191
+Methomyl                            141               142          141
+Methyl mercury                      193               192          191
+Nickel dichloride                   192               193          192
+Paraquat_250                        191               192          192
+Paraquat_62.5                       154               153          152
+Propoxur                            192               193          192
+Pyraclostrobin                      193               193          192
+Silver nitrate_250                  185               186          186
+Silver nitrate_7.8                  193               193          192
+Triphenyl phosphate_50              189               190          189
+Triphenyl phosphate_6.25            174               173          172
+Zinc dichloride                     173               173          172
+                         Paraquat_62.5 Propoxur Pyraclostrobin
+2_4-D                              155      191            191
+Aldicarb                           154      194            193
+Arsenic trioxide                   154      193            193
+Atrazine                           155      194            194
+Cadmium dichloride                 150      190            190
+Carbaryl                           154      194            193
+Carboxin                           153      192            192
+Chlorfenapyr                       132      152            152
+Chlorothalonil                     154      193            193
+Chlorpyrifos                       153      172            172
+Copper chloride                    154      194            193
+Lead nitrate                       154      194            193
+Malathion                          154      193            193
+Mancozeb                           154      193            193
+Methomyl                           123      143            142
+Methyl mercury                     154      192            193
+Nickel dichloride                  153      193            193
+Paraquat_250                       152      192            192
+Paraquat_62.5                      155      154            154
+Propoxur                           154      194            193
+Pyraclostrobin                     154      193            194
+Silver nitrate_250                 146      186            186
+Silver nitrate_7.8                 154      193            194
+Triphenyl phosphate_50             153      191            190
+Triphenyl phosphate_6.25           155      174            174
+Zinc dichloride                    154      174            173
+                         Silver nitrate_250 Silver nitrate_7.8
+2_4-D                                   183                191
+Aldicarb                                186                193
+Arsenic trioxide                        185                193
+Atrazine                                186                194
+Cadmium dichloride                      184                190
+Carbaryl                                186                193
+Carboxin                                184                192
+Chlorfenapyr                            150                152
+Chlorothalonil                          185                193
+Chlorpyrifos                            166                172
+Copper chloride                         186                193
+Lead nitrate                            186                193
+Malathion                               185                193
+Mancozeb                                185                193
+Methomyl                                137                142
+Methyl mercury                          185                193
+Nickel dichloride                       186                193
+Paraquat_250                            186                192
+Paraquat_62.5                           146                154
+Propoxur                                186                193
+Pyraclostrobin                          186                194
+Silver nitrate_250                      186                186
+Silver nitrate_7.8                      186                194
+Triphenyl phosphate_50                  183                190
+Triphenyl phosphate_6.25                166                174
+Zinc dichloride                         166                173
+                         Triphenyl phosphate_50 Triphenyl phosphate_6.25
+2_4-D                                       188                      175
+Aldicarb                                    191                      174
+Arsenic trioxide                            190                      174
+Atrazine                                    191                      175
+Cadmium dichloride                          188                      170
+Carbaryl                                    191                      174
+Carboxin                                    189                      173
+Chlorfenapyr                                150                      132
+Chlorothalonil                              191                      174
+Chlorpyrifos                                169                      153
+Copper chloride                             191                      174
+Lead nitrate                                191                      174
+Malathion                                   190                      174
+Mancozeb                                    190                      174
+Methomyl                                    140                      123
+Methyl mercury                              189                      174
+Nickel dichloride                           190                      173
+Paraquat_250                                189                      172
+Paraquat_62.5                               153                      155
+Propoxur                                    191                      174
+Pyraclostrobin                              190                      174
+Silver nitrate_250                          183                      166
+Silver nitrate_7.8                          190                      174
+Triphenyl phosphate_50                      191                      173
+Triphenyl phosphate_6.25                    173                      175
+Zinc dichloride                             173                      174
+                         Zinc dichloride
+2_4-D                                174
+Aldicarb                             174
+Arsenic trioxide                     173
+Atrazine                             174
+Cadmium dichloride                   170
+Carbaryl                             174
+Carboxin                             172
+Chlorfenapyr                         132
+Chlorothalonil                       173
+Chlorpyrifos                         152
+Copper chloride                      174
+Lead nitrate                         174
+Malathion                            173
+Mancozeb                             173
+Methomyl                             123
+Methyl mercury                       173
+Nickel dichloride                    173
+Paraquat_250                         172
+Paraquat_62.5                        154
+Propoxur                             174
+Pyraclostrobin                       173
+Silver nitrate_250                   166
+Silver nitrate_7.8                   173
+Triphenyl phosphate_50               173
+Triphenyl phosphate_6.25             174
+Zinc dichloride                      174
+Probability values (Entries above the diagonal are adjusted for multiple tests.) 
+                         2_4-D Aldicarb Arsenic trioxide Atrazine
+2_4-D                     0.00     1.00             1.00     0.99
+Aldicarb                  0.04     0.00             1.00     0.03
+Arsenic trioxide          0.06     0.11             0.00     0.89
+Atrazine                  0.00     0.00             0.00     0.00
+Cadmium dichloride        0.21     0.98             0.00     0.00
+Carbaryl                  0.12     0.00             0.01     0.00
+Carboxin                  0.12     0.00             0.06     0.00
+Chlorfenapyr              0.99     0.19             0.07     0.00
+Chlorothalonil            0.00     0.00             0.04     0.00
+Chlorpyrifos              0.00     0.00             0.07     0.00
+Copper chloride           0.20     0.64             0.29     0.56
+Lead nitrate              0.30     0.05             0.00     0.18
+Malathion                 0.00     0.00             0.78     0.00
+Mancozeb                  0.00     0.12             0.82     0.00
+Methomyl                  0.00     0.00             0.09     0.00
+Methyl mercury            0.02     0.26             0.00     0.05
+Nickel dichloride         0.02     0.51             0.01     0.19
+Paraquat_250              0.06     0.66             0.03     0.00
+Paraquat_62.5             0.65     0.75             0.02     0.00
+Propoxur                  0.00     0.00             0.72     0.00
+Pyraclostrobin            0.00     0.02             0.00     0.00
+Silver nitrate_250        0.02     0.29             0.05     0.00
+Silver nitrate_7.8        0.00     0.11             0.00     0.00
+Triphenyl phosphate_50    0.23     0.64             0.08     0.00
+Triphenyl phosphate_6.25  0.00     0.00             0.03     0.00
+Zinc dichloride           0.03     0.00             0.14     0.00
+                         Cadmium dichloride Carbaryl Carboxin Chlorfenapyr
+2_4-D                                  1.00     1.00     1.00         1.00
+Aldicarb                               1.00     0.00     0.00         1.00
+Arsenic trioxide                       0.02     1.00     1.00         1.00
+Atrazine                               0.05     0.00     0.00         0.01
+Cadmium dichloride                     0.00     1.00     1.00         1.00
+Carbaryl                               0.85     0.00     0.00         1.00
+Carboxin                               0.19     0.00     0.00         1.00
+Chlorfenapyr                           0.01     0.05     0.34         0.00
+Chlorothalonil                         0.04     0.00     0.06         0.45
+Chlorpyrifos                           0.50     0.00     0.00         0.78
+Copper chloride                        0.00     0.14     0.11         0.70
+Lead nitrate                           0.02     0.04     0.14         0.80
+Malathion                              0.02     0.00     0.00         0.00
+Mancozeb                               0.18     0.00     0.00         0.61
+Methomyl                               0.03     0.19     0.53         0.07
+Methyl mercury                         0.00     0.01     0.01         0.59
+Nickel dichloride                      0.37     0.01     0.29         0.37
+Paraquat_250                           0.00     0.55     0.00         0.00
+Paraquat_62.5                          0.43     0.19     0.41         0.26
+Propoxur                               0.91     0.00     0.00         0.26
+Pyraclostrobin                         0.00     0.00     0.00         0.00
+Silver nitrate_250                     0.00     0.78     0.03         0.00
+Silver nitrate_7.8                     0.31     0.26     0.06         0.41
+Triphenyl phosphate_50                 0.00     0.00     0.47         0.00
+Triphenyl phosphate_6.25               0.90     0.00     0.00         0.12
+Zinc dichloride                        0.08     0.41     0.03         0.85
+                         Chlorothalonil Chlorpyrifos Copper chloride
+2_4-D                              0.00         0.00            1.00
+Aldicarb                           0.07         0.00            1.00
+Arsenic trioxide                   1.00         1.00            1.00
+Atrazine                           0.00         0.00            1.00
+Cadmium dichloride                 1.00         1.00            0.00
+Carbaryl                           0.55         0.00            1.00
+Carboxin                           1.00         0.01            1.00
+Chlorfenapyr                       1.00         1.00            1.00
+Chlorothalonil                     0.00         0.00            1.00
+Chlorpyrifos                       0.00         0.00            1.00
+Copper chloride                    0.07         0.72            0.00
+Lead nitrate                       0.07         0.01            0.86
+Malathion                          0.00         0.00            0.31
+Mancozeb                           0.00         0.00            0.99
+Methomyl                           0.00         0.00            0.03
+Methyl mercury                     0.11         0.20            0.00
+Nickel dichloride                  0.05         0.11            0.00
+Paraquat_250                       0.36         0.36            0.00
+Paraquat_62.5                      0.35         0.41            0.32
+Propoxur                           0.00         0.00            0.27
+Pyraclostrobin                     0.00         0.00            0.46
+Silver nitrate_250                 0.09         0.72            0.00
+Silver nitrate_7.8                 0.01         0.00            0.98
+Triphenyl phosphate_50             0.01         0.00            0.99
+Triphenyl phosphate_6.25           0.00         0.00            0.42
+Zinc dichloride                    0.00         0.00            0.00
+                         Lead nitrate Malathion Mancozeb Methomyl
+2_4-D                            1.00      0.00     0.95     0.55
+Aldicarb                         1.00      0.00     1.00     0.11
+Arsenic trioxide                 0.12      1.00     1.00     1.00
+Atrazine                         1.00      0.00     1.00     0.00
+Cadmium dichloride               1.00      1.00     1.00     1.00
+Carbaryl                         1.00      0.00     0.00     1.00
+Carboxin                         1.00      0.01     0.21     1.00
+Chlorfenapyr                     1.00      1.00     1.00     1.00
+Chlorothalonil                   1.00      0.00     0.04     0.11
+Chlorpyrifos                     1.00      0.00     0.00     0.07
+Copper chloride                  1.00      1.00     1.00     1.00
+Lead nitrate                     0.00      0.38     1.00     1.00
+Malathion                        0.00      0.00     0.01     0.10
+Mancozeb                         0.00      0.00     0.00     1.00
+Methomyl                         0.58      0.00     0.55     0.00
+Methyl mercury                   0.00      0.14     0.01     0.13
+Nickel dichloride                0.24      0.53     0.67     0.19
+Paraquat_250                     0.15      0.03     0.41     0.00
+Paraquat_62.5                    0.95      0.09     0.09     0.04
+Propoxur                         0.84      0.00     0.00     0.00
+Pyraclostrobin                   0.03      0.00     0.00     0.00
+Silver nitrate_250               0.46      0.04     0.85     0.00
+Silver nitrate_7.8               0.00      0.00     0.00     0.10
+Triphenyl phosphate_50           0.33      0.00     0.00     0.00
+Triphenyl phosphate_6.25         0.00      0.00     0.00     0.06
+Zinc dichloride                  0.00      0.00     0.00     0.24
+                         Methyl mercury Nickel dichloride Paraquat_250
+2_4-D                              1.00              1.00         1.00
+Aldicarb                           1.00              1.00         1.00
+Arsenic trioxide                   0.01              1.00         1.00
+Atrazine                           1.00              1.00         0.00
+Cadmium dichloride                 0.46              1.00         0.00
+Carbaryl                           1.00              1.00         1.00
+Carboxin                           1.00              1.00         0.77
+Chlorfenapyr                       1.00              1.00         0.52
+Chlorothalonil                     1.00              1.00         1.00
+Chlorpyrifos                       1.00              1.00         1.00
+Copper chloride                    0.14              0.95         0.00
+Lead nitrate                       0.44              1.00         1.00
+Malathion                          1.00              1.00         1.00
+Mancozeb                           1.00              1.00         1.00
+Methomyl                           1.00              1.00         0.00
+Methyl mercury                     0.00              1.00         0.26
+Nickel dichloride                  0.76              0.00         1.00
+Paraquat_250                       0.00              0.00         0.00
+Paraquat_62.5                      0.08              0.27         0.00
+Propoxur                           0.03              0.24         0.02
+Pyraclostrobin                     0.00              0.52         0.00
+Silver nitrate_250                 0.01              0.01         0.00
+Silver nitrate_7.8                 0.02              0.50         0.04
+Triphenyl phosphate_50             0.13              0.45         0.00
+Triphenyl phosphate_6.25           0.01              0.89         0.95
+Zinc dichloride                    0.21              0.00         0.04
+                         Paraquat_62.5 Propoxur Pyraclostrobin
+2_4-D                             1.00     0.00           0.00
+Aldicarb                          1.00     0.37           1.00
+Arsenic trioxide                  1.00     1.00           1.00
+Atrazine                          0.35     0.00           0.00
+Cadmium dichloride                1.00     1.00           0.02
+Carbaryl                          1.00     0.00           0.00
+Carboxin                          1.00     0.00           0.25
+Chlorfenapyr                      1.00     1.00           0.01
+Chlorothalonil                    1.00     0.01           0.00
+Chlorpyrifos                      1.00     0.00           0.00
+Copper chloride                   1.00     1.00           1.00
+Lead nitrate                      1.00     1.00           1.00
+Malathion                         1.00     0.14           0.00
+Mancozeb                          1.00     0.00           0.01
+Methomyl                          1.00     0.08           0.00
+Methyl mercury                    1.00     1.00           0.03
+Nickel dichloride                 1.00     1.00           1.00
+Paraquat_250                      0.00     1.00           0.01
+Paraquat_62.5                     0.00     1.00           1.00
+Propoxur                          0.01     0.00           0.00
+Pyraclostrobin                    0.33     0.00           0.00
+Silver nitrate_250                0.00     0.01           0.00
+Silver nitrate_7.8                0.87     0.09           0.00
+Triphenyl phosphate_50            0.20     0.00           0.00
+Triphenyl phosphate_6.25          0.32     0.00           0.00
+Zinc dichloride                   0.98     0.03           0.01
+                         Silver nitrate_250 Silver nitrate_7.8
+2_4-D                                  1.00               0.46
+Aldicarb                               1.00               1.00
+Arsenic trioxide                       1.00               0.30
+Atrazine                               0.00               0.77
+Cadmium dichloride                     0.00               1.00
+Carbaryl                               1.00               1.00
+Carboxin                               1.00               1.00
+Chlorfenapyr                           1.00               1.00
+Chlorothalonil                         1.00               1.00
+Chlorpyrifos                           1.00               0.03
+Copper chloride                        0.00               1.00
+Lead nitrate                           1.00               0.00
+Malathion                              1.00               0.02
+Mancozeb                               1.00               0.34
+Methomyl                               0.00               1.00
+Methyl mercury                         1.00               1.00
+Nickel dichloride                      1.00               1.00
+Paraquat_250                           0.00               1.00
+Paraquat_62.5                          0.21               1.00
+Propoxur                               1.00               1.00
+Pyraclostrobin                         0.00               0.14
+Silver nitrate_250                     0.00               1.00
+Silver nitrate_7.8                     0.27               0.00
+Triphenyl phosphate_50                 0.00               0.04
+Triphenyl phosphate_6.25               0.20               0.00
+Zinc dichloride                        0.05               0.00
+                         Triphenyl phosphate_50 Triphenyl phosphate_6.25
+2_4-D                                      1.00                     0.03
+Aldicarb                                   1.00                     0.15
+Arsenic trioxide                           1.00                     1.00
+Atrazine                                   0.00                     0.00
+Cadmium dichloride                         0.14                     1.00
+Carbaryl                                   0.23                     0.00
+Carboxin                                   1.00                     0.01
+Chlorfenapyr                               0.06                     1.00
+Chlorothalonil                             1.00                     0.03
+Chlorpyrifos                               0.11                     0.00
+Copper chloride                            1.00                     1.00
+Lead nitrate                               1.00                     0.28
+Malathion                                  0.02                     0.00
+Mancozeb                                   0.01                     0.00
+Methomyl                                   0.09                     1.00
+Methyl mercury                             1.00                     1.00
+Nickel dichloride                          1.00                     1.00
+Paraquat_250                               0.00                     1.00
+Paraquat_62.5                              1.00                     1.00
+Propoxur                                   0.00                     0.00
+Pyraclostrobin                             0.00                     0.00
+Silver nitrate_250                         0.00                     1.00
+Silver nitrate_7.8                         1.00                     0.00
+Triphenyl phosphate_50                     0.00                     0.00
+Triphenyl phosphate_6.25                   0.00                     0.00
+Zinc dichloride                            0.45                     0.00
+                         Zinc dichloride
+2_4-D                               1.00
+Aldicarb                            1.00
+Arsenic trioxide                    1.00
+Atrazine                            0.62
+Cadmium dichloride                  1.00
+Carbaryl                            1.00
+Carboxin                            1.00
+Chlorfenapyr                        1.00
+Chlorothalonil                      0.00
+Chlorpyrifos                        0.03
+Copper chloride                     0.32
+Lead nitrate                        0.00
+Malathion                           1.00
+Mancozeb                            1.00
+Methomyl                            1.00
+Methyl mercury                      1.00
+Nickel dichloride                   0.06
+Paraquat_250                        1.00
+Paraquat_62.5                       1.00
+Propoxur                            1.00
+Pyraclostrobin                      1.00
+Silver nitrate_250                  1.00
+Silver nitrate_7.8                  0.00
+Triphenyl phosphate_50              1.00
+Triphenyl phosphate_6.25            0.89
+Zinc dichloride                     0.00
+
+ To see confidence intervals of the correlations, print with the short=FALSE option</code></pre>
+</div>
+</div></div>
+</section>
+     </main>
+<!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>  </div> <!-- /content --> 
+  
+</body></html>

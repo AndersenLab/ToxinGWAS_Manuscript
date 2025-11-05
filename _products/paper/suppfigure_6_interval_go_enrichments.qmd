@@ -1,0 +1,142 @@
+---
+title: "Figure S06. Gene ontology enrichment of susceptibility-associated genomic intervals"
+execute:
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: interval-go-enrich-setup
+#| include: false
+
+library(clusterProfiler)
+library(glue)
+```
+
+```{r}
+#| include: false
+source(file.path("bin", "outs.R"))
+source(file.path("bin", "materials_key.R"))
+source(file.path("bin", "pub_format.R"))
+```
+
+```{r}
+#| label: interval-go-prep
+
+in_dir <- "data/processed/interval_genes/enrichments"
+
+#### Load data ####
+interval_enrich <- readRDS(file.path(in_dir, "enrich_each_interval.rds"))
+
+# simplify the dotplot
+int_enrich_simp <- clusterProfiler::simplify(interval_enrich)
+
+# Filter for SCF-related terms
+scf_terms <- int_enrich_simp@compareClusterResult %>%
+  filter(grepl("SCF", Description, ignore.case = TRUE))
+
+# Print the filtered results
+print(scf_terms)
+
+# Function to update SCF term description
+update_scf_description <- function(enrich_obj) {
+  # Get the compareClusterResult
+  result <- enrich_obj@compareClusterResult
+
+  # Update the Description for SCF terms
+  result$Description[grepl("SCF", result$Description, ignore.case = TRUE)] <-
+    "SCF/ubiquitin-dependent protein catabolic processes"
+
+  # Update the object
+  enrich_obj@compareClusterResult <- result
+  return(enrich_obj)
+}
+
+# Apply the update
+int_enrich_simp <- update_scf_description(int_enrich_simp)
+
+# Verify the changes
+scf_terms_updated <- int_enrich_simp@compareClusterResult %>%
+  filter(grepl("SCF", Description, ignore.case = TRUE))
+print(scf_terms_updated)
+# Filter for SCF-related terms
+scf_terms <- int_enrich_simp@compareClusterResult %>%
+  filter(grepl("SCF", Description, ignore.case = TRUE))
+
+# Print the filtered results
+print(scf_terms)
+
+# Function to update SCF term description
+update_scf_description <- function(enrich_obj) {
+  # Get the compareClusterResult
+  result <- enrich_obj@compareClusterResult
+
+  # Update the Description for SCF terms
+  result$Description[grepl("SCF", result$Description, ignore.case = TRUE)] <-
+    "SCF/ubiquitin-dependent protein catabolism"
+
+  # Update the object
+  enrich_obj@compareClusterResult <- result
+  return(enrich_obj)
+}
+
+# Apply the update
+int_enrich_simp <- update_scf_description(int_enrich_simp)
+
+# Verify the changes
+scf_terms_updated <- int_enrich_simp@compareClusterResult %>%
+  filter(grepl("SCF", Description, ignore.case = TRUE))
+print(scf_terms_updated)
+
+```
+
+```{r}
+#| label: interval-go-plot-base
+
+int_enrich_simp_dp_no_facet <- enrichplot::dotplot(
+  int_enrich_simp,
+  x = "peak_marker",
+  font.size = 10,
+  label_format = 50
+)
+```
+
+```{r}
+int_enrich_simp_dp_no_facet <-
+  int_enrich_simp_dp_no_facet +
+  pub_theme() +
+  theme(
+    legend.position = "inside",
+    # set coordinates (x, y)
+    legend.position.inside = c(.2, 0.3),
+    axis.text.x = element_text(
+      family = "Helvetica",
+      size = 10,
+      face = "bold",
+      angle = 45,
+      hjust = 1
+    ),
+    axis.text.y = element_text(
+      family = "Helvetica",
+      size = 10
+    ),
+    axis.title.x = element_blank()
+  )
+```
+
+```{r}
+#| fig-width: 7
+#| fig-height: 8.5
+int_enrich_simp_dp_no_facet
+```
+
+```{r}
+#| label: plot-interval-go-enrichments-output
+save_plot(
+  int_enrich_simp_dp_no_facet,
+  sup_figure_fns$int_enrich_sim_dp,
+  w_in = 7.5,
+  h_in = 8.5
+)
+```
+

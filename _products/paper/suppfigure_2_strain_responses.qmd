@@ -1,0 +1,87 @@
+---
+title: "Figure S02: Differences in susceptibility among 195 C. elegans strains to 26 environmental toxicant conditions"
+execute:
+  warning: false
+  message: false
+format: html
+---
+
+```{r}
+#| include: false
+
+library(data.table)
+library(dplyr)
+library(ggplot2)
+library(ggh4x)
+library(here)
+
+set.seed(123)
+
+# Load required functions using file.path with project_root
+source(file.path("bin", "tox_colors.R"))
+source(file.path("bin", "pub_format.R"))
+source(file.path("bin", "outs.R"))
+source(file.path("bin", "materials_key.R"))
+
+```
+
+# Inputs
+```{r}
+
+#### Inputs ####
+strain_means <- readRDS(file.path("data", "processed", "phenotypes", "strain_means.rds"))
+drug_means <- readRDS(file.path("data", "processed", "phenotypes", "drug_means.rds"))
+
+class.pal.df <- tibble::tibble(
+  col = c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
+  big_class = c("Flame Retardant", "Fungicide", "Herbicide", "Insecticide", "Metal")
+)
+
+strain_means_out <- strain_means %>%
+  dplyr::left_join(drug_means, by = "drug") %>%
+  dplyr::mutate(
+    ResponderType = case_when(
+      StrainMean_NormLength > twoSD_pos ~ "High",
+      StrainMean_NormLength < twoSD_neg ~ "Low",
+      TRUE ~ "Normal"
+    ),
+    big_class = factor(big_class, levels = class.pal.df$big_class)
+  )
+
+res_col_pal <- c("Low" = "#FF0000", "Normal" = "grey", "High" = "#0000FF")
+man_pal <- class.pal.df %>% dplyr::pull(col)
+strip_colors <- setNames(man_pal, class.pal.df$big_class)
+
+strip_y <- ggh4x::strip_themed(
+  background_y = ggh4x::elem_list_rect(
+    fill = strip_colors[levels(strain_means_out$big_class)]
+  ),
+  text_y = ggh4x::elem_list_text(face = "bold", size = 12)
+)
+
+strain_means_plot <- strain_means_out %>%
+  dplyr::mutate(nice_drug_label2 = stringr::str_replace(nice_drug_label2, "uM", "µM")) %>%
+  ggplot2::ggplot(aes(x = StrainMean_NormLength, y = nice_drug_label2)) +
+  ggplot2::geom_jitter(aes(color = ResponderType), alpha = 0.8, width = 0.2, height = 0.2) +
+  ggplot2::geom_boxplot(outliers = FALSE) +
+  ggh4x::facet_grid2(big_class ~ ., scales = "free_y", strip = strip_y) +
+  scale_color_manual(
+    values = res_col_pal,
+    labels = c("Low" = "Highly susceptible", "Normal" = "Moderately susceptible", "High" = "Minimally susceptible")
+  ) +
+  ggplot2::labs(x = "Normalized animal length (µm)", color = "Response type") +
+  pub_theme() +
+  theme(axis.title.y = ggplot2::element_blank(), legend.position = "top")
+```
+
+```{r}
+#| label: fig-s2-strain-means
+#| fig-width: 7.5
+#| fig-height: 10
+strain_means_plot
+```
+
+Save the plot
+```{r}
+save_plot(strain_means_plot, sup_figure_fns$strain_means_plot, w_in = 7.5, h_in = 10)
+```

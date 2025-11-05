@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.23">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Natural variation suggests candidate genes underlying Caenorhabditis elegans susceptibility to diverse toxicants</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1fe81d0376b2c50856e68e651e390326.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a74871fe4945b66d259aafc266475145.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+<meta name="citation_title" content="Natural variation suggests candidate genes underlying Caenorhabditis elegans susceptibility to diverse toxicants">
+<meta name="citation_language" content="en">
+</head>
+
+<body class="quarto-light">
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Natural variation suggests candidate genes underlying Caenorhabditis elegans susceptibility to diverse toxicants</h1>
+          </div>
+
+    
+    <div class="quarto-title-meta-container">
+      <div class="quarto-title-meta-column-start">
+        
+        <div class="quarto-title-meta">
+
+                
+          
+                
+              </div>
+      </div>
+      <div class="quarto-title-meta-column-end quarto-other-formats-target">
+      </div>
+    </div>
+
+
+
+    <div class="quarto-other-links-text-target">
+    </div>  </div>
+</header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#toxicant-gwas-manuscript" id="toc-toxicant-gwas-manuscript" class="nav-link active" data-scroll-target="#toxicant-gwas-manuscript"><span class="header-section-number">1</span> Toxicant GWAS Manuscript</a>
+  <ul class="collapse">
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">1.1</span> Getting Started</a>
+  <ul class="collapse">
+  <li><a href="#clone-the-repository" id="toc-clone-the-repository" class="nav-link" data-scroll-target="#clone-the-repository"><span class="header-section-number">1.1.1</span> 1. Clone the Repository</a></li>
+  <li><a href="#render-the-project" id="toc-render-the-project" class="nav-link" data-scroll-target="#render-the-project"><span class="header-section-number">1.1.2</span> 2. Render the Project</a></li>
+  </ul></li>
+  <li><a href="#project-structure" id="toc-project-structure" class="nav-link" data-scroll-target="#project-structure"><span class="header-section-number">1.2</span> Project Structure</a>
+  <ul class="collapse">
+  <li><a href="#analysis-pipeline" id="toc-analysis-pipeline" class="nav-link" data-scroll-target="#analysis-pipeline"><span class="header-section-number">1.2.1</span> Analysis Pipeline</a></li>
+  <li><a href="#paper-figures-and-tables" id="toc-paper-figures-and-tables" class="nav-link" data-scroll-target="#paper-figures-and-tables"><span class="header-section-number">1.2.2</span> Paper Figures and Tables</a></li>
+  <li><a href="#products-directory" id="toc-products-directory" class="nav-link" data-scroll-target="#products-directory"><span class="header-section-number">1.2.3</span> <code>products/</code> Directory</a></li>
+  </ul></li>
+  <li><a href="#pre-computed-gwas-results" id="toc-pre-computed-gwas-results" class="nav-link" data-scroll-target="#pre-computed-gwas-results"><span class="header-section-number">1.3</span> Pre-computed GWAS Results</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="paper/aggregate_supplementary_tables-preview.html"><i class="bi bi-journal-code"></i>Aggregate Supplementary Tables into Excel Workbook</a></li><li><a href="analysis/nemascan_pipeline_documentation-preview.html"><i class="bi bi-journal-code"></i>Analysis 01: NemaScan Pipeline Documentation</a></li><li><a href="analysis/decompress_nemascan_output-preview.html"><i class="bi bi-journal-code"></i>Analysis 02: Decompress NemaScan Output</a></li><li><a href="analysis/organize_tox_metadata-preview.html"><i class="bi bi-journal-code"></i>Analysis 03: Organize Toxicant Metadata</a></li><li><a href="analysis/trait_generate_mapping_inputs-preview.html"><i class="bi bi-journal-code"></i>Analysis 04: Generate Mapping Inputs</a></li><li><a href="analysis/organize_strain_means-preview.html"><i class="bi bi-journal-code"></i>Analysis 05: Organize Strain Means</a></li><li><a href="analysis/organize_strain_outliers-preview.html"><i class="bi bi-journal-code"></i>Analysis 06: Organize Strain Outliers</a></li><li><a href="analysis/calculate_phenotype_correlations-preview.html"><i class="bi bi-journal-code"></i>Analysis 07: Calculate Phenotype Correlations</a></li><li><a href="analysis/calculate_enrich_each_interval-preview.html"><i class="bi bi-journal-code"></i>Analysis 08: GO Enrichment for Intervals</a></li><li><a href="analysis/interval_overlap_identification-preview.html"><i class="bi bi-journal-code"></i>Analysis 09: Interval Overlap Identification</a></li><li><a href="analysis/hdr_summarize_strain-preview.html"><i class="bi bi-journal-code"></i>Analysis 10: Summarize Strain HDRs</a></li><li><a href="analysis/hdr_calculate_region_overlaps-preview.html"><i class="bi bi-journal-code"></i>Analysis 11: Calculate Region HDR Overlaps</a></li><li><a href="analysis/rank_regions-preview.html"><i class="bi bi-journal-code"></i>Analysis 12: Rank Regions</a></li><li><a href="analysis/candidate_gene_identification-preview.html"><i class="bi bi-journal-code"></i>Analysis 13: Identify Candidate Genes</a></li><li><a href="analysis/candidate_gene_GO-preview.html"><i class="bi bi-journal-code"></i>Analysis 14: Candidate Gene GO Terms</a></li><li><a href="analysis/candidate_gene_effects-preview.html"><i class="bi bi-journal-code"></i>Analysis 15: Candidate Gene Effects</a></li><li><a href="analysis/candidate_gene_organization-preview.html"><i class="bi bi-journal-code"></i>Analysis 16: Organize Candidate Genes</a></li><li><a href="analysis/candidate_gene_orthologs-preview.html"><i class="bi bi-journal-code"></i>Analysis 17: Candidate Gene Orthologs</a></li><li><a href="analysis/semantic_similarity_all_genes-preview.html"><i class="bi bi-journal-code"></i>Analysis 18: Semantic Similarity for All Genes</a></li><li><a href="analysis/semantic_similarity_candidate_genes-preview.html"><i class="bi bi-journal-code"></i>Analysis 19: Semantic Similarity for Candidate Genes</a></li><li><a href="paper/figure_1_heritabilty-preview.html"><i class="bi bi-journal-code"></i>Figure 01. Heritability of toxicant susceptibilities</a></li><li><a href="paper/figure_2_phenotype_correlations-preview.html"><i class="bi bi-journal-code"></i>Figure 02. Correlations between differences in susceptibility to toxicant conditions</a></li><li><a href="paper/figure_3_manhattan_plots-preview.html"><i class="bi bi-journal-code"></i>Figure 03. Representative Manhattan plots showing 19 of 40 susceptibility-associated regions identified with GWAS</a></li><li><a href="paper/figure_4_effect_sizes-preview.html"><i class="bi bi-journal-code"></i>Figure 04. Absolute effect size of susceptibility associated variants by frequency</a></li><li><a href="paper/figure_5_interval_overlaps-preview.html"><i class="bi bi-journal-code"></i>Figure 05. Physical overlaps of genomic regions associated with susceptibility across toxicants</a></li><li><a href="paper/suppfigure_1_strainset_simulations-preview.html"><i class="bi bi-journal-code"></i>Figure S01: GWAS simulations to optimize mapping panel strain selection</a></li><li><a href="paper/suppfigure_2_strain_responses-preview.html"><i class="bi bi-journal-code"></i>Figure S02: Differences in susceptibility among 195 C. elegans strains to 26 environmental toxicant conditions</a></li><li><a href="paper/suppfigure_3_extreme_susceptibility_strains-preview.html"><i class="bi bi-journal-code"></i>Figure S03. Number of strains with extreme susceptibility profiles across 26 toxicant exposures</a></li><li><a href="paper/suppfigure_4_heritability_comp-preview.html"><i class="bi bi-journal-code"></i>Figure S04: Regression of heritability estimates for the 195 strains in the GWAS mapping panel against the eight strains from Widmayer et al. 2022</a></li><li><a href="paper/suppfigure_5_alltox_intervals-preview.html"><i class="bi bi-journal-code"></i>Figure S05: Susceptibility-associated intervals for all 26 toxicant exposures</a></li><li><a href="paper/suppfigure_6_interval_go_enrichments-preview.html"><i class="bi bi-journal-code"></i>Figure S06. Gene ontology enrichment of susceptibility-associated genomic intervals</a></li><li><a href="paper/suppfigure_7_interval_overlap_summary-preview.html"><i class="bi bi-journal-code"></i>Figure S07. Physical overlaps of susceptibility-associated intervals across toxicants</a></li><li><a href="paper/suppfigure_8_semantic_similarity-preview.html"><i class="bi bi-journal-code"></i>Figure S08. GO term semantic similarity of susceptibility-associated genes</a></li><li><a href="paper/supptable_1_strains-preview.html"><i class="bi bi-journal-code"></i>Table S01. Strains selected for the GWAS panel</a></li><li><a href="paper/supptable_2_toxicants-preview.html"><i class="bi bi-journal-code"></i>Table S02. Environmental toxicants and exposure conditions assayed</a></li><li><a href="paper/supptable_3_strain_responses-preview.html"><i class="bi bi-journal-code"></i>Table S03. Strain specific toxicant response data</a></li><li><a href="paper/supptable_4_susceptibility_differences-preview.html"><i class="bi bi-journal-code"></i>Table S04. Differences in susceptibility to toxicant conditions among strains</a></li><li><a href="paper/supptable_5_toxicant_group_response_comparison-preview.html"><i class="bi bi-journal-code"></i>Table S05: Comparison of the mean standard deviation of normalized animal lengths across toxicant groups</a></li><li><a href="paper/supptable_6_heritability_estimates-preview.html"><i class="bi bi-journal-code"></i>Table S06. Heritability estimates for toxicant conditions</a></li><li><a href="paper/supptable_7_intervals_detected-preview.html"><i class="bi bi-journal-code"></i>Table S07. Susceptibility-associated intervals detected by the Inbred GWAS algorithm</a></li><li><a href="paper/supptable_8_candidate_genes-preview.html"><i class="bi bi-journal-code"></i>Table S08. Candidate genes from susceptibility-associated intervals detected by GWAS</a></li><li><a href="paper/supptable_9_interval_overlap-preview.html"><i class="bi bi-journal-code"></i>Table S09. Overlapping susceptibility-associated intervals across toxicant condition pairs</a></li><li><a href="paper/supptable_10_interval_ranking-preview.html"><i class="bi bi-journal-code"></i>Table S10. Prioritization of actionable susceptibility-associated regions detected by GWAS</a></li><li><a href="paper/supptable_11_orthologs-preview.html"><i class="bi bi-journal-code"></i>Table S11. Human orthologs for candidate genes</a></li></ul></div></nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+  
+
+
+<section id="toxicant-gwas-manuscript" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Toxicant GWAS Manuscript</h1>
+<p>This repository contains all code and data needed to reproduce the analyses and figures from the manuscript “Natural variation suggests candidate genes underlying <em>Caenorhabditis elegans</em> susceptibility to diverse toxicants”</p>
+<section id="getting-started" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">1.1</span> Getting Started</h2>
+<section id="clone-the-repository" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="clone-the-repository"><span class="header-section-number">1.1.1</span> 1. Clone the Repository</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/<span class="pp">[</span><span class="ss">your</span><span class="pp">-</span><span class="ss">username</span><span class="pp">]</span>/ToxinGWAS_Manuscript.git</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ToxinGWAS_Manuscript</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="render-the-project" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="render-the-project"><span class="header-section-number">1.1.2</span> 2. Render the Project</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Render the entire project</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This will: 1. Decompress pre-computed GWAS mapping results (~6 GB) 2. Process raw data to generate all intermediate data files 3. Generate all manuscript figures and tables</p>
+</section>
+</section>
+<section id="project-structure" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="project-structure"><span class="header-section-number">1.2</span> Project Structure</h2>
+<ul>
+<li><strong><code>analysis/</code></strong> - Data processing and analysis scripts</li>
+<li><strong><code>paper/</code></strong> - Figure and table generation scripts for the manuscript</li>
+<li><strong><code>data/raw/</code></strong> - Raw input data</li>
+<li><strong><code>data/processed/</code></strong> - Intermediate processed data</li>
+<li><strong><code>bin/</code></strong> - Utility functions and helper scripts</li>
+<li><strong><code>_products/</code></strong> - Rendered outputs from <code>analysis/</code> and <code>paper/</code> scripts</li>
+<li><strong><code>figures/</code></strong> - Generated figures for the manuscript</li>
+<li><strong><code>tables/</code></strong> - Generated tables for the manuscript</li>
+</ul>
+<section id="analysis-pipeline" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="analysis-pipeline"><span class="header-section-number">1.2.1</span> Analysis Pipeline</h3>
+<p>The analysis scripts in <a href="analysis/"><code>analysis/</code></a> are executed in the following order (as specified in <a href="_quarto.yml"><code>_quarto.yml</code></a>):</p>
+<ol type="1">
+<li><strong>Data Processing</strong>
+<ul>
+<li><a href="./analysis/nemascan_pipeline_documentation-preview.html"><code>nemascan_pipeline_documentation.qmd</code></a></li>
+<li><a href="./analysis/decompress_nemascan_output-preview.html"><code>decompress_nemascan_output.qmd</code></a></li>
+<li><a href="./analysis/organize_tox_metadata-preview.html"><code>organize_tox_metadata.qmd</code></a></li>
+<li><a href="./analysis/trait_generate_mapping_inputs-preview.html"><code>trait_generate_mapping_inputs.qmd</code></a></li>
+</ul></li>
+<li><strong>Phenotype Analysis</strong>
+<ul>
+<li><a href="./analysis/organize_strain_means-preview.html"><code>organize_strain_means.qmd</code></a></li>
+<li><a href="./analysis/organize_strain_outliers-preview.html"><code>organize_strain_outliers.qmd</code></a></li>
+<li><a href="./analysis/calculate_phenotype_correlations-preview.html"><code>calculate_phenotype_correlations.qmd</code></a></li>
+</ul></li>
+<li><strong>GWAS and Interval Analysis</strong>
+<ul>
+<li><a href="./analysis/calculate_enrich_each_interval-preview.html"><code>calculate_enrich_each_interval.qmd</code></a></li>
+<li><a href="./analysis/interval_overlap_identification-preview.html"><code>interval_overlap_identification.qmd</code></a></li>
+<li><a href="./analysis/hdr_summarize_strain-preview.html"><code>hdr_summarize_strain.qmd</code></a></li>
+<li><a href="./analysis/hdr_calculate_region_overlaps-preview.html"><code>hdr_calculate_region_overlaps.qmd</code></a></li>
+<li><a href="./analysis/rank_regions-preview.html"><code>rank_regions.qmd</code></a></li>
+</ul></li>
+<li><strong>Candidate Gene Analysis</strong>
+<ul>
+<li><a href="./analysis/candidate_gene_identification-preview.html"><code>candidate_gene_identification.qmd</code></a></li>
+<li><a href="./analysis/candidate_gene_GO-preview.html"><code>candidate_gene_GO.qmd</code></a></li>
+<li><a href="./analysis/candidate_gene_effects-preview.html"><code>candidate_gene_effects.qmd</code></a></li>
+<li><a href="./analysis/candidate_gene_organization-preview.html"><code>candidate_gene_organization.qmd</code></a></li>
+<li><a href="./analysis/candidate_gene_orthologs-preview.html"><code>candidate_gene_orthologs.qmd</code></a></li>
+</ul></li>
+<li><strong>Semantic Similarity Analysis</strong>
+<ul>
+<li><a href="./analysis/semantic_similarity_all_genes-preview.html"><code>semantic_similarity_all_genes.qmd</code></a></li>
+<li><a href="./analysis/semantic_similarity_candidate_genes-preview.html"><code>semantic_similarity_candidate_genes.qmd</code></a></li>
+</ul></li>
+<li><strong>Supplementary Materials</strong>
+<ul>
+<li><a href="./paper/aggregate_supplementary_tables-preview.html"><code>aggregate_supplementary_tables.qmd</code></a></li>
+</ul></li>
+</ol>
+</section>
+<section id="paper-figures-and-tables" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="paper-figures-and-tables"><span class="header-section-number">1.2.2</span> Paper Figures and Tables</h3>
+<p>The figure and table generation scripts in <a href="paper/"><code>paper/</code></a> are executed after the analysis scripts, as specified in <a href="_quarto.yml"><code>_quarto.yml</code></a>. These scripts generate all figures and tables used in the manuscript.</p>
+</section>
+<section id="products-directory" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="products-directory"><span class="header-section-number">1.2.3</span> <code>products/</code> Directory</h3>
+<p>The <code>_products/</code> directory contains all rendered outputs from the analysis and paper scripts. After running <code>quarto render</code>, you can find: - Processed data files in <code>_products/analysis/</code> - Manuscript figures in <code>_products/paper/</code> - Index file at <code>_products/index.html</code> for easy navigation of all outputs.</p>
+</section>
+</section>
+<section id="pre-computed-gwas-results" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="pre-computed-gwas-results"><span class="header-section-number">1.3</span> Pre-computed GWAS Results</h2>
+<p>The GWAS mapping results (<code>data/processed/20231116_Analysis_NemaScan/</code>) were generated using the <a href="https://github.com/andersenlab/nemascan">NemaScan pipeline</a> and are provided pre-computed due to computational requirements.</p>
+<p><strong>For detailed information about how these results were generated</strong>, see the rendered documentation at <code>_products/analysis/nemascan_pipeline_documentation.html</code> after running <code>quarto render</code>, or view the source at <a href="./analysis/nemascan_pipeline_documentation-preview.html"><code>analysis/nemascan_pipeline_documentation.qmd</code></a>.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

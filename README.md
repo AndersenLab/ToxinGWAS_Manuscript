@@ -1,49 +1,86 @@
 # Toxicant GWAS Manuscript
 
-This repository contains all code and data needed to reproduce the analyses and figures from the manuscript.
+This repository contains all code and data needed to reproduce the analyses and figures from the manuscript "Natural variation suggests candidate genes underlying *Caenorhabditis elegans* susceptibility to diverse toxicants"
 
-## Reproducibility
+## Getting Started
 
-### Quick Start
-
-To reproduce all analyses and figures:
+### 1. Clone the Repository
 
 ```bash
-quarto render
+git clone https://github.com/[your-username]/ToxinGWAS_Manuscript.git
+cd ToxinGWAS_Manuscript
 ```
 
+### 2. Render the Project
+```bash
+# Render the entire project
+quarto render
+```
 This will:
 1. Decompress pre-computed GWAS mapping results (~6 GB)
-2. Process all intermediate data
-3. Generate all manuscript figures
+2. Process raw data to generate all intermediate data files
+3. Generate all manuscript figures and tables
 
-### Pre-computed GWAS Results
 
-The GWAS mapping results (`data/processed/20231116_Analysis_NemaScan/`) were generated using the [NemaScan pipeline](https://github.com/andersenlab/nemascan) and are provided pre-computed due to computational requirements (HPC cluster with ~500 CPU hours).
-
-**For detailed information about how these results were generated**, see the rendered documentation at `_products/analysis/nemascan_pipeline_documentation.html` after running `quarto render`, or view the source at [`analysis/nemascan_pipeline_documentation.qmd`](analysis/nemascan_pipeline_documentation.qmd).
-
-**Note**: The compressed archive (`data/raw/nemascan_output/20231116_Analysis_NemaScan.tar.xz`, 68 MB) is included in this repository and will be automatically decompressed on first render. The archive uses xz compression to stay under GitHub's file size limits.
 
 ## Project Structure
 
-- **`analysis/`** - Data processing and analysis scripts (Quarto documents)
+- **`analysis/`** - Data processing and analysis scripts 
 - **`paper/`** - Figure and table generation scripts for the manuscript
 - **`data/raw/`** - Raw input data
-- **`data/processed/`** - Intermediate processed data (generated during rendering)
+- **`data/processed/`** - Intermediate processed data
 - **`bin/`** - Utility functions and helper scripts
-- **`_products/`** - Rendered outputs (HTML reports, figures, tables)
+- **`_products/`** - Rendered outputs from `analysis/` and `paper/` scripts
+- **`figures/`** - Generated figures for the manuscript
+- **`tables/`** - Generated tables for the manuscript
 
-## Requirements
+### Analysis Pipeline
 
-- R (version 4.0 or higher recommended)
-- Quarto
-- Required R packages (will be loaded/installed during rendering)
+The analysis scripts in [`analysis/`](analysis/) are executed in the following order (as specified in [`_quarto.yml`](_quarto.yml)):
 
-## Citation
+1. **Data Processing**
+   - [`nemascan_pipeline_documentation.qmd`](analysis/nemascan_pipeline_documentation.qmd)
+   - [`decompress_nemascan_output.qmd`](analysis/decompress_nemascan_output.qmd)
+   - [`organize_tox_metadata.qmd`](analysis/organize_tox_metadata.qmd)
+   - [`trait_generate_mapping_inputs.qmd`](analysis/trait_generate_mapping_inputs.qmd)
 
-[Citation information to be added]
+2. **Phenotype Analysis**
+   - [`organize_strain_means.qmd`](analysis/organize_strain_means.qmd)
+   - [`organize_strain_outliers.qmd`](analysis/organize_strain_outliers.qmd)
+   - [`calculate_phenotype_correlations.qmd`](analysis/calculate_phenotype_correlations.qmd)
 
-## License
+3. **GWAS and Interval Analysis**
+   - [`calculate_enrich_each_interval.qmd`](analysis/calculate_enrich_each_interval.qmd)
+   - [`interval_overlap_identification.qmd`](analysis/interval_overlap_identification.qmd)
+   - [`hdr_summarize_strain.qmd`](analysis/hdr_summarize_strain.qmd)
+   - [`hdr_calculate_region_overlaps.qmd`](analysis/hdr_calculate_region_overlaps.qmd)
+   - [`rank_regions.qmd`](analysis/rank_regions.qmd)
 
-[License information to be added]
+4. **Candidate Gene Analysis**
+   - [`candidate_gene_identification.qmd`](analysis/candidate_gene_identification.qmd)
+   - [`candidate_gene_GO.qmd`](analysis/candidate_gene_GO.qmd)
+   - [`candidate_gene_effects.qmd`](analysis/candidate_gene_effects.qmd)
+   - [`candidate_gene_organization.qmd`](analysis/candidate_gene_organization.qmd)
+   - [`candidate_gene_orthologs.qmd`](analysis/candidate_gene_orthologs.qmd)
+
+5. **Semantic Similarity Analysis**
+   - [`semantic_similarity_all_genes.qmd`](analysis/semantic_similarity_all_genes.qmd)
+   - [`semantic_similarity_candidate_genes.qmd`](analysis/semantic_similarity_candidate_genes.qmd)
+
+6. **Supplementary Materials**
+   - [`aggregate_supplementary_tables.qmd`](paper/aggregate_supplementary_tables.qmd)
+
+### Paper Figures and Tables
+The figure and table generation scripts in [`paper/`](paper/) are executed after the analysis scripts, as specified in [`_quarto.yml`](_quarto.yml). These scripts generate all figures and tables used in the manuscript.
+
+### `products/` Directory
+The `_products/` directory contains all rendered outputs from the analysis and paper scripts. After running `quarto render`, you can find:
+- Processed data files in `_products/analysis/`
+- Manuscript figures in `_products/paper/`
+- Index file at `_products/index.html` for easy navigation of all outputs. 
+
+## Pre-computed GWAS Results
+
+The GWAS mapping results (`data/processed/20231116_Analysis_NemaScan/`) were generated using the [NemaScan pipeline](https://github.com/andersenlab/nemascan) and are provided pre-computed due to computational requirements.
+
+**For detailed information about how these results were generated**, see the rendered documentation at `_products/analysis/nemascan_pipeline_documentation.html` after running `quarto render`, or view the source at [`analysis/nemascan_pipeline_documentation.qmd`](analysis/nemascan_pipeline_documentation.qmd).

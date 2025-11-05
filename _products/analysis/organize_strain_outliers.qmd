@@ -1,0 +1,103 @@
+---
+title: "Analysis 06: Organize Strain Outliers"
+---
+
+```{r}
+#| label: identify_outlier_strains
+
+# Script to identify outlier strains based on their response to toxicants
+# This script reads in strain and drug means data and identifies strains that are
+# outliers (either highly susceptible or minimally susceptible) based on 2SD thresholds
+
+library(tidyverse)
+
+# Load required data
+strain_means <- readRDS("data/processed/phenotypes/strain_means.rds")
+drug_means <- readRDS("data/processed/phenotypes/drug_means.rds")
+
+# Join strain means with drug means and metadata
+strain_means_anno <- strain_means %>%
+  dplyr::left_join(drug_means, by = "drug") %>%
+  dplyr::mutate(
+    LowResponder = if_else(StrainMean_NormLength > twoSD_pos, true = 1, false = 0),
+    HighResponder = if_else(StrainMean_NormLength < twoSD_neg, true = 1, false = 0),
+    nice_drug_label2 = stringr::str_replace(nice_drug_label2, "uM", "µM")
+  )
+
+# Save the annotated strain means data
+write.csv(strain_means_anno, "data/processed/phenotypes/strain_means_anno.csv", row.names = FALSE)
+
+# Create a data frame to be used for the histograms
+outlier_status_hist_df <- strain_means_anno %>%
+  dplyr::filter(HighResponder == 1 | LowResponder == 1) %>%
+  dplyr::group_by(strain, drug) %>%
+  dplyr::summarise(
+    n_LowResponder = sum(LowResponder),
+    n_HighResponder = sum(HighResponder),
+    n_outliers = n_LowResponder + n_HighResponder
+  )
+
+# Check if in the same drug a strain ever gets both designations
+conflicting_strains <- outlier_status_hist_df %>%
+  dplyr::filter(n_HighResponder == 1 & n_LowResponder == 1)
+
+if (nrow(conflicting_strains) > 0) {
+  stop("Error: Found strains that are both high and low responders. This should not happen.")
+}
+
+# Generate a dataframe summarizing the number of times a strain is designated as
+# an outlier of each type
+outlier_summary_df <- outlier_status_hist_df %>%
+  dplyr::group_by(strain) %>%
+  dplyr::summarise(
+    n_HighResponder = sum(n_HighResponder),
+    n_LowResponder = sum(n_LowResponder)
+  ) %>%
+  tidyr::pivot_longer(
+    cols = c(n_HighResponder, n_LowResponder),
+    names_to = "Outlier_Type",
+    values_to = "Count"
+  ) %>%
+  # remove any rows where strain did not rec. designation
+  dplyr::filter(
+    Count > 0
+  )
+
+# Save the outlier summary data
+write.csv(outlier_summary_df, "data/processed/phenotypes/outlier_summary_df.csv", row.names = FALSE)
+```
+
+## Strains that were outliers to multiple drugs 
+
+```{r}
+#| label: multi_outlier_strains
+
+# print the unique nuber of strains that were outliers
+n_outlier_strains <- strain_means_anno %>%
+  dplyr::filter(HighResponder == 1 | LowResponder == 1) %>%
+  dplyr::pull(strain) %>%
+  unique() %>%
+  length()
+
+multi_outlier_strains <- outlier_summary_df %>%
+  dplyr::filter(Count > 1) %>%
+  dplyr::pull(strain) %>%
+  unique() %>%
+  length()
+
+# small .csv file summarizing the number of strains that are outliers to multiple drugs
+multi_outlier_strains_table <- tibble::tibble(
+  n_outlier_strains = n_outlier_strains,
+  multi_outlier_strains = multi_outlier_strains
+)
+
+# save the table
+data.table::fwrite(
+  multi_outlier_strains_table,
+  "data/processed/phenotypes/number_outlier_strains_table.csv"
+)
+
+cat(sprintf("Number of strains that are outliers: %d\n", n_outlier_strains))
+cat(sprintf("Number of strains that are outliers to multiple drugs: %d\n", multi_outlier_strains))
+```
+

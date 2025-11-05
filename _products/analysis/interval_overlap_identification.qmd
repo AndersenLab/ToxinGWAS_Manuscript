@@ -1,0 +1,201 @@
+---
+title: "Analysis 09: Interval Overlap Identification"
+---
+
+```{r}
+#| label: overlap-identification-setup
+
+library(tidyverse)
+library(GenomicRanges)
+library(cowplot)
+
+set.seed(123)
+
+source("bin/qtl_overlaps.R")
+```
+
+# Inputs
+```{r}
+#| label: overlap-identification-inputs
+
+ns_dir <- "data/processed/20231116_Analysis_NemaScan"
+tox_file <- "data/processed/tox_data/tox_metadata.csv"
+```
+
+# Outputs
+```{r}
+#| label: overlap-identification-outputs
+out_dir <- "data/processed/interval_overlap"
+if (!dir.exists(out_dir)) {
+  dir.create(out_dir, recursive = TRUE)
+}
+```
+
+# Main
+
+Code to identify overlapping intervals and calculate the proportion of overlapping intervals for all toxicant pairs.
+
+This script runs `pairwise_qtl_overlaps()` and processes the output.
+
+- Each row represents the overlaps between all possible trait pair combinations.
+- Trait pairs with no overlaps are listed as rows with `NA` values for `peakidA` and `peakidB`.
+- Trait pairs with multiple overlaps have a row for each overlap.
+
+To get the overlaps each interval is involved in, we filter the output to only include rows where `peakidA` or `peakidB` is not `NA`.
+
+The scipt also outputs dataframe summarizing the overlaps.
+
+# outputs
+`inbred_qtl_overlaps.csv` - dataframe with the following columns:
+    - `peakidA` - peak marker ID for trait A
+    - `peakidB` - peak marker ID for trait B
+    - `traitA` - trait name for trait A
+    - `traitB` - trait name for trait B
+    - `groupA` - use or MoA for trait A
+    - `groupB` - use or MoA for trait B
+    - `n_overlaps` - number of overlapping intervals
+`inbred_qtl_overlaps_moa.csv` - dataframe with the same columns as `inbred_qtl_overlaps.csv` but where group represents the MoA group instead of the use group
+
+`inbred_qtl_overlaps_summary.csv` - summary of the overlapping intervals
+`inbred_condition_pair_overlaps_summary.csv` - summary of the overlapping intervals by condition pair
+`overlap_qtl.csv` - list of intervals that overlap another interval
+
+
+```{r}
+#| label: overlap-identification-main
+tox_metadata <- data.table::fread(tox_file) %>%
+  dplyr::select(trait, nice_drug_label2, big_class, class, moa_class) %>%
+  # adjust the uM to µM
+  dplyr::mutate(nice_drug_label2 = dplyr::case_when(
+    nice_drug_label2 == "uM" ~ "µM",
+    TRUE ~ nice_drug_label2
+  ))
+
+### Load the inbred QTL data ###
+inbred_qtl <- data.table::fread(
+  glue::glue("{ns_dir}/INBRED/Mapping/Processed/QTL_peaks_inbred.tsv")
+) %>%
+  # remove the CV_length traits
+  dplyr::filter(!stringr::str_detect(trait, pattern = "CV_length"))
+
+# join the toxicant data to the qtl data
+tox.QTL.summary <- inbred_qtl %>%
+  dplyr::left_join(tox_metadata, by = c("trait" = "trait"))
+
+### Create a dataframe with the data for just MoA or just use ###
+
+tox_group_df <- tox.QTL.summary %>%
+  dplyr::mutate(group = big_class)
+
+tox_moa_df <- tox.QTL.summary %>%
+  dplyr::mutate(group = moa_class)
+
+#### Calculate Overlaps for all trait pairs #### ----
+
+print("Calculating overlaps for class data")
+
+inbred_qtl_overlaps <- pairwise_qtl_overlaps(tox_group_df)
+
+# save the overlaps data
+inbred_qtl_overlaps %>%
+  data.table::fwrite(
+    file = glue::glue("{out_dir}/inbred_qtl_overlaps.csv"),
+    sep = ",",
+    quote = FALSE
+  )
+
+
+### MOA overlaps ###
+
+print("Calculating overlaps for MOA data")
+
+inbred_qtl_overlaps_moa <- pairwise_qtl_overlaps(tox_moa_df)
+
+# save the overlaps data
+inbred_qtl_overlaps_moa %>%
+  data.table::fwrite(
+    file = glue::glue("{out_dir}/inbred_qtl_overlaps_moa.csv"),
+    sep = ",",
+    quote = FALSE
+  )
+
+
+### Perform permutation testing #### ----
+
+
+## Class Permutation Testing ###
+# inbred_class_permute_df <- run_permutation(tox_group_df)
+
+
+### Summarize the intervals that overlap another interval ####
+
+# Just get the overlaps
+inbred_overlaps_clean <- inbred_qtl_overlaps %>%
+  filter(!is.na(peakidA)) %>%
+  dplyr::select(
+    traitA,
+    traitB,
+    peakidA,
+    peakidB
+  )
+
+# save the overlap summary
+data.table::fwrite(
+  inbred_overlaps_clean,
+  file = glue::glue("{out_dir}/inbred_qtl_overlaps_summary.csv"),
+  sep = ",",
+  quote = FALSE
+)
+
+
+
+#### Summarize the overlaps for each trait pair ####
+pair_summary <- inbred_qtl_overlaps %>%
+  dplyr::select(-peakidA, -peakidB) %>%
+  dplyr::group_by(traitA, traitB) %>%
+  # keep distinct entries
+  dplyr::distinct() %>%
+  # keep paris with at least one overlap
+  dplyr::filter(n_overlaps >= 1)
+
+# save the summary
+data.table::fwrite(
+  pair_summary,
+  file = glue::glue("{out_dir}/inbred_condition_pair_overlaps_summary.csv"),
+  sep = ",",
+  quote = FALSE
+)
+
+
+# #### List ofintervals that overlap another interval ####
+
+# pull trait A values
+overlap_qtl_a <- inbred_overlaps_clean %>%
+  dplyr::select(peakidA, traitA) %>%
+  dplyr::distinct() %>%
+  dplyr::rename(
+    peakid = peakidA,
+    trait = traitA
+  )
+
+# pull trait B values
+overlap_qtl_b <- inbred_overlaps_clean %>%
+  dplyr::select(peakidB, traitB) %>%
+  dplyr::distinct() %>%
+  dplyr::rename(
+    peakid = peakidB,
+    trait = traitB
+  )
+
+# combine trait A and B values
+overlap_qtl <- rbind(overlap_qtl_a, overlap_qtl_b) %>%
+  dplyr::distinct()
+
+# save the list of intervals that overlap with another
+overlap_qtl %>%
+  data.table::fwrite(
+    file = glue::glue("{out_dir}/overlap_qtl.csv"),
+    sep = ",",
+    quote = FALSE
+  )
+```
