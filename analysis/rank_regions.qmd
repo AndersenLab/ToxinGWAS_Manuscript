@@ -20,7 +20,7 @@ source("bin/gwa_summary.R")
 ns_folder <- "data/processed/20231116_Analysis_NemaScan"
 tox_data_file <- "data/processed/tox_data/con_metadata.csv"
 qtl_database_file <- "data/raw/qtl_database/20230710_2021 QTL_Database_review.csv"
-inbred_overlap_dir <- "data/processed/HDR_overlap/20250204_1144_All_QTL_HD_overlap/inbred"
+inbred_overlap_dir <- "data/processed/HDR_overlap/All_QTL_HD_overlap/inbred"
 ```
 # Outputs
 ```{r}
