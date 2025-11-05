@@ -23,7 +23,7 @@ The GWAS mapping results (`data/processed/20231116_Analysis_NemaScan/`) were gen
 
 **For detailed information about how these results were generated**, see the rendered documentation at `_products/analysis/nemascan_pipeline_documentation.html` after running `quarto render`, or view the source at [`analysis/nemascan_pipeline_documentation.qmd`](analysis/nemascan_pipeline_documentation.qmd).
 
-**Note**: The compressed archive (`data/raw/nemascan_output/20231116_Analysis_NemaScan.tar.gz`, ~602 MB) is included in this repository and will be automatically decompressed on first render.
+**Note**: The compressed archive (`data/raw/nemascan_output/20231116_Analysis_NemaScan.tar.xz`, 68 MB) is included in this repository and will be automatically decompressed on first render. The archive uses xz compression to stay under GitHub's file size limits.
 
 ## Project Structure
 

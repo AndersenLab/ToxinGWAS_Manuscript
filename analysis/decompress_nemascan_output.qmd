@@ -11,7 +11,7 @@ library(tools)
 
 ```{r decompress}
 # Define paths
-archive_path <- "data/raw/nemascan_output/20231116_Analysis_NemaScan.tar.gz"
+archive_path <- "data/raw/nemascan_output/20231116_Analysis_NemaScan.tar.xz"
 output_dir <- "data/processed"
 expected_dir <- file.path(output_dir, "20231116_Analysis_NemaScan")
 

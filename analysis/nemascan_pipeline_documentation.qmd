@@ -71,9 +71,10 @@ nextflow run main.nf \
 
 ### 4. Replace the archived results
 
-- Compress the output directory using tar:
+- Compress the output directory using tar with xz compression (more efficient than gzip):
   ```bash
-  tar -czf 20231116_Analysis_NemaScan.tar.gz 20231116_Analysis_NemaScan/
+  tar -cJf 20231116_Analysis_NemaScan.tar.xz 20231116_Analysis_NemaScan/
   ```
-- Replace `data/raw/nemascan_output/20231116_Analysis_NemaScan.tar.gz` with your new archive
+- Replace `data/raw/nemascan_output/20231116_Analysis_NemaScan.tar.xz` with your new archive
+- Note: xz compression is used to keep file size under GitHub's 100MB limit (68MB vs 105MB with gzip)
 
