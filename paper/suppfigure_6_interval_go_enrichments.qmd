@@ -1,6 +1,6 @@
 ---
+title: "Figure S6. Gene ontology enrichment of susceptibility-associated genomic intervals"
 execute:
-  echo: false
   warning: false
   message: false
 ---
@@ -11,59 +11,22 @@ execute:
 
 library(clusterProfiler)
 library(glue)
-library(here)
+```
 
-script_dir <- tryCatch(
-  dirname(normalizePath(knitr::current_input())),
-  error = function(e) getwd()
-)
-
-# Try multiple possible locations for the setup file
-setup_file_paths <- c(
-  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
-  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
-  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
-)
-
-setup_file <- NULL
-for (path in setup_file_paths) {
-  if (file.exists(path)) {
-    setup_file <- path
-    break
-  }
-}
-
-if (!is.null(setup_file)) {
-  source(setup_file)
-  project_root <- setup_toxin_project_here()
-} else {
-  stop(
-    "Could not find setup_project_here.R in any of the expected locations: ",
-    paste(setup_file_paths, collapse = ", ")
-  )
-}
-
-if (is.null(project_root)) {
-  stop("Could not locate ToxinGWAS_Manuscript project root.")
-}
-
-
-
-source(file.path(project_root, "bin", "outs.R"))
-source(file.path(project_root, "bin", "materials_key.R"))
-source(file.path(project_root, "bin", "pub_format.R"))
+```{r}
+#| include: false
+source(file.path("bin", "outs.R"))
+source(file.path("bin", "materials_key.R"))
+source(file.path("bin", "pub_format.R"))
 ```
 
 ```{r}
 #| label: interval-go-prep
-#| include: false
 
 in_dir <- "data/processed/interval_genes/enrichments"
 
 #### Load data ####
 interval_enrich <- readRDS(file.path(in_dir, "enrich_each_interval.rds"))
-
-
 
 # simplify the dotplot
 int_enrich_simp <- clusterProfiler::simplify(interval_enrich)
@@ -129,7 +92,6 @@ print(scf_terms_updated)
 
 ```{r}
 #| label: interval-go-plot-base
-#| include: false
 
 int_enrich_simp_dp_no_facet <- enrichplot::dotplot(
   int_enrich_simp,
@@ -140,10 +102,41 @@ int_enrich_simp_dp_no_facet <- enrichplot::dotplot(
 ```
 
 ```{r}
-saveRDS(int_enrich_simp_dp_no_facet, file = "_shared/interval_go_enrichments_plot.rds")
+int_enrich_simp_dp_no_facet <-
+  int_enrich_simp_dp_no_facet +
+  pub_theme() +
+  theme(
+    legend.position = "inside",
+    # set coordinates (x, y)
+    legend.position.inside = c(.2, 0.3),
+    axis.text.x = element_text(
+      family = "Helvetica",
+      size = 10,
+      face = "bold",
+      angle = 45,
+      hjust = 1
+    ),
+    axis.text.y = element_text(
+      family = "Helvetica",
+      size = 10
+    ),
+    axis.title.x = element_blank()
+  )
 ```
 
 ```{r}
+#| fig-width: 7
+#| fig-height: 8.5
 int_enrich_simp_dp_no_facet
+```
+
+```{r}
+#| label: plot-interval-go-enrichments-output
+save_plot(
+  int_enrich_simp_dp_no_facet,
+  sup_figure_fns$int_enrich_sim_dp,
+  w_in = 7.5,
+  h_in = 8.5
+)
 ```
 
