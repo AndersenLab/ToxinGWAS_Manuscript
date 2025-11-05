@@ -1,0 +1,45 @@
+Interval,C. elegans Gene,Human Ortholog(s)
+Aldicarb (X:13252751),asp-4,"CTSD, NAPSA, REN, BACE2, BACE1, CTSE"
+Arsenic (II:13692527),W02B8.2,CIT
+Arsenic (II:13692527),Y39G8B.5,"MAP3K4, IKBKB, CHUK, IKBKE"
+Arsenic (III:1642838),Y119D3B.14,"GFM2, GFM1"
+Arsenic (III:1642838),Y22D7AL.11,FKTN
+Arsenic (III:1642838),Y46E12A.3,"GRXCR1, GRXCR2"
+Arsenic (III:1642838),cdh-12,PCDH15
+Arsenic (III:1642838),exc-6,"FHDC1, INF2, GRID2IP"
+Arsenic (III:1642838),smi-1,GEMIN2
+Cadmium (X:5955567),K11G12.6,"LMF2, LMF1"
+Carbaryl (I:2596756),K07A3.3,CLPX
+Carbaryl (I:2596756),ptr-12,"PTCHD1, PTCHD3, PTCHD4"
+Carboxin (III:2527992),rbc-2,"WDR7, WDR72"
+Chlorothalonil (II:5392976),EEED8.10,FBXL13
+Chlorothalonil (II:5392976),F07F6.7,"APOL4, APOL3"
+Chlorothalonil (II:5392976),T05H10.1,USP47
+Chlorothalonil (III:4478684),R151.8,CRAMP1
+Chlorothalonil (III:4478684),Y32H12A.8,WDR24
+Chlorothalonil (III:4478684),asb-1,ATP5F1
+Chlorothalonil (III:4478684),copd-1,ARCN1
+Chlorothalonil (III:4478684),daf-4,"ACVR2B, ACVR2A, AMHR2, TGFBR2"
+Chlorothalonil (III:4478684),dig-1,MUC16
+Chlorothalonil (III:4478684),exos-9,"EXOSC9, EXOSC8"
+Chlorothalonil (III:4478684),mdt-15,MED15
+Chlorothalonil (III:4478684),mlc-4,"MYL12B, MYL9, MYL12A"
+Chlorothalonil (III:4478684),mog-3,CWC25
+Chlorothalonil (III:4478684),nduf-2.2,NDUFS2
+Chlorothalonil (III:4478684),npp-9,"RGPD5, RANBP1, RGPD3, RANBP2, RGPD8, RGPD6, RGPD2, RGPD1, RGPD4"
+Chlorothalonil (III:4478684),ogt-1,OGT
+Chlorothalonil (III:4478684),panl-2,PAN2
+Chlorothalonil (III:4478684),set-2,"SETD1A, SETD1B"
+Chlorothalonil (III:4478684),sorf-2,WDR81
+Chlorothalonil (III:4478684),tag-325,"ARHGAP27, ARHGAP15, ARHGAP9, ARHGAP12"
+Chlorothalonil (III:4478684),tmem-17,TMEM17
+Chlorothalonil (III:4478684),wip-1,"WIPF1, WIPF2, WIPF3"
+Mercury (III:2461452),klo-2,"LCTL, LCT, KL, KLB, GBA3"
+Mercury (III:2461452),smg-6,"SMG6, SMG7, SMG5"
+Mercury (III:3716201),dph-1,DPH1
+Mercury (III:3716201),wdr-5.1,"WDR5, WDR5B"
+Nickel (V:1486141),chil-14,CHID1
+Nickel (V:1486141),fpn-1.2,SLC40A1
+Paraquat 62.5 uM (II:13675568),arrd-11,"ARRDC2, ARRDC4, ARRDC3, ARRDC1, TXNIP"
+Paraquat 62.5 uM (II:13675568),arrd-13,"ARRDC2, ARRDC3, ARRDC4, ARRDC1, TXNIP"
+Propoxur (V:5315004),mms-19,MMS19

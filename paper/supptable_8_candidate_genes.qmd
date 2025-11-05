@@ -1,0 +1,86 @@
+---
+title: "Table S8. Candidate genes from susceptibility-associated intervals detected by GWAS"
+format: html
+---
+
+
+```{r}
+#| label: candidate-genes-table-setup
+#| include: false
+
+library(dplyr)
+library(data.table)
+library(flextable)
+
+set.seed(123)
+```
+```{r}
+#| include: false
+# source the helper functions
+source("bin/general.R")
+source("bin/outs.R")
+source("bin/materials_key.R")
+source("bin/candidate_groupGO.R")
+```
+
+# Inputs
+`candidates_table` is generated in `analysis/candidate_gene_organization.qmd`
+```{r}
+candidate_table_fn <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes_table.tsv"
+```
+
+# Main
+```{r}
+candidate_table <- data.table::fread(candidate_table_fn)
+head(candidate_table)
+```
+
+
+
+```{r}
+candidate_ft <- candidate_table %>%
+  flextable::flextable(
+    col_keys = c(
+      "Gene",
+      "Details",
+      "Marker",
+      "Beta Coefficient",
+      "Reference Allele",
+      "Alternative Allele",
+      "Log10p",
+      "LD (r2)",
+      "MAF",
+      "Interval",
+      "Interval Rank"
+    ),
+  ) %>%
+  # make the gene name bold and italic
+  flextable::italic(j = 1, i = ~ !is.na(Gene), part = "body") %>%
+  # center the rank column
+  flextable::align(j = "Interval Rank", align = "center", part = "all") %>%
+  # replace NA values with "N/a"
+  flextable::compose(j = "Interval Rank", value = as_paragraph(ifelse(is.na(`Interval Rank`), "N/a", `Interval Rank`))) %>%
+  flextable::set_table_properties(layout = "autofit") %>%
+  flextable::line_spacing(space = 1, part = "all") %>%
+  flextable::align(align = "left", part = "all") %>%
+  flextable::set_table_properties(
+    layout = "autofit",
+    width = 1,
+    opts_word = list(split = FALSE, keep_with_next = TRUE)
+  ) %>%
+  flextable::paginate(
+    group = "Gene",
+    group_def = c("rle")
+  )
+
+```
+
+```{r}
+candidate_ft
+```
+
+Save the tabels with standard functions
+```{r}
+save_supp_table_csv(candidate_table, "candidate_genes")
+save_supp_table_flextable(candidate_ft, "candidate_genes")
+```

@@ -192,10 +192,10 @@ candidate_flex_table_pre <- candidate_pre_table %>%
     Details = GENENAME,
     Marker = MARKER,
     `Beta Coefficient` = beta_coefficient,
-    `Effect Allele` = effect_allele,
-    `Other Allele` = other_allele,
+    `Reference Allele` = effect_allele,
+    `Alternative Allele` = other_allele,
     Log10p = max_log10p,
-    R2 = max_marker_ld,
+    `LD (r2)` = max_marker_ld,
     MAF = max_marker_maf,
     Interval = drug_marker,
     `Interval Rank` = rank

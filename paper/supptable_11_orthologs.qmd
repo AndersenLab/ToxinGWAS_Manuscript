@@ -1,0 +1,112 @@
+---
+title: "Table S11. Human orthologs for candidate genes"
+---
+
+```{r}
+#| label: orthologs-setup
+#| include: false
+
+library(tidyverse)
+library(data.table)
+library(flextable)
+
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
+
+# Inputs
+
+```{r}
+#| label: orthologs-inputs
+
+# Candidate genes with human orthologs from analysis/candidate_gene_orthologs.qmd
+orthologs_fn <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes_with_human_orthologs.tsv"
+```
+
+# Main
+
+```{r}
+#| label: orthologs-main
+
+# Load the candidate genes with orthologs
+orthologs_data <- data.table::fread(orthologs_fn)
+
+# Filter to genes with HGNC symbols and select relevant columns
+orthologs_filtered <- orthologs_data %>%
+  dplyr::filter(!is.na(`HGNC Symbol`)) %>%
+  dplyr::select(Interval, Gene, `HGNC Symbol`)
+
+# Group by Interval and Gene, collapse HGNC symbols to comma-separated list
+orthologs_summary <- orthologs_filtered %>%
+  dplyr::group_by(Interval, Gene) %>%
+  dplyr::summarise(
+    `Human Orthologs` = paste(unique(`HGNC Symbol`), collapse = ", "),
+    .groups = "drop"
+  ) %>%
+  dplyr::arrange(Interval, Gene)
+
+# Check number of rows
+message("Number of candidate genes with human orthologs: ", nrow(orthologs_summary))
+message("Number of unique intervals: ", length(unique(orthologs_summary$Interval)))
+```
+
+# Create Flextable
+
+```{r}
+#| label: orthologs-flextable
+
+# Create grouped data by Interval
+orthologs_grouped <- orthologs_summary %>%
+  as_grouped_data(groups = "Interval")
+
+# Create flextable
+orthologs_ft <- orthologs_grouped %>%
+  flextable::as_flextable(
+    col_keys = c("Gene", "Human Orthologs"),
+    hide_grouplabel = TRUE
+  ) %>%
+  flextable::set_header_labels(
+    values = list(
+      "Gene" = "C. elegans Gene",
+      "Human Orthologs" = "Human Ortholog(s)"
+    )
+  ) %>%
+  # Make gene names italic
+  flextable::italic(j = "Gene", i = ~ !is.na(Gene), part = "body") %>%
+  # Make interval grouping bold
+  flextable::bold(j = 1, i = ~ is.na(Gene), bold = TRUE, part = "body") %>%
+  flextable::bold(part = "header") %>%
+  flextable::line_spacing(space = 1, part = "all") %>%
+  flextable::align(align = "left", part = "all") %>%
+  flextable::set_table_properties(
+    layout = "autofit",
+    width = 1,
+    opts_word = list(
+      split = FALSE,
+      keep_with_next = TRUE
+    )
+  ) %>%
+  flextable::paginate(
+    group = "Interval",
+    group_def = c("rle")
+  )
+
+orthologs_ft
+```
+
+# Save Tables
+
+```{r}
+#| label: orthologs-save
+
+# Prepare CSV output with nice column names
+orthologs_csv <- orthologs_summary %>%
+  dplyr::rename(
+    "C. elegans Gene" = Gene,
+    "Human Ortholog(s)" = `Human Orthologs`
+  )
+
+# Save using standardized naming
+save_supp_table_flextable(orthologs_ft, "orthologs_ft")
+save_supp_table_csv(orthologs_csv, "orthologs_ft")
+```

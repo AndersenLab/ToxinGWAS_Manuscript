@@ -1,4 +1,4 @@
-Interval	Marker	Gene	Details	WBGeneID	Interval Rank	Log10p	R2	MAF	Beta Coefficient	Effect Allele	Other Allele
+Interval	Marker	Gene	Details	WBGeneID	Interval Rank	Log10p	LD (r2)	MAF	Beta Coefficient	Reference Allele	Alternative Allele
 Chlorothalonil (II:5392976)	II:5396567	EEED8.10	Putative RNA-binding protein EEED8.10	WBGene00017138	1	18.2888019661438	1	0.215385	-10.8962	T	A
 Chlorothalonil (II:5392976)	II:5423524	F07F6.7	Uncharacterized protein	WBGene00017219	1	18.2888019661438	1	0.215385	-10.8962	T	C
 Chlorothalonil (II:5392976)	II:8707976	cup-16	Uncharacterized protein	WBGene00007919	1	13.6607400702576	0.752988	0.230769	-9.24022	G	A

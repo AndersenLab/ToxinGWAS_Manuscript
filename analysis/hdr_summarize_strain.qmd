@@ -16,7 +16,7 @@ today <- format(Sys.time(), "%Y%m%d")
 ```{r}
 #| label: summarize-strain-hdrs-inputs
 raw_hvr_file <- "data/raw/HDR/20240408_c_elegans_divergent_regions.bed"
-pheno_path <- "data/raw/phenotypes/pheno.df.rda"
+pheno_path <- "data/processed/phenotypes/pheno.df.rda"
 ```
 
 # Main

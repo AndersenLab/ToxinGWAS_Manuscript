@@ -1,5 +1,5 @@
 ---
-title: "Table S2: Toxicant Information"
+title: "Table S2. Environmental toxicants and exposure conditions assayed"
 format: html
 ---
 
@@ -8,22 +8,25 @@ library(data.table)
 library(dplyr)
 library(flextable)
 library(glue)
+```
 
+```{r}
+#| include: false
 source("bin/outs.R")
 source("bin/materials_key.R")
+```
 
-
-#### inputs ####
-
+# inputs
+```{r}
 tox_metadata_fn <- "data/processed/tox_data/tox_metadata.csv"
 con_data_fn <- "data/processed/tox_data/con_metadata.csv"
+```
 
-
-#### Main ####
-
+# main
+```{r}
 # load the tox and the con metadata
-tox_metadata <- fread(tox_metadata_fn)
-con_data <- fread(con_data_fn)
+tox_metadata <- data.table::fread(tox_metadata_fn)
+con_data <- data.table::fread(con_data_fn)
 
 
 ## Create the toxicant summary table ##
@@ -105,175 +108,4 @@ tox_table_ft <- flextable::flextable(
 # save the table as a flextable and a csv
 save_supp_table_csv(tox_table_pre, "tox_table_ft")
 save_supp_table_flextable(tox_table_ft, "tox_table_ft")
-
-## Create the toxicant condition table ##
-# con_table_pre <- con_data %>%
-#   dplyr::select(
-#     "toxicant_condition" = nice_drug_label2,
-#     "toxicant" = PREFERRED_NAME,
-#     concentration_um,
-#     diluent
-#   )
-
-# con_table_ft <- flextable::flextable(
-#   con_table_pre,
-#   col_keys = c(
-#     "toxicant_condition",
-#     "toxicant",
-#     "concentration_um",
-#     "diluent"
-#   )
-# ) %>%
-#   flextable::set_header_labels(
-#     values = list(
-#       toxicant_condition = "Condition",
-#       toxicant = "Toxicant",
-#       concentration_um = "Concentration µM",
-#       diluent = "Diluent"
-#     )
-#   ) %>%
-#   flextable::line_spacing(space = 1, part = "all") %>%
-#   flextable::bold(part = "header") %>%
-#   flextable::align(j = 1, align = "left") %>%
-#   flextable::align(j = 2, align = "left") %>%
-#   flextable::align(j = 3, align = "right") %>%
-#   flextable::align(j = 4, align = "right") %>%
-#   flextable::set_table_properties(
-#     layout = "autofit",
-#     width = 1,
-#     opts_word = list(
-#       split = FALSE,
-#       keep_with_next = TRUE
-#     )
-#   )
-# # save the table as a flextable and a csv
-# save_supp_table_csv(con_table_pre, "con_table_ft")
-# save_supp_table_flextable(con_table_ft, "con_table_ft")
-
-# ## Create the MoA group table ##
-
-# moa_table_pre <- tox_metadata %>%
-#   dplyr::select(
-#     PREFERRED_NAME,
-#     MoA_broad,
-#     MoA_specific,
-#     moa_class
-#   ) %>%
-#   dplyr::distinct() %>%
-#   dplyr::mutate(
-#     MoA_broad = case_when(
-#       MoA_broad == "" ~ "Unavailable",
-#       MoA_broad == " " ~ "Unavailable",
-#       TRUE ~ MoA_broad
-#     )
-#   ) %>%
-#   dplyr::mutate(
-#     MoA_specific = case_when(
-#       MoA_specific == "" ~ "n/a",
-#       MoA_specific == " " ~ "n/a",
-#       TRUE ~ MoA_specific
-#     )
-#   )
-
-# moa_table_ft <- flextable::flextable(
-#   moa_table_pre,
-#   col_keys = c(
-#     "PREFERRED_NAME",
-#     "MoA_broad",
-#     "MoA_specific",
-#     "moa_class"
-#   )
-# ) %>%
-#   flextable::set_header_labels(
-#     values = list(
-#       PREFERRED_NAME = "Toxicant",
-#       MoA_broad = "MoA Broad",
-#       MoA_specific = "MoA Specific",
-#       moa_class = "MoA Group")
-#   ) %>%
-#   flextable::bold(j = 1) %>%
-#   flextable::align(j = 1, align = "left") %>%
-#   flextable::align(j = 2, align = "left") %>%
-#   flextable::line_spacing(space = 1, part = "all") %>%
-#   flextable::align(j = 3, align = "left") %>%
-#   flextable::align(j = 4, align = "right") %>%
-#   flextable::bold(part = "header") %>%
-#   # Add horizontal grey lines
-#   flextable::hline(
-#     border = officer::fp_border(color = "grey", width = 1),
-#     part = "body"
-#   ) %>%
-#   flextable::set_table_properties(
-#     layout = "autofit",
-#     width = 1,
-#     opts_word = list(
-#       split = FALSE,
-#       keep_with_next = TRUE
-#     )
-#   )
-
-# # save the table as a flextable and a csv
-# save_supp_table_csv(moa_table_pre, "moa_table_ft")
-# save_supp_table_flextable(moa_table_ft, "moa_table_ft")
-
-# #### Create the use group table ####
-
-# use_table_pre <- tox_metadata %>%
-#   dplyr::mutate(
-#     use_group_details = case_when(
-#       use_group == "Pesticide" ~ paste("Pesticide (", use_group_details, ")", sep = ""),
-#       use_group_details == "" ~ "Unavailable",
-#       use_group_details == " " ~ "Unavailable",
-#       TRUE ~ use_group_details
-#     )
-#   ) %>%
-#   dplyr::select(
-#     PREFERRED_NAME,
-#     use_group_details,
-#     big_class
-#   ) %>%
-#   dplyr::distinct()
-
-# use_table_ft <- flextable::flextable(
-#   use_table_pre,
-#   col_keys = c(
-#     "PREFERRED_NAME",
-#     "use_group_details",
-#     "big_class"
-#   )
-# ) %>%
-#   flextable::set_header_labels(
-#     values = list(
-#       PREFERRED_NAME = "Toxicant",
-#       use_group_details = "Use Group Details",
-#       big_class = "Use Group"
-#     )
-#   )  %>%
-#   flextable::bold(part = "header") %>%
-#   flextable::line_spacing(space = 1, part = "all") %>%
-#   flextable::bold(j = 1) %>%
-#   flextable::align(j = 1, align = "left") %>%
-#   flextable::align(j = 2, align = "left") %>%
-#   flextable::align(j = 3, align = "right") %>%
-#   # Add horizontal grey lines
-#   flextable::hline(
-#     border = officer::fp_border(color = "grey", width = 1),
-#     part = "body"
-#   ) %>%
-#   flextable::set_table_properties(
-#     layout = "autofit",
-#     width = 1,
-#     opts_word = list(
-#       split = FALSE,
-#       keep_with_next = TRUE
-#     )
-#   )
-
-# # save the table as a flextable and a csv
-# save_supp_table_csv(use_table_pre, "use_table_ft")
-# save_supp_table_flextable(use_table_ft, "use_table_ft")
-```
-
-```{r}
-tox_table_ft
 ```

@@ -1,0 +1,123 @@
+---
+title: "Table S5: Comparison of the mean standard deviation of normalized animal lengths across toxicant groups"
+format: html
+---
+
+```{r}
+#| label: toxicant-group-response-comparison-project-setup
+library(tidyverse)
+library(flextable)
+```
+
+```{r}
+#| include: false
+# Source the output functions
+source(file.path("bin/outs.R"))
+source(file.path("bin/materials_key.R"))
+```
+
+# Inputs 
+```{r}
+#| label: toxicant-group-response-comparison-input
+# Load required data
+drug_means <- readRDS(file.path("data/processed/phenotypes/drug_means.rds"))
+```
+
+# Main
+```{r}
+#| label: toxicant-group-response-comparison-calculations
+
+# Calculate summary statistics for both Use and MoA groups
+use_group_summary <- drug_means %>%
+  dplyr::group_by(group = big_class) %>%
+  dplyr::summarise(
+    group_type = "Use",
+    avg_sd = mean(sd_NormLength),
+    sd_avg_sd = sd(sd_NormLength)
+  )
+
+moa_group_summary <- drug_means %>%
+  dplyr::group_by(group = moa_class) %>%
+  dplyr::summarise(
+    group_type = "MoA",
+    avg_sd = mean(sd_NormLength),
+    sd_avg_sd = sd(sd_NormLength)
+  )
+
+# Combine the summaries
+group_summary <- dplyr::bind_rows(use_group_summary, moa_group_summary) %>%
+  dplyr::arrange(group_type, desc(avg_sd))
+```
+
+```{r}
+#| label: tbl-toxicant-group-response-comparison
+group_summary
+```
+
+```{r}
+# Create grouped data
+grouped_data <- as_grouped_data(
+  x = group_summary,
+  groups = "group_type"
+)
+
+# Create flextable from grouped data
+group_pheno_ft <- as_flextable(
+  grouped_data,
+  col_keys = c(
+    "group",
+    "avg_sd",
+    "sd_avg_sd"
+  ),
+  hide_grouplabel = TRUE
+) %>%
+  flextable::set_header_labels(
+    values = list(
+      "group" = "Group",
+      "avg_sd" = "Average SD"
+    )
+  ) %>%
+  # Combine avg_sd and sd_avg_sd using mk_par
+  flextable::compose(
+    j = "avg_sd",
+    # but not for the group rows
+    i = ~ !is.na(group),
+    value = as_paragraph(
+      sprintf("%.3f", avg_sd),
+      " ± ",
+      sprintf("%.3f", sd_avg_sd)
+    )
+  ) %>%
+  # Delete the sd_avg_sd column since it's now combined
+  flextable::delete_columns("sd_avg_sd") %>%
+  # make only the groups and header bold
+  flextable::bold(
+    j = 1,
+    i = ~ is.na(group),
+    bold = TRUE,
+    part = "body"
+  ) %>%
+  flextable::bold(part = "header") %>%
+  flextable::line_spacing(space = 1, part = "all") %>%
+  flextable::align(j = 1, align = "center") %>%
+  flextable::align(j = 2, align = "center") %>%
+  flextable::hline(
+    i = ~ is.na(group),
+    part = "body"
+  ) %>%
+  flextable::set_table_properties(
+    layout = "autofit",
+    width = 1,
+    opts_word = list(
+      split = FALSE,
+      keep_with_next = TRUE
+    )
+  )
+```
+
+# Output
+```{r}
+# Save the table using standardized functions
+save_supp_table_csv(group_summary, "group_summary")
+save_supp_table_flextable(group_pheno_ft, "group_summary")
+```
