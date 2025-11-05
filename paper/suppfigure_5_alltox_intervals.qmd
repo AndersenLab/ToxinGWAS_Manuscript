@@ -1,5 +1,5 @@
 ---
-title: "Figure S5: Susceptibility-associated intervals for all 26 toxicant exposures"
+title: "Figure S05: Susceptibility-associated intervals for all 26 toxicant exposures"
 format: html
 ---
 

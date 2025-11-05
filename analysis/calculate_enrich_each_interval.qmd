@@ -1,5 +1,5 @@
 ---
-title: "Analysis 8: GO Enrichment for Intervals"
+title: "Analysis 08: GO Enrichment for Intervals"
 ---
 
 ```{r}

@@ -1,5 +1,5 @@
 ---
-title: "Figure S1: GWAS simulations to optimize mapping panel strain selection"
+title: "Figure S01: GWAS simulations to optimize mapping panel strain selection"
 format: html
 ---
 

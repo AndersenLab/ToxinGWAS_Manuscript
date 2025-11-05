@@ -1,5 +1,5 @@
 ---
-title: "Figure S8. GO term semantic similarity of susceptibility-associated genes"
+title: "Figure S08. GO term semantic similarity of susceptibility-associated genes"
 format: html
 ---
 

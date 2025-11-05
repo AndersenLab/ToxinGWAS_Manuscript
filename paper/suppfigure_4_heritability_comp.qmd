@@ -1,5 +1,5 @@
 ---
-title: "Figure S4: Regression of heritability estimates for the 195 strains in the GWAS mapping panel against the eight strains from Widmayer et al. 2022"
+title: "Figure S04: Regression of heritability estimates for the 195 strains in the GWAS mapping panel against the eight strains from Widmayer et al. 2022"
 execute:
   warning: false
   message: false

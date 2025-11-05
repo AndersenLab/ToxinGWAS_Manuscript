@@ -1,5 +1,5 @@
 ---
-title: "Table S7. Susceptibility-associated intervals detected by the Inbred GWAS algorithm"
+title: "Table S07. Susceptibility-associated intervals detected by the Inbred GWAS algorithm"
 format: html
 ---
 

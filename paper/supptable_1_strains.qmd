@@ -1,5 +1,5 @@
 ---
-title: "Table S1. Strains selected for the GWAS panel"
+title: "Table S01. Strains selected for the GWAS panel"
 format: html
 ---
 

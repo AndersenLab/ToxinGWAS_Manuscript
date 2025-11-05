@@ -1,5 +1,5 @@
 ---
-title: "Table S2. Environmental toxicants and exposure conditions assayed"
+title: "Table S02. Environmental toxicants and exposure conditions assayed"
 format: html
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Figure S3. Number of strains with extreme susceptibility profiles across 26 toxicant exposures"
+title: "Figure S03. Number of strains with extreme susceptibility profiles across 26 toxicant exposures"
 execute:
   warning: false
   message: false

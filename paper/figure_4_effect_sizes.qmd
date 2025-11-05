@@ -1,5 +1,5 @@
 ---
-title: "Figure 4. Absolute effect size of susceptibility associated variants by frequency"
+title: "Figure 04. Absolute effect size of susceptibility associated variants by frequency"
 execute:
   warning: false
   message: false

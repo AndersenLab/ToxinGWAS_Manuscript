@@ -1,5 +1,5 @@
 ---
-title: "Table S9. Overlapping susceptibility-associated intervals across toxicant condition pairs"
+title: "Table S09. Overlapping susceptibility-associated intervals across toxicant condition pairs"
 ---
 
 ```{r}

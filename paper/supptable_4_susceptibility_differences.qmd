@@ -1,5 +1,5 @@
 ---
-title: "Table S4. Differences in susceptibility to toxicant conditions among strains"
+title: "Table S04. Differences in susceptibility to toxicant conditions among strains"
 format: html
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Analysis 5: Organize Strain Means"
+title: "Analysis 05: Organize Strain Means"
 ---
 
 ```{r}

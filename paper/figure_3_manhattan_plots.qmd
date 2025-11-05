@@ -1,5 +1,5 @@
 ---
-title: "Figure 3. Representative Manhattan plots showing 19 of 40 susceptibility-associated regions identified with GWAS"
+title: "Figure 03. Representative Manhattan plots showing 19 of 40 susceptibility-associated regions identified with GWAS"
 execute:
   warning: false
   message: false

@@ -1,5 +1,5 @@
 ---
-title: "Table S6. Heritability estimates for toxicant conditions"
+title: "Table S06. Heritability estimates for toxicant conditions"
 format: html
 ---
 

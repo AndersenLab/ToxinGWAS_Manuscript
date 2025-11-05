@@ -1,5 +1,5 @@
 ---
-title: "Figure S6. Gene ontology enrichment of susceptibility-associated genomic intervals"
+title: "Figure S06. Gene ontology enrichment of susceptibility-associated genomic intervals"
 execute:
   warning: false
   message: false

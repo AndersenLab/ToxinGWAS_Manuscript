@@ -1,5 +1,5 @@
 ---
-title: "Analysis 7: Calculate Phenotype Correlations"
+title: "Analysis 07: Calculate Phenotype Correlations"
 ---
 
 ```{r}

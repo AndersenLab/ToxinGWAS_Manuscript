@@ -1,5 +1,5 @@
 ---
-title: "Table S8. Candidate genes from susceptibility-associated intervals detected by GWAS"
+title: "Table S08. Candidate genes from susceptibility-associated intervals detected by GWAS"
 format: html
 ---
 

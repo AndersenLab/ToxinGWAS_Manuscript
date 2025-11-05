@@ -1,5 +1,5 @@
 ---
-title: "Figure 1. Heritability of toxicant susceptibilities"
+title: "Figure 01. Heritability of toxicant susceptibilities"
 execute:
   warning: false
   message: false

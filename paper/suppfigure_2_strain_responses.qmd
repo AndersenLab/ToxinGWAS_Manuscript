@@ -1,5 +1,5 @@
 ---
-title: "Figure S2: Differences in susceptibility among 195 C. elegans strains to 26 environmental toxicant conditions"
+title: "Figure S02: Differences in susceptibility among 195 C. elegans strains to 26 environmental toxicant conditions"
 execute:
   warning: false
   message: false
