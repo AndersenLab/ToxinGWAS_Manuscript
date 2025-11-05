@@ -48,7 +48,7 @@ hvr_df <- raw_hvr_df %>%
 
 data.table::fwrite(
   hvr_df,
-  glue::glue("data/processed/HDR_overlap/{today}_hvr_gwas_strains.tsv"),
+  glue::glue("data/processed/HDR_overlap/hvr_gwas_strains.tsv"),
   sep = "\t",
   quote = FALSE
 )
@@ -60,7 +60,7 @@ hvr_df_collapsed <- raw_hvr_df %>%
 
 data.table::fwrite(
   hvr_df_collapsed,
-  glue::glue("data/processed/HDR_overlap/{today}_hvr_gwas_strains_collapsed.tsv"),
+  glue::glue("data/processed/HDR_overlap/hvr_gwas_strains_collapsed.tsv"),
   sep = "\t",
   quote = FALSE
 )
