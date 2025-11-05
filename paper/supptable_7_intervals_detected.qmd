@@ -1,0 +1,187 @@
+---
+title: "Table S7. Susceptibility-associated intervals detected by the Inbred GWAS algorithm"
+format: html
+---
+
+```{r}
+#| include: false
+library(dplyr)
+library(data.table)
+library(flextable)
+library(stringr)
+```
+
+```{r}
+#| include: false
+
+# load the functions to save the output
+source("bin/gsheets.R")
+source("bin/outs.R")
+source("bin/materials_key.R")
+
+# functions to process mapping results
+source("bin/gwa_summary.R")
+```
+
+# Inputs
+
+```{r}
+# filter to toxins
+controls <- c("length_DMSO", "length_Water")
+
+# path to the nemascan output directory
+ns_folder <- "data/processed/20231116_Analysis_NemaScan"
+
+# Read in the QTL data
+inbred_peaks_df <-
+  glue::glue("{ns_folder}/INBRED/Mapping/Processed/QTL_peaks_inbred.tsv") %>%
+  data.table::fread()
+
+# Load the tox data
+tox <- data.table::fread("data/processed/tox_data/con_metadata.csv") %>%
+  dplyr::filter(type == "Toxicant") %>%
+  dplyr::select(trait, nice_drug_label2) %>%
+  # adjust the uM to µM
+  dplyr::mutate(nice_drug_label2 = dplyr::case_when(
+    nice_drug_label2 == "uM" ~ "µM",
+    TRUE ~ nice_drug_label2
+  ))
+
+# load the mappings
+all.mappings <- list.files(
+  path = glue::glue("{ns_folder}"),
+  pattern = "AGGREGATE_mapping",
+  recursive = T,
+  full.names = T
+)
+
+# read in all the mappings
+mapping.results <- purrr::map(all.mappings, combine.mappings) %>%
+  Reduce(rbind, .)
+```
+
+# Process the data
+
+```{r}
+inbred_mappings_df <- mapping.results %>%
+  dplyr::select(marker, trait, log10p, BETA, AF1, var.exp, algorithm) %>%
+  dplyr::mutate(var_type = stringr::str_extract(trait, pattern = "length|CV_length")) %>%
+  dplyr::filter(!trait %in% controls) %>%
+  dplyr::filter(algorithm == "Inbred" & var_type == "length") %>%
+  dplyr::distinct() %>%
+  dplyr::left_join(., tox, by = "trait") %>%
+  # select the columns we want before joining with the peaks
+  dplyr::select(
+    marker,
+    trait,
+    nice_drug_label2,
+    BETA,
+    AF1,
+    var.exp
+  )
+
+# Process inbred data
+inbred_clean <- inbred_mappings_df %>%
+  dplyr::left_join(inbred_peaks_df, by = c("trait", "marker")) %>%
+  dplyr::mutate(
+    interval = paste0(CHROM, ":", startPOS, "-", endPOS)
+  ) %>%
+  dplyr::select(
+    condition = nice_drug_label2,
+    marker,
+    interval,
+    log10p,
+    BETA,
+    AF1,
+    var.exp
+  ) %>%
+  dplyr::arrange(condition, desc(log10p))
+```
+
+# Create flextable
+
+```{r}
+# Create grouped data by condition
+grouped_data <- as_grouped_data(
+  x = inbred_clean,
+  groups = "condition"
+)
+
+# Create flextable from grouped data
+qtl_detected_ft <- as_flextable(
+  grouped_data,
+  col_keys = c(
+    "marker",
+    "interval",
+    "log10p",
+    "BETA",
+    "AF1",
+    "var.exp"
+  ),
+  hide_grouplabel = TRUE
+) %>%
+  flextable::set_header_labels(
+    values = list(
+      "marker" = "Peak Marker",
+      "interval" = "Interval",
+      "log10p" = "-log10(p-value)",
+      "BETA" = "Effect Size",
+      "AF1" = "Frequency",
+      "var.exp" = "Variance Explained"
+    )
+  ) %>%
+  # make only the groups and header bold
+  flextable::bold(
+    j = 1,
+    i = ~ is.na(marker),
+    bold = TRUE,
+    part = "body"
+  ) %>%
+  flextable::bold(part = "header") %>%
+  flextable::line_spacing(space = 1, part = "all") %>%
+  flextable::align(j = 1, align = "center") %>%
+  flextable::align(j = 2, align = "left") %>%
+  flextable::align(j = 3, align = "center") %>%
+  flextable::align(j = 4, align = "center") %>%
+  flextable::align(j = 5, align = "center") %>%
+  flextable::align(j = 6, align = "center") %>%
+  flextable::align(j = 1, i = ~ is.na(marker), align = "left", part = "body") %>%
+  flextable::hline(
+    i = ~ is.na(marker),
+    part = "body"
+  ) %>%
+  flextable::set_table_properties(
+    layout = "autofit",
+    width = 1,
+    opts_word = list(
+      split = FALSE,
+      keep_with_next = TRUE
+    )
+  )
+```
+
+# Save tables
+
+```{r}
+# Rename columns to match flextable headers for CSV output
+inbred_clean_csv <- inbred_clean %>%
+  dplyr::rename(
+    "Condition" = condition,
+    "Peak Marker" = marker,
+    "Interval" = interval,
+    "-log10(p-value)" = log10p,
+    "Effect Size" = BETA,
+    "Frequency" = AF1,
+    "Variance Explained" = var.exp
+  )
+
+# Save the data table and flextable using standardized functions
+save_supp_table_csv(inbred_clean_csv, "qtl_detected_table")
+save_supp_table_flextable(qtl_detected_ft, "qtl_detected_table")
+```
+
+```{r}
+#| echo: false
+
+qtl_detected_ft
+```
