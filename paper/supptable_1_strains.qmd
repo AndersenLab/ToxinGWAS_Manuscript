@@ -12,10 +12,10 @@ library(data.table)
 
 ```{r}
 # source the helper functions
-source(file.path(project_root, "bin", "general.R"))
+source(file.path("bin", "general.R"))
 
-source(file.path(project_root, "bin", "outs.R"))
-source(file.path(project_root, "bin", "materials_key.R"))
+source(file.path("bin", "outs.R"))
+source(file.path("bin", "materials_key.R"))
 ```
 
 ```{r}
