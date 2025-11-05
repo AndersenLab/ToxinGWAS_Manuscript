@@ -1,4 +1,5 @@
 project: 
+  type: manuscript
   title: Toxicant GWAS Analysis
   output-dir: _products
   execute-dir: project
@@ -24,3 +25,7 @@ execute:
   freeze: false
   
 editor: source
+
+format:
+  html:
+    toc: true
