@@ -1,6 +1,5 @@
 ---
 execute:
-  echo: false
   warning: false
   message: false
 ---
@@ -8,41 +7,6 @@ execute:
 ```{r}
 library(tidyverse)
 library(ggh4x)
-library(here)
-
-script_dir <- tryCatch(
-  dirname(normalizePath(knitr::current_input())),
-  error = function(e) getwd()
-)
-
-# Try multiple possible locations for the setup file
-setup_file_paths <- c(
-  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
-  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
-  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
-)
-
-setup_file <- NULL
-for (path in setup_file_paths) {
-  if (file.exists(path)) {
-    setup_file <- path
-    break
-  }
-}
-
-if (!is.null(setup_file)) {
-  source(setup_file)
-  project_root <- setup_toxin_project_here()
-} else {
-  stop(
-    "Could not find setup_project_here.R in any of the expected locations: ",
-    paste(setup_file_paths, collapse = ", ")
-  )
-}
-
-if (is.null(project_root)) {
-  stop("Could not locate ToxinGWAS_Manuscript project root.")
-}
 ```
 
 ```{r}
@@ -61,19 +25,18 @@ source("bin/materials_key.R")
 #### Inputs ####
 
 # chrom length data
-chr.lens.fn <- file.path(project_root, "data/raw/c_elegans_chr_lengths.tsv")
+chr.lens.fn <- file.path("data/raw/c_elegans_chr_lengths.tsv")
 
 # NemaScan output
-ns_folder <- file.path(project_root, "data/processed/20231116_Analysis_NemaScan")
+ns_folder <- file.path("data/processed/20231116_Analysis_NemaScan")
 
 # tox meta data
-tox_meta_fn <- file.path(project_root, "data/processed/tox_data/con_metadata.csv")
+tox_meta_fn <- file.path("data/processed/tox_data/con_metadata.csv")
 ```
 
 
 ```{r}
 #| label: prepare-effect-size-figure
-#| include: false
 
 # Load the tox data for condition metadata
 tox <- data.table::fread(tox_meta_fn) %>%
@@ -124,7 +87,6 @@ names(col.pal) <- class.pal.df$big_class
 
 ```{r}
 #| label: effect-size-base-figure
-#| include: false
 tox.effect.bubble <- L.inbred %>%
   dplyr::mutate(
     big_class = factor(
