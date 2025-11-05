@@ -1,5 +1,5 @@
 ---
-title: "Plot the number of overlaps per interval and breakdown by size"
+title: "Figure S7. Physical overlaps of susceptibility-associated intervals across toxicants"
 ---
 
 ```{r}
@@ -232,11 +232,12 @@ overlaps_supp_fig <- cowplot::plot_grid(
   label_fontface = "bold",
   labels = c("A", "B")
 )
-
+overlaps_supp_fig
+```
+```{r}
 save_plot(
   overlaps_supp_fig,
   sup_figure_fns$physical_overlaps,
   w_in = 6.5, h_in = 6.5
 )
-
 ```

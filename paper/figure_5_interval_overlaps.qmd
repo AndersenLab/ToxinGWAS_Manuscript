@@ -173,6 +173,12 @@ qtl_overlaps <- ggplot() +
 
 ```
 
+```{r}
+#| label: fig-interval-overlaps-view
+#| fig-width: 7.5
+#| fig-height: 5
+qtl_overlaps
+```
 
 ```{r}
 #| label: plot-interval-overlaps-output

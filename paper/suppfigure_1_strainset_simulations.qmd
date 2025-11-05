@@ -1,5 +1,5 @@
 ---
-title: "Simulation performance of mapping panels"
+title: "Figure S1: GWAS simulations to optimize mapping panel strain selection"
 format: html
 ---
 
@@ -7,12 +7,13 @@ format: html
 #| label: strain-set-simulations-setup
 library(tidyverse)
 library(ggrepel)
-
-source("bin/outs.R")
-source("bin/materials_key.R")
-
 ```
 
+```{r}
+#| include: false
+source("bin/outs.R")
+source("bin/materials_key.R")
+```
 # Inputs
 - `sim_data_fn`: path to the simulation data RDS file. When loaded a dataframe named `simulation.metrics.df` is added to the env
 ```{r}
@@ -152,6 +153,11 @@ sim_performance <- summer.GWA.perform %>%
         panel.grid.minor = element_blank()) +
   facet_wrap(~h2) 
 ```
+
+```{r}
+sim_performance
+```
+
 Save the plot
 ```{r}
 save_plot(sim_performance, sup_figure_fns$sim_performance, w_in = 7.5, h_in = 5)

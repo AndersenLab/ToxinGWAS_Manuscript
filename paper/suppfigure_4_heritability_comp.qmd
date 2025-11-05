@@ -1,6 +1,6 @@
 ---
+title: "Figure S4: Regression of heritability estimates for the 195 strains in the GWAS mapping panel against the eight strains from Widmayer et al. 2022"
 execute:
-  echo: false
   warning: false
   message: false
 ---
@@ -12,6 +12,10 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 
+set.seed(123)
+```
+```{r}
+#| include: false
 # Source the output functions
 source("bin/outs.R")
 source("bin/materials_key.R")
@@ -98,7 +102,7 @@ h_comp3
 # Combined plots
 ```{r}
 # put them together
-h_comp_supplement <- cowplot::plot_grid(H_comp2, h_comp3, labels = c("a", "b"), align = "hv")
+h_comp_supplement <- cowplot::plot_grid(H_comp2, h_comp3, labels = c("A", "B"), align = "hv")
 
 save_plot(
   h_comp_supplement,
@@ -108,11 +112,9 @@ save_plot(
 ```
 
 ```{r}
-#| label: fig-heritability_comp
+#| label: heritability_comp
 #| fig-width: 7.5
 #| fig-height: 3
-#| fig-cap: Regression of heritability estimates for the 195 strains in the GWAS mapping panel against the eight strains from Widmayer et al. 2022.
-#| fig-alt: (A) Broad-sense heritability estimates. (B) Narrow-sense heritability estimates. Each point represents the heritability estimate for a particular toxicant condition. In each panel, the regression equation, Pearson’s correlation coefficient (r), and the associated p-value (p) are shown in the upper left corner.
 h_comp_supplement
 ```
 

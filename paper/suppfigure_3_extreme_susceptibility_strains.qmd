@@ -1,6 +1,6 @@
 ---
+title: "Figure S3. Number of strains with extreme susceptibility profiles across 26 toxicant exposures"
 execute:
-  echo: false
   warning: false
   message: false
 ---
@@ -10,49 +10,19 @@ execute:
 library(tidyverse)
 library(ggplot2)
 
-# Source the portable project setup function
-script_dir <- tryCatch(
-  dirname(normalizePath(knitr::current_input())),
-  error = function(e) getwd()
-)
-
-# Try multiple possible locations for the setup file
-setup_file_paths <- c(
-  file.path(script_dir, "..", "bin", "setup_project_here.R"), # Standard location relative to script
-  file.path(getwd(), "bin", "setup_project_here.R"), # If we're in project root
-  file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R") # If in projects structure
-)
-
-setup_file <- NULL
-for (path in setup_file_paths) {
-  if (file.exists(path)) {
-    setup_file <- path
-    break
-  }
-}
-
-if (!is.null(setup_file)) {
-  source(setup_file)
-  project_root <- setup_toxin_project_here()
-} else {
-  stop(
-    "Could not find setup_project_here.R in any of the expected locations: ",
-    paste(setup_file_paths, collapse = ", ")
-  )
-}
-
-if (is.null(project_root)) {
-  stop("Could not locate ToxinGWAS_Manuscript project root.")
-}
-
-
 # Source the output functions
 source(file.path(project_root, "bin", "outs.R"))
 source(file.path(project_root, "bin", "materials_key.R"))
+```
 
+# Inputs
+```{r}
 # Load the outlier summary data
-outlier_summary_df <- read.csv(file.path(project_root, "data", "processed", "phenotypes", "outlier_summary_df.csv"))
+outlier_summary_df <- read.csv(file.path("data", "processed", "phenotypes", "outlier_summary_df.csv"))
+```
 
+# Main
+```{r}
 # Plot the histogram of the number of times a strain is designated an outlier
 n_outlier_hist <- outlier_summary_df %>%
   ggplot2::ggplot(
@@ -89,12 +59,6 @@ n_outlier_hist <- outlier_summary_df %>%
   ) +
   ggplot2::scale_x_continuous(breaks = 1:max(outlier_summary_df$Count))
 
-# Save the strain means plot as supplementary figure 2
-save_plot(
-  n_outlier_hist,
-  sup_figure_fns$n_outlier_hist,
-  w_in = 7.5, h_in = 7.5
-)
 ```
 
 
@@ -102,7 +66,14 @@ save_plot(
 #| label: fig-n_outlier_hist
 #| fig-width: 7.5
 #| fig-height: 7.5
-#| fig-cap: "**Number of strains with extreme susceptibility profiles across 26 toxicant exposures** The height of each bar represents the subset of strains (n = 108) that exhibited either highly susceptible (Red bars; normalized animal length > 2 SD below the mean) or were minimally susceptible (Blue bars; normalized animal length > 2 SD below the mean) to at least one toxicant condition."
-
 n_outlier_hist
+```
+
+```{r}
+# Save the strain means plot as supplementary figure 2
+save_plot(
+  n_outlier_hist,
+  sup_figure_fns$n_outlier_hist,
+  w_in = 7.5, h_in = 7.5
+)
 ```

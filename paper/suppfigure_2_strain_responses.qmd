@@ -1,8 +1,9 @@
 ---
+title: "Figure S2: Differences in susceptibility among 195 C. elegans strains to 26 environmental toxicant conditions"
 execute:
-  echo: false
   warning: false
   message: false
+format: html
 ---
 
 ```{r}
@@ -14,40 +15,22 @@ library(ggplot2)
 library(ggh4x)
 library(here)
 
-# Source the portable project setup function
-script_dir <- tryCatch(
-  dirname(normalizePath(knitr::current_input())),
-  error = function(e) getwd()
-)
-
-setup_file <- file.path(script_dir, "..", "bin", "setup_project_here.R")
-
-if (file.exists(setup_file)) {
-  source(setup_file)
-  project_root <- setup_toxin_project_here()
-} else {
-  setup_file <- file.path(getwd(), "projects", "ToxinGWAS_Manuscript", "bin", "setup_project_here.R")
-  if (file.exists(setup_file)) {
-    source(setup_file)
-    project_root <- setup_toxin_project_here()
-  } else {
-    stop("Could not find setup_project_here.R")
-  }
-}
-
-if (is.null(project_root)) {
-  stop("Could not locate ToxinGWAS_Manuscript project root.")
-}
+set.seed(123)
 
 # Load required functions using file.path with project_root
-source(file.path(project_root, "bin", "tox_colors.R"))
-source(file.path(project_root, "bin", "pub_format.R"))
-source(file.path(project_root, "bin", "outs.R"))
-source(file.path(project_root, "bin", "materials_key.R"))
+source(file.path("bin", "tox_colors.R"))
+source(file.path("bin", "pub_format.R"))
+source(file.path("bin", "outs.R"))
+source(file.path("bin", "materials_key.R"))
+
+```
+
+# Inputs
+```{r}
 
 #### Inputs ####
-strain_means <- readRDS(file.path(project_root, "data", "processed", "phenotypes", "strain_means.rds"))
-drug_means <- readRDS(file.path(project_root, "data", "processed", "phenotypes", "drug_means.rds"))
+strain_means <- readRDS(file.path("data", "processed", "phenotypes", "strain_means.rds"))
+drug_means <- readRDS(file.path("data", "processed", "phenotypes", "drug_means.rds"))
 
 class.pal.df <- tibble::tibble(
   col = c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"),
@@ -89,14 +72,16 @@ strain_means_plot <- strain_means_out %>%
   ggplot2::labs(x = "Normalized animal length (µm)", color = "Response type") +
   pub_theme() +
   theme(axis.title.y = ggplot2::element_blank(), legend.position = "top")
-
-save_plot(strain_means_plot, sup_figure_fns$strain_means_plot, w_in = 7.5, h_in = 10)
 ```
 
 ```{r}
 #| label: fig-s2-strain-means
 #| fig-width: 7.5
 #| fig-height: 10
-#| fig-cap: Differences in susceptibility among 195 C. elegans strains to 26 environmental toxicant conditions.
 strain_means_plot
+```
+
+Save the plot
+```{r}
+save_plot(strain_means_plot, sup_figure_fns$strain_means_plot, w_in = 7.5, h_in = 10)
 ```

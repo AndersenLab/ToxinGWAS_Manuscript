@@ -1,5 +1,6 @@
 ---
-title: "Supplementary Figure 5: All Toxins Interval Plot"
+title: "Figure S5: Susceptibility-associated intervals for all 26 toxicant exposures"
+format: html
 ---
 
 ```{r}
@@ -10,11 +11,13 @@ library(tidyverse)
 library(data.table)
 
 set.seed(123)
+```
 
+```{r}
+#| include: false
 # source functions
 source("bin/outs.R")
 source("bin/materials_key.R")
-
 ```
 
 # Overview
@@ -172,7 +175,7 @@ all_tox_intervals_p <- ggplot() +
 
 ```{r}
 #| fig-width: 7
-#| fig-height: 10
+#| fig-height: 7
 all_tox_intervals_p
 ```
 

@@ -1,5 +1,5 @@
 ---
-title: "Figure S7: GO Semantic Similarity among genes in susceptibility intervals"
+title: "Figure S8. GO term semantic similarity of susceptibility-associated genes"
 format: html
 ---
 
@@ -11,7 +11,9 @@ library(data.table)
 library(pheatmap)
 library(grid)
 library(gridExtra)
-
+```
+```{r}
+#| include: false
 source("bin/outs.R")
 source("bin/materials_key.R")
 ```
