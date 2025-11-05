@@ -11,8 +11,8 @@ library(tidyverse)
 library(ggplot2)
 
 # Source the output functions
-source(file.path(project_root, "bin", "outs.R"))
-source(file.path(project_root, "bin", "materials_key.R"))
+source(file.path("bin", "outs.R"))
+source(file.path("bin", "materials_key.R"))
 ```
 
 # Inputs

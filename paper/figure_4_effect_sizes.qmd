@@ -144,7 +144,6 @@ tox.effect.bubble <- L.inbred %>%
     x = "Frequency"
   )
 
-saveRDS(tox.effect.bubble, file = file.path("_shared", "tox_effect_size_bubble.rds"))
 ```
 
 ```{r}
