@@ -1,5 +1,5 @@
 ---
-title: "Plot the number of overlaps per interval and breakdown by size"
+title: "Figure S7. Physical overlaps of susceptibility-associated intervals across toxicants"
 ---
 
 ```{r}
