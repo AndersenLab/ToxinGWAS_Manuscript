@@ -7,7 +7,7 @@ This repository contains all code and data needed to reproduce the analyses and 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/[your-username]/ToxinGWAS_Manuscript.git
+git clone https://github.com/AndersenLab/ToxinGWAS_Manuscript.git
 cd ToxinGWAS_Manuscript
 ```
 
