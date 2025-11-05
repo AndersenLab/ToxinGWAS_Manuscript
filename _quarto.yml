@@ -19,6 +19,7 @@ project:
     - analysis/candidate_gene_organization.qmd
     - analysis/candidate_gene_orthologs.qmd
     - paper/
+    - paper/aggregate_supplementary_tables.qmd
 execute: 
   freeze: false
   
