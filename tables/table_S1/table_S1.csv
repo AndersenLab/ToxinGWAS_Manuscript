@@ -12,6 +12,7 @@ DL226,"",20160408,DL,44.5633,-123.2821,Urban_garden,Oregon,Soil,leaf litter/soil
 DL238,"",20160408,DL,19.11,-155.81,Forest,Hawaii,Vegetal_litter/mix,leaves on side of hiking path at Manuka State Park,,,,"",J. Knapp,J. Knapp,2008-07-15,""
 ECA1069,"",20200815,ECA,-34.89411879,-56.15794301,Urban_garden,"Montevideo, Uruguay",Rotting_nut/pod/seed/fruit,small rotting fruits (on ground),,,,"","U. Koziol, C. Martinez",B. Rodriguez,2018-05-20,""
 ECA1074,"",20200815,ECA,-34.89623486,-56.15625241,Urban_garden,"Montevideo, Uruguay",Rotting_nut/pod/seed/fruit,rotting banana (on ground),,,,"","U. Koziol, C. Martinez",B. Rodriguez,2018-05-22,""
+EG4724,"",20160408,EG,41.6288,-8.3476,Agricultural_land,Braga,Rotting_nut/pod/seed/fruit,"rotting fruit, apple",,,,"",M. Ailion,M. Ailion,2007-03-28,""
 ECA248,CB4855_(UK)|CB4855_UK|CB4855|Cal-5|Sta-5,20160408,CB,37.44,-122.14,Urban_garden,California,Compost,compost heap,,,,"",T. Doniach,"",1982-01-01,"Low copy Tc1, pattern VI"
 ECA250,CB4857_(UK)|CB4857_UK|Cl2a,20160408,CB,34.096,-117.719,"",California,Fungus,rotting mushroom,,,,"",E. Hedgecock,"",1972-11-01,"Low copy Tc1, pattern II"
 ECA2546,S-12454,20210121,ECA,-38.15055556,144.3788889,Botanical_garden_or_zoo,"",Rotting_nut/pod/seed/fruit,"",15.5,17.4,69.7,"",L. Stevens,C. Buchanan,2020-02-20,Fulcrum collection 2020FebruaryAustralia
@@ -33,6 +34,7 @@ ECA2656,S-13224,20210121,ECA,-37.825658,144.9770918,Botanical_garden_or_zoo,"",R
 ECA2659,S-13278,20210121,ECA,-37.8274278,144.980163,Botanical_garden_or_zoo,"",Rotting_nut/pod/seed/fruit,Figs,21.4,26.2,58.9,"",E. Andersen,L. Stevens,2020-02-16,Fulcrum collection 2020FebruaryAustralia
 ECA2660,S-13279,20210121,ECA,-37.8274278,144.980163,Botanical_garden_or_zoo,"",Rotting_nut/pod/seed/fruit,Figs,21.4,26.2,58.9,"",E. Andersen,L. Stevens,2020-02-16,Fulcrum collection 2020FebruaryAustralia
 ECA2672,S-12494,20210121,ECA,-37.8701549,144.9824148,Botanical_garden_or_zoo,"",Rotting_nut/pod/seed/fruit,"",19,20.8,64.4,"",L. Stevens,C. Buchanan,2020-02-22,Fulcrum collection 2020FebruaryAustralia
+EG4349,"",20160408,EG,40.771467,-111.87316,Agricultural_land,Utah,Rotting_nut/pod/seed/fruit,"rotting fruit, apple",,,,"",M. Ailion,M. Ailion,2006-10-02,""
 ECA36,GD6,20160408,ECA,-36.893333,174.745529,Urban_garden,"Auckland, New Zealand",Vegetal_litter/mix,garden grass,,,,"",I. Ly,K. Ly,2013-07-27,"Russel Snell's lab, no CGC lab designation so given an ECA strain name"
 ECA396,"",20170531,ECA,19.449831,-155.235493,Rural_garden,Hawaii,Rotting_nut/pod/seed/fruit,"rotting fruit, lemons",,,,"",G. Chavez,R. Tanny,2016-05-17,""
 ECA594,"",20180413,ECA,34.417532,-119.640673,Urban_garden,"Santa Barbar, USA",Rotting_nut/pod/seed/fruit,rotting fruit (on ground),,,,"",E. Andersen,E. Andersen,2017-03-07,""
@@ -44,8 +46,6 @@ ED3048,"",20160408,VX,-33.366667,19.316667,Urban_garden,Western Cape,Compost,com
 ED3049,"",20160408,VX,-33.366667,19.316667,Urban_garden,Western Cape,Compost,compost heap,,,,"",E. Dolgin,E. Dolgin,2006-04-02,Isolated from compost at a plant nursery at the Ceres Fruit Farms in the Western Cape province near Ceres
 ED3052,"",20160408,VX,-33.366667,19.316667,Urban_garden,Western Cape,Compost,compost heap,,,,"",E. Dolgin,E. Dolgin,2006-05-05,Isolated from compost at a plant nursery at the Ceres Fruit Farms in the Western Cape province near Ceres
 ED3073,"",20160408,VX,-1.083333,36.65,Agricultural_land,Kiambu County,Compost,compost heap,,,,"",E. Dolgin,E. Dolgin,2006-05-17,"Isolated from compost from the Olive Mushroom Farms near the town of Limuru, Kenya;  altitude 2356m"
-EG4349,"",20160408,EG,40.771467,-111.87316,Agricultural_land,Utah,Rotting_nut/pod/seed/fruit,"rotting fruit, apple",,,,"",M. Ailion,M. Ailion,2006-10-02,""
-EG4724,"",20160408,EG,41.6288,-8.3476,Agricultural_land,Braga,Rotting_nut/pod/seed/fruit,"rotting fruit, apple",,,,"",M. Ailion,M. Ailion,2007-03-28,""
 JT11398,"",20160408,JT,47.763944,-122.275484,Urban_garden,Washington,Compost,worm bin,,,,"",J. Kemner,J. Kemner,2003-12-01,"Isolated from worm bin in contact with soil at 18704 50th Ave Lake Forest Park, WA outside of Seattle. Bin was fed kitchen scraps and espresso ground. Isolated by single worm pick from fluidized worm castings. Fertile with C. elegans males."
 JU1172,C6.2.1,20160408,JU,-36.87,-73.04,Urban_garden,Region del Bio Bio,Compost,compost heap,,,,"",M.-A. Felix,M.-A. Felix,2007-04-01,"Isolated from a sample of soil (compost) in a pot with rotting tomatoes collected in April 2007 in Concepcion, Chile, in the Villuco area, 3 km SE of the town."
 JU1200,TP,20160408,JU,55.577,-4.6,Rural_garden,Scotland,Compost,compost heap,,,,"",T. Page,T. Page,2007-08-01,Isolated by Tony Page from a compost heap sample recovered on 1 Aug 2007 in SouthWest Scotland 4°36.0’ West 55°34.6’ North.
