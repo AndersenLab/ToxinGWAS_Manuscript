@@ -13,7 +13,7 @@ This document describes how the GWAS mapping results in `data/processed/20231116
 
 - **Pipeline**: [andersenlab/nemascan](https://github.com/andersenlab/nemascan)
 - **Commit hash**: `b58711369124885fb90ce9c53b720313fa68f79b`
-- **Date run**: November 16, 2023
+
 
 ## Input Data
 
@@ -37,7 +37,7 @@ nextflow run andersenlab/nemascan \
   --out /projects/b1059/projects/Tim/2021_GWA_manuscript/data/processed/20231116_Analysis_NemaScan
 ```
 
-## Re-running the Pipeline (Advanced)
+## Re-running the Pipeline
 
 If you need to re-run the mapping analysis:
 
@@ -52,7 +52,7 @@ git checkout b58711369124885fb90ce9c53b720313fa68f79b
 ### 2. Prepare input data
 
 - Run `analysis/trait_generate_mapping_inputs.qmd` to generate trait files
-- Ensure you have access to the WI VCF version 20220216
+- Ensure you have access to the WI VCF version 20220216, which can be downloaded from [CaeNDR](https://caendr.org/data/data-release)
 
 ### 3. Run the pipeline
 
@@ -77,22 +77,3 @@ nextflow run main.nf \
   ```
 - Replace `data/raw/nemascan_output/20231116_Analysis_NemaScan.tar.gz` with your new archive
 
-## Output Structure
-
-The pipeline generates extensive output including:
-
-- **Mapping/**: GWAS mapping results for each trait
-- **Fine_Mappings/**: Fine-mapping results for QTL intervals
-- **Mediation/**: Mediation analysis results
-- **Plots/**: Diagnostic and Manhattan plots
-- **Phenotypes/**: Processed phenotype files
-- **Genotype_Matrix/**: Genotype information and test counts
-- **Reports/**: HTML reports summarizing results
-
-## Notes
-
-- The archived data is approximately 6.0 GB uncompressed
-- Decompression is handled automatically by `analysis/decompress_nemascan_output.qmd`
-- All downstream analyses depend on these mapping results
-- The pipeline requires significant computational resources (HPC cluster recommended)
-- Runtime is approximately 500 CPU hours for the full analysis
