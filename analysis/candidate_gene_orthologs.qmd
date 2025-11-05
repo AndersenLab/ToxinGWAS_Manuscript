@@ -31,8 +31,6 @@ fg <- cg %>%
 
 # get the gene list for human orthos
 genes <- fg$Gene
-
-l
 ```
 
 Load the ortholog data

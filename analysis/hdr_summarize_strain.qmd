@@ -31,7 +31,7 @@ raw_hvr_df <- data.table::fread(
 )
 
 # load phenotype data
-load("data/processed/pheno.df.rda")
+load(pheno_path)
 
 gwas_strains <- pheno.df %>%
   pull(strain) %>%
