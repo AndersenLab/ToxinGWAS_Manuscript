@@ -13,7 +13,9 @@ library(data.table)
 library(flextable)
 
 set.seed(123)
-
+```
+```{r}
+#| include: false
 # source the helper functions
 source("bin/general.R")
 source("bin/outs.R")
@@ -21,19 +23,32 @@ source("bin/materials_key.R")
 source("bin/candidate_groupGO.R")
 ```
 
-Create a flexttable
+# Inputs
+`candidates_table` is generated in `analysis/candidate_gene_organization.qmd`
 ```{r}
-candidate_ft <- candidate_flex_table_pre %>%
+candidate_table_fn <- "data/processed/interval_genes/candidate_genes/inbred_candidate_genes_table.tsv"
+```
+
+# Main
+```{r}
+candidate_table <- data.table::fread(candidate_table_fn)
+head(candidate_table)
+```
+
+
+
+```{r}
+candidate_ft <- candidate_table %>%
   flextable::flextable(
     col_keys = c(
       "Gene",
       "Details",
       "Marker",
       "Beta Coefficient",
-      "Effect Allele",
-      "Other Allele",
+      "Reference Allele",
+      "Alternative Allele",
       "Log10p",
-      "LD(r2)",
+      "LD (r2)",
       "MAF",
       "Interval",
       "Interval Rank"
@@ -58,10 +73,6 @@ candidate_ft <- candidate_flex_table_pre %>%
     group_def = c("rle")
   )
 
-# fns <- table_fns[["candidate_ft"]]
-# docx_fn <- fns$docx
-
-# flextable::save_as_docx(candidate_ft, path = docx_fn)
 ```
 
 ```{r}
@@ -70,6 +81,6 @@ candidate_ft
 
 Save the tabels with standard functions
 ```{r}
-save_supp_table_csv(candidate_flex_table_pre, "candidate_genes")
+save_supp_table_csv(candidate_table, "candidate_genes")
 save_supp_table_flextable(candidate_ft, "candidate_genes")
 ```
