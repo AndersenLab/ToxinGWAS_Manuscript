@@ -1,0 +1,23 @@
+Trait Pair,Interval Pair,LD (r²)
+"2,4-D & TPhP 6.25 uM",V:14453636 & V:7623783,0.000241136
+Mercury & Paraquat 62.5 uM,I:2994073 & I:3282224,0.000892973
+Mercury & TPhP 6.25 uM,V:15476283 & V:7623783,0.066469
+Mercury & Carboxin,III:2461452 & III:2527992,0.0194887
+Mercury & Silver 7.8 uM,II:2730209 & II:3016298,0.0109944
+Mercury & Chlorothalonil,III:2461452 & III:2605810,0.00813665
+Mercury & Chlorothalonil,III:3716201 & III:4478684,0.0635838
+Mercury & Carbaryl,I:2994073 & I:2596756,0.00307552
+Mercury & Arsenic,III:2461452 & III:1642838,0.000428907
+Paraquat 62.5 uM & Zinc,I:11258815 & I:4884561,0.0064538
+Paraquat 62.5 uM & Chlorothalonil,II:13675568 & II:13921653,0.0477691
+Paraquat 62.5 uM & Arsenic,II:13675568 & II:13692527,0.0299564
+Mancozeb & Chlorothalonil,II:10305644 & II:5392976,0.0314322
+Carboxin & Chlorothalonil,III:2527992 & III:2605810,0.402813
+Carboxin & Arsenic,III:2527992 & III:1642838,0.119695
+Silver 7.8 uM & Chlorothalonil,I:1622740 & I:1741155,0.276095
+Silver 7.8 uM & Chlorothalonil,II:11883855 & II:5392976,0.00234262
+Atrazine & Chlorothalonil,II:12658388 & II:5392976,0.0106935
+Chlorothalonil & Nickel,II:5392976 & II:12203935,0.0260947
+Chlorothalonil & Arsenic,II:13921653 & II:13692527,0.38182
+Chlorothalonil & Arsenic,III:1455164 & III:1642838,0.348605
+Chlorothalonil & Arsenic,III:2605810 & III:1642838,0.191683
