@@ -8,7 +8,7 @@ if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
 if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
 # search directory for dependencies
-dir <- paste0(dirname(rstudioapi::getActiveDocumentContext()$path), "/..")
+dir <- here::here()
 
 # get all dependencies
 pkgs <- renv::dependencies(path = dir, progress = FALSE, errors = "ignore")$Package |> unique()
