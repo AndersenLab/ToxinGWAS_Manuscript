@@ -8,7 +8,19 @@ if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
 if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
 # search directory for dependencies
-dir <- here::here()
+dir <- getwd()
+
+# Verify we're in the correct Git repository folder
+if (basename(dir) != "ToxinGWAS_Manuscript") {
+  stop(paste0(
+    "Error: Not in the ToxinGWAS_Manuscript repository!\n",
+    "Current directory: ", dir, "\n",
+    "Expected directory name: ToxinGWAS_Manuscript\n",
+    "Please run this script from the project root directory."
+  ))
+} else {
+  message("Verified: In ToxinGWAS_Manuscript repository.")
+}
 
 # get all dependencies
 pkgs <- renv::dependencies(path = dir, progress = FALSE, errors = "ignore")$Package |> unique()
