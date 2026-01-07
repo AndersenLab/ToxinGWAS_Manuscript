@@ -46,6 +46,7 @@ inhibition_formatted <- inhibition_data %>%
 # prepare the tox metadata for the table
 tox_table_pre <- tox_metadata %>%
   dplyr::select(
+    drug,
     PREFERRED_NAME,
     cas,
     cat_num,
@@ -66,7 +67,10 @@ tox_table_pre <- tox_metadata %>%
     source = "Sigma-Aldrich",
     source_cat = cat_num
   ) %>%
-  dplyr::select(-source, -cat_num) %>%
+  # Join with inhibition data
+
+  dplyr::left_join(inhibition_formatted, by = "drug") %>%
+  dplyr::select(-source, -cat_num, -drug) %>%
   dplyr::rename(
     "Toxicant" = PREFERRED_NAME,
     "CAS" = cas,
