@@ -26,6 +26,12 @@ load(pheno_path)
 dplyr::glimpse(pheno.df)
 ```
 
+Load the toxicant metadata (for nice_drug_label2)
+```{r}
+tox_meta <- data.table::fread(tox_meta_fn)
+dplyr::glimpse(tox_meta)
+```
+
 Extract the relevant columns:
 * `median_wormlength_um`: Median wormlenght for a well
 * `drug`: Toxicant
@@ -162,5 +168,38 @@ dplyr::glimpse(toxicant_inhibition_summary)
 Display the summary table:
 ```{r}
 knitr::kable(toxicant_inhibition_summary %>% dplyr::arrange(desc(mean_pct_inhibition)))
+```
+
+## Step 4: Join with toxicant metadata for nice_drug_label2
+
+Join the inhibition summary with the toxicant metadata to include the `nice_drug_label2` values for integration with Figure 2.
+
+```{r}
+# Select drug and nice_drug_label2 from toxicant metadata
+drug_labels <- tox_meta %>%
+  dplyr::select(drug, nice_drug_label2) %>%
+  dplyr::distinct()
+
+# Join with inhibition summary
+toxicant_inhibition_final <- toxicant_inhibition_summary %>%
+  dplyr::left_join(drug_labels, by = "drug") %>%
+  # Clean up nice_drug_label2 to replace uM with µM for plotting
+  dplyr::mutate(nice_drug_label2 = stringr::str_replace(nice_drug_label2, pattern = "uM", replacement = "µM"))
+
+dplyr::glimpse(toxicant_inhibition_final)
+```
+
+```{r}
+knitr::kable(toxicant_inhibition_final %>% dplyr::arrange(desc(mean_pct_inhibition)))
+```
+
+# Save output
+
+Save the toxicant inhibition summary for use in Figure 2.
+
+```{r}
+output_path <- "data/processed/phenotypes/toxicant_inhibition_summary.csv"
+data.table::fwrite(toxicant_inhibition_final, output_path)
+message("Saved toxicant inhibition summary to: ", output_path)
 ```
 
