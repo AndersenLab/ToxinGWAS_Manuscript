@@ -137,17 +137,6 @@ ggplot2::ggplot(strain_inhibition, ggplot2::aes(x = pct_growth_inhibition)) +
 summary(strain_inhibition$pct_growth_inhibition)
 ```
 
-### Investigate any negative inhibition values
-
-```{r}
-negative_inhibition <- strain_inhibition %>%
-  dplyr::filter(pct_growth_inhibition < 0)
-```
-
-```{r}
-knitr::kable(negative_inhibition)
-```
-
 ## Step 3: Summarize % growth inhibition per toxicant condition (mean ± SD across strains)
 
 For each toxicant, calculate the mean and standard deviation of % growth inhibition across all strains used in the GWAS.
