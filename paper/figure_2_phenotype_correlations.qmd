@@ -191,8 +191,10 @@ moa_anno_df <- tox_cols_with_inhibition %>%
   tibble::column_to_rownames(var = "nice_drug_label2") %>%
   # remove the drug and color columns
   dplyr::select(-drug, -col) %>%
-  # Rename mean_pct_inhibition to Growth Inhibition for display
-  dplyr::rename(`Growth Inhibition (%)` = mean_pct_inhibition)
+  # Rename mean_pct_inhibition for display
+  dplyr::rename(`% Growth Inhib.` = mean_pct_inhibition) %>%
+  # Reorder columns: Use, MoA, % Growth Inhib. (right to left on heatmap)
+  dplyr::select(`% Growth Inhib.`, MoA, Use)
 
 # Create annotation colors for Use (categorical)
 cols <- unique(class.pal.df$col)
@@ -206,7 +208,7 @@ inhibition_color_scale <- colorRampPalette(c("gray90", "gray20"))(100)
 # Create annotation colors list
 anno_cols <- list(
   Use = cols,
-  `Growth Inhibition (%)` = inhibition_color_scale
+  `% Growth Inhib.` = inhibition_color_scale
 )
 ```
 
