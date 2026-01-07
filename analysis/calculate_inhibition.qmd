@@ -1,5 +1,8 @@
 ---
 title: "Analysis NN: "
+format:
+  html:
+    embed-resources: true
 ---
 ```{r}
 library(data.table)
@@ -112,9 +115,31 @@ knitr::kable(as.data.frame(table(strain_inhibition$n_control_pheno_values)),
              col.names = c("n_control_pheno_values", "Frequency"))
 ```
 
-Preview the distribution of inhibition values:
+Preview the distribution of inhibition values across all strain/toxicant combinations:
+```{r}
+ggplot2::ggplot(strain_inhibition, ggplot2::aes(x = pct_growth_inhibition)) +
+  ggplot2::geom_histogram(binwidth = 5, fill = "lightblue", color = "black") +
+  ggplot2::theme_minimal() +
+  ggplot2::labs(
+    title = "% Growth Inhibition Distribution Across Strain/Toxicant Combinations",
+    x = "% Growth Inhibition",
+    y = "Count"
+  )
+```
+
 ```{r}
 summary(strain_inhibition$pct_growth_inhibition)
+```
+
+### Investigate any negative inhibition values
+
+```{r}
+negative_inhibition <- strain_inhibition %>%
+  dplyr::filter(pct_growth_inhibition < 0)
+```
+
+```{r}
+knitr::kable(negative_inhibition)
 ```
 
 ## Step 3: Summarize % growth inhibition per toxicant condition (mean ± SD across strains)
@@ -136,6 +161,6 @@ dplyr::glimpse(toxicant_inhibition_summary)
 
 Display the summary table:
 ```{r}
-knitr::kable(toxicant_inhibition_summary)
+knitr::kable(toxicant_inhibition_summary %>% dplyr::arrange(desc(mean_pct_inhibition)))
 ```
 
