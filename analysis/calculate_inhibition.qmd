@@ -1,0 +1,141 @@
+---
+title: "Analysis NN: "
+---
+```{r}
+library(data.table)
+library(dplyr)
+library(knitr)
+```
+# Overview
+Calculate quantitative inhibition metrics from GWA data
+```{r}
+pheno_path <- "data/processed/phenotypes/pheno.df.rda"
+
+# toxicant condition metadata
+tox_meta_fn <- "data/processed/tox_data/tox_metadata.csv"
+```
+# Inputs
+Load the phenotype data
+```{r}
+# load phenotype data
+load(pheno_path)
+
+dplyr::glimpse(pheno.df)
+```
+
+Extract the relevant columns:
+* `median_wormlength_um`: Median wormlenght for a well
+* `drug`: Toxicant
+* `strain`: Strain name
+* `control_pheno`: The control phenotype for that strain
+* `well.id`: The well identifier 
+
+```{r}
+clean_pheno_df <- pheno.df %>%
+  dplyr::select(
+    drug,
+    strain,
+    median_wormlength_um,
+    control_pheno,
+    well.id
+  ) 
+```
+
+# Validate the data
+These data contain well-level estimates of toxicant responses. For each unique `strain`, we expected to 26 or fewer unique `drug` values, and 12 wells per `drug`/`strain` combination
+
+```{r}
+strain_drug_counts <- clean_pheno_df %>%
+  dplyr::group_by(strain) %>%
+  dplyr::summarise(
+    n_drugs = dplyr::n_distinct(drug),
+    .groups = "drop"
+  )
+knitr::kable(head(strain_drug_counts))
+```
+
+
+Check the number of unique drugs per strain and the number of unique control well phenotypes per strain/drug combination
+```{r}
+validation_summary <- clean_pheno_df %>%
+  dplyr::group_by(strain, drug, .drop = FALSE) %>%
+  dplyr::summarise(
+    n_wells = dplyr::n_distinct(well.id),
+    n_distinct_control_pheno = dplyr::n_distinct(control_pheno),
+    .groups = "drop"
+  )
+
+knitr::kable(head(validation_summary))
+```
+
+# Calculate inhibition metrics
+
+## Step 1: Calculate % growth inhibition for each well (rowwise)
+
+Calculate the percent growth inhibition for each well using the paired `control_pheno` value. The calculation is performed rowwise to preserve the pairing between each toxicant measurement and its corresponding control phenotype.
+
+Formula: `% growth inhibition = 100 × (1 – (median_wormlength_um / control_pheno))`
+
+```{r}
+well_inhibition <- clean_pheno_df %>%
+  dplyr::mutate(
+    pct_growth_inhibition = 100 * (1 - (median_wormlength_um / control_pheno))
+  )
+
+dplyr::glimpse(well_inhibition)
+```
+
+## Step 2: Summarize % growth inhibition per strain/toxicant
+
+For each strain in each toxicant condition, calculate the mean % growth inhibition across all wells. Also report the number of distinct `control_pheno` values and wells per strain/drug combination.
+
+```{r}
+strain_inhibition <- well_inhibition %>%
+  dplyr::group_by(drug, strain) %>%
+  dplyr::summarise(
+    pct_growth_inhibition = mean(pct_growth_inhibition, na.rm = TRUE),
+    mean_length_exposed = mean(median_wormlength_um, na.rm = TRUE),
+    mean_control_pheno = mean(control_pheno, na.rm = TRUE),
+    n_control_pheno_values = dplyr::n_distinct(control_pheno),
+    n_wells = dplyr::n(),
+    .groups = "drop"
+  )
+```
+
+```{r}
+knitr::kable(head(strain_inhibition))
+```
+
+Report the distribution of distinct control phenotype values per strain/drug:
+```{r}
+knitr::kable(as.data.frame(table(strain_inhibition$n_control_pheno_values)),
+             col.names = c("n_control_pheno_values", "Frequency"))
+```
+
+Preview the distribution of inhibition values:
+```{r}
+summary(strain_inhibition$pct_growth_inhibition)
+```
+
+## Step 3: Summarize % growth inhibition per toxicant condition (mean ± SD across strains)
+
+For each toxicant, calculate the mean and standard deviation of % growth inhibition across all strains used in the GWAS.
+
+```{r}
+toxicant_inhibition_summary <- strain_inhibition %>%
+  dplyr::group_by(drug) %>%
+  dplyr::summarise(
+    mean_pct_inhibition = mean(pct_growth_inhibition, na.rm = TRUE),
+    sd_pct_inhibition = sd(pct_growth_inhibition, na.rm = TRUE),
+    n_strains = dplyr::n(),
+    .groups = "drop"
+  )
+
+dplyr::glimpse(toxicant_inhibition_summary)
+```
+
+Display the summary table:
+```{r}
+knitr::kable(toxicant_inhibition_summary)
+```
+
