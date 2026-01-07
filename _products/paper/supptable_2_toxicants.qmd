@@ -20,6 +20,7 @@ source("bin/materials_key.R")
 ```{r}
 tox_metadata_fn <- "data/processed/tox_data/tox_metadata.csv"
 con_data_fn <- "data/processed/tox_data/con_metadata.csv"
+inhibition_fn <- "data/processed/phenotypes/toxicant_inhibition_summary.csv"
 ```
 
 # main
@@ -27,12 +28,25 @@ con_data_fn <- "data/processed/tox_data/con_metadata.csv"
 # load the tox and the con metadata
 tox_metadata <- data.table::fread(tox_metadata_fn)
 con_data <- data.table::fread(con_data_fn)
+inhibition_data <- data.table::fread(inhibition_fn)
+
+# Format inhibition data as "mean ± SD" rounded to 1 decimal place
+inhibition_formatted <- inhibition_data %>%
+  dplyr::mutate(
+    `% Growth Inhib.` = paste0(
+      round(mean_pct_inhibition, 1),
+      " \u00b1 ",
+      round(sd_pct_inhibition, 1)
+    )
+  ) %>%
+  dplyr::select(drug, `% Growth Inhib.`)
 
 
 ## Create the toxicant summary table ##
 # prepare the tox metadata for the table
 tox_table_pre <- tox_metadata %>%
   dplyr::select(
+    drug,
     PREFERRED_NAME,
     cas,
     cat_num,
@@ -53,7 +67,10 @@ tox_table_pre <- tox_metadata %>%
     source = "Sigma-Aldrich",
     source_cat = cat_num
   ) %>%
-  dplyr::select(-source, -cat_num) %>%
+  # Join with inhibition data
+
+  dplyr::left_join(inhibition_formatted, by = "drug") %>%
+  dplyr::select(-source, -cat_num, -drug) %>%
   dplyr::rename(
     "Toxicant" = PREFERRED_NAME,
     "CAS" = cas,
@@ -74,7 +91,8 @@ tox_table_ft <- flextable::flextable(
     "concentration_um",
     "diluent",
     "Use Group",
-    "MoA Group"
+    "MoA Group",
+    "% Growth Inhib."
   )
 ) %>%
   flextable::set_header_labels(
@@ -86,7 +104,8 @@ tox_table_ft <- flextable::flextable(
       concentration_um = "Concentration µM",
       diluent = "Diluent",
       "Use Group" = "Use Group",
-      "MoA Group" = "MoA Group"
+      "MoA Group" = "MoA Group",
+      "% Growth Inhib." = "% Growth Inhib."
     )
   ) %>%
   flextable::line_spacing(space = 1, part = "all") %>%
@@ -94,6 +113,7 @@ tox_table_ft <- flextable::flextable(
   flextable::align(j = 2, align = "center") %>%
   flextable::align(j = 3, align = "center") %>%
   flextable::align(j = 4, align = "right") %>%
+  flextable::align(j = "% Growth Inhib.", align = "center") %>%
   flextable::bold(part = "header") %>%
   flextable::bold(j = "Toxicant") %>%
   flextable::set_table_properties(

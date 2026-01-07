@@ -470,7 +470,8 @@ $qtl_overlaps$jpg
 <h1>inputs</h1>
 <div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>tox_metadata_fn <span class="ot">&lt;-</span> <span class="st">"data/processed/tox_data/tox_metadata.csv"</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>con_data_fn <span class="ot">&lt;-</span> <span class="st">"data/processed/tox_data/con_metadata.csv"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>con_data_fn <span class="ot">&lt;-</span> <span class="st">"data/processed/tox_data/con_metadata.csv"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>inhibition_fn <span class="ot">&lt;-</span> <span class="st">"data/processed/phenotypes/toxicant_inhibition_summary.csv"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 <section id="main" class="level1">
@@ -479,87 +480,106 @@ $qtl_overlaps$jpg
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the tox and the con metadata</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>tox_metadata <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(tox_metadata_fn)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>con_data <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(con_data_fn)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>inhibition_data <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(inhibition_fn)</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Create the toxicant summary table ##</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare the tox metadata for the table</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>tox_table_pre <span class="ot">&lt;-</span> tox_metadata <span class="sc">%&gt;%</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    PREFERRED_NAME,</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    cas,</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    cat_num,</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    source,</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    stock_mM,</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    concentration_um,</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    diluent,</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    big_class,</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    moa_class</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># make the stock_mM a character</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">stock_mM =</span> <span class="fu">as.character</span>(stock_mM)</span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">cas =</span> <span class="fu">as.character</span>(cas),</span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">source =</span> <span class="st">"Sigma-Aldrich"</span>,</span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">source_cat =</span> cat_num</span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>source, <span class="sc">-</span>cat_num) <span class="sc">%&gt;%</span></span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(</span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Toxicant"</span> <span class="ot">=</span> PREFERRED_NAME,</span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CAS"</span> <span class="ot">=</span> cas,</span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sigma Catalog Number"</span> <span class="ot">=</span> source_cat,</span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Stock (mM)"</span> <span class="ot">=</span> stock_mM,</span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Use Group"</span> <span class="ot">=</span> big_class,</span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MoA Group"</span> <span class="ot">=</span> moa_class</span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>tox_table_ft <span class="ot">&lt;-</span> flextable<span class="sc">::</span><span class="fu">flextable</span>(</span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>  tox_table_pre,</span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_keys =</span> <span class="fu">c</span>(</span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Toxicant"</span>,</span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CAS"</span>,</span>
-<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sigma Catalog Number"</span>,</span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Stock (mM)"</span>,</span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>    <span class="st">"concentration_um"</span>,</span>
-<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>    <span class="st">"diluent"</span>,</span>
-<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Use Group"</span>,</span>
-<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MoA Group"</span></span>
-<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">set_header_labels</span>(</span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">list</span>(</span>
-<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Toxicant"</span> <span class="ot">=</span> <span class="st">"Toxicant"</span>,</span>
-<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>      <span class="st">"CAS"</span> <span class="ot">=</span> <span class="st">"CAS"</span>,</span>
-<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Sigma Catalog Number"</span> <span class="ot">=</span> <span class="st">"Sigma Catalog Number"</span>,</span>
-<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Stock (mM)"</span> <span class="ot">=</span> <span class="st">"Stock (mM)"</span>,</span>
-<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>      <span class="at">concentration_um =</span> <span class="st">"Concentration µM"</span>,</span>
-<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>      <span class="at">diluent =</span> <span class="st">"Diluent"</span>,</span>
-<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Use Group"</span> <span class="ot">=</span> <span class="st">"Use Group"</span>,</span>
-<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>      <span class="st">"MoA Group"</span> <span class="ot">=</span> <span class="st">"MoA Group"</span></span>
-<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">line_spacing</span>(<span class="at">space =</span> <span class="dv">1</span>, <span class="at">part =</span> <span class="st">"all"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">j =</span> <span class="dv">1</span>, <span class="at">align =</span> <span class="st">"left"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">j =</span> <span class="dv">2</span>, <span class="at">align =</span> <span class="st">"center"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">j =</span> <span class="dv">3</span>, <span class="at">align =</span> <span class="st">"center"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">j =</span> <span class="dv">4</span>, <span class="at">align =</span> <span class="st">"right"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">bold</span>(<span class="at">part =</span> <span class="st">"header"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">bold</span>(<span class="at">j =</span> <span class="st">"Toxicant"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">set_table_properties</span>(</span>
-<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">layout =</span> <span class="st">"autofit"</span>,</span>
-<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">1</span>,</span>
-<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">opts_word =</span> <span class="fu">list</span>(</span>
-<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>      <span class="at">split =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>      <span class="at">keep_with_next =</span> <span class="cn">TRUE</span></span>
-<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a><span class="co"># save the table as a flextable and a csv</span></span>
-<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a><span class="fu">save_supp_table_csv</span>(tox_table_pre, <span class="st">"tox_table_ft"</span>)</span>
-<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a><span class="fu">save_supp_table_flextable</span>(tox_table_ft, <span class="st">"tox_table_ft"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Format inhibition data as "mean ± SD" rounded to 1 decimal place</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>inhibition_formatted <span class="ot">&lt;-</span> inhibition_data <span class="sc">%&gt;%</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span>(</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">round</span>(mean_pct_inhibition, <span class="dv">1</span>),</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">" \u00b1 "</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">round</span>(sd_pct_inhibition, <span class="dv">1</span>)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(drug, <span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="do">## Create the toxicant summary table ##</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare the tox metadata for the table</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>tox_table_pre <span class="ot">&lt;-</span> tox_metadata <span class="sc">%&gt;%</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    drug,</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    PREFERRED_NAME,</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    cas,</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    cat_num,</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    source,</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    stock_mM,</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    concentration_um,</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>    diluent,</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>    big_class,</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>    moa_class</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># make the stock_mM a character</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">stock_mM =</span> <span class="fu">as.character</span>(stock_mM)</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">cas =</span> <span class="fu">as.character</span>(cas),</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">source =</span> <span class="st">"Sigma-Aldrich"</span>,</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">source_cat =</span> cat_num</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Join with inhibition data</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(inhibition_formatted, <span class="at">by =</span> <span class="st">"drug"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>source, <span class="sc">-</span>cat_num, <span class="sc">-</span>drug) <span class="sc">%&gt;%</span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(</span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Toxicant"</span> <span class="ot">=</span> PREFERRED_NAME,</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CAS"</span> <span class="ot">=</span> cas,</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sigma Catalog Number"</span> <span class="ot">=</span> source_cat,</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Stock (mM)"</span> <span class="ot">=</span> stock_mM,</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Use Group"</span> <span class="ot">=</span> big_class,</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MoA Group"</span> <span class="ot">=</span> moa_class</span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>tox_table_ft <span class="ot">&lt;-</span> flextable<span class="sc">::</span><span class="fu">flextable</span>(</span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>  tox_table_pre,</span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_keys =</span> <span class="fu">c</span>(</span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Toxicant"</span>,</span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CAS"</span>,</span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sigma Catalog Number"</span>,</span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Stock (mM)"</span>,</span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">"concentration_um"</span>,</span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">"diluent"</span>,</span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Use Group"</span>,</span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MoA Group"</span>,</span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>    <span class="st">"% Growth Inhib."</span></span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">set_header_labels</span>(</span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">list</span>(</span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Toxicant"</span> <span class="ot">=</span> <span class="st">"Toxicant"</span>,</span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>      <span class="st">"CAS"</span> <span class="ot">=</span> <span class="st">"CAS"</span>,</span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Sigma Catalog Number"</span> <span class="ot">=</span> <span class="st">"Sigma Catalog Number"</span>,</span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Stock (mM)"</span> <span class="ot">=</span> <span class="st">"Stock (mM)"</span>,</span>
+<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>      <span class="at">concentration_um =</span> <span class="st">"Concentration µM"</span>,</span>
+<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>      <span class="at">diluent =</span> <span class="st">"Diluent"</span>,</span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Use Group"</span> <span class="ot">=</span> <span class="st">"Use Group"</span>,</span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a>      <span class="st">"MoA Group"</span> <span class="ot">=</span> <span class="st">"MoA Group"</span>,</span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>      <span class="st">"% Growth Inhib."</span> <span class="ot">=</span> <span class="st">"% Growth Inhib."</span></span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">line_spacing</span>(<span class="at">space =</span> <span class="dv">1</span>, <span class="at">part =</span> <span class="st">"all"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">j =</span> <span class="dv">1</span>, <span class="at">align =</span> <span class="st">"left"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">j =</span> <span class="dv">2</span>, <span class="at">align =</span> <span class="st">"center"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">j =</span> <span class="dv">3</span>, <span class="at">align =</span> <span class="st">"center"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">j =</span> <span class="dv">4</span>, <span class="at">align =</span> <span class="st">"right"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">j =</span> <span class="st">"% Growth Inhib."</span>, <span class="at">align =</span> <span class="st">"center"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">bold</span>(<span class="at">part =</span> <span class="st">"header"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">bold</span>(<span class="at">j =</span> <span class="st">"Toxicant"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">set_table_properties</span>(</span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a>    <span class="at">layout =</span> <span class="st">"autofit"</span>,</span>
+<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">1</span>,</span>
+<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a>    <span class="at">opts_word =</span> <span class="fu">list</span>(</span>
+<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>      <span class="at">split =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>      <span class="at">keep_with_next =</span> <span class="cn">TRUE</span></span>
+<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a><span class="co"># save the table as a flextable and a csv</span></span>
+<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a><span class="fu">save_supp_table_csv</span>(tox_table_pre, <span class="st">"tox_table_ft"</span>)</span>
+<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a><span class="fu">save_supp_table_flextable</span>(tox_table_ft, <span class="st">"tox_table_ft"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
      </main>

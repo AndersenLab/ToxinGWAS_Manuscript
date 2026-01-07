@@ -1,27 +1,27 @@
-Toxicant,CAS,Stock (mM),concentration_um,diluent,Use Group,MoA Group,Sigma Catalog Number
-"2,4-Dichlorophenoxyacetic acid",94757,500,751.31,DMSO,Herbicide,Other|unknown,31518-250MG
-Aldicarb,116063,2000,156.25,DMSO,Insecticide,AChE inhibition,33386-100MG
-Atrazine,1912249,500,510.2,DMSO,Herbicide,Redox disruption,45330-250MG-R
-Carbaryl,63252,500,262.14,DMSO,Insecticide,AChE inhibition,32055-250MG
-Carboxin,5234684,1000,538.66,DMSO,Fungicide,Redox disruption,45371-250MG
-Chlorfenapyr,122453730,500,0.62,DMSO,Insecticide,Redox disruption,37913-100MG-R
-Chlorothalonil,1897456,75,111.11,DMSO,Fungicide,Redox disruption,36791-250MG
-Chlorpyrifos,2921882,100,2.7,DMSO,Insecticide,AChE inhibition,45395-250MG
-Malathion,121755,1200,790.12,DMSO,Insecticide,AChE inhibition,36143-100MG
-Methomyl,16752775,1000,50,DMSO,Insecticide,AChE inhibition,36159-100MG
-Propoxur,114261,1500,195.09,DMSO,Insecticide,AChE inhibition,45644-250MG
-Pyraclostrobin,175013180,500,93.75,DMSO,Fungicide,Redox disruption,33696-100MG-R
-Triphenyl phosphate,115866,100,6.25,DMSO,Flame Retardant,Other|unknown,241288-50G
-Triphenyl phosphate,115866,100,50,DMSO,Flame Retardant,Other|unknown,241288-50G
-Arsenic oxide (As2O3),1327533,450,242.26,Water,Metal,Redox disruption,202673-5G
-Cadmium chloride,10108642,500,100,Water,Metal,Redox disruption,202908-10G
-Copper(II) chloride,7447394,500,100,Water,Metal,Redox disruption,751944-25G
-Lead nitrate,10099748,500,49.74,Water,Metal,Redox disruption,228621-100G
-Mancozeb,8018017,75,102.4,DMSO,Fungicide,AChE inhibition,45553-100MG
-Methylmercuric(II) chloride,115093,150,15.62,DMSO,Metal,Redox disruption,442534-5G-A
-Nickel chloride,7718549,2500,100,Water,Metal,Other|unknown,339350-50G
-Paraquat dichloride,1910425,1500,62.5,Water,Herbicide,Redox disruption,856177-1G
-Paraquat dichloride,1910425,1500,250,Water,Herbicide,Redox disruption,856177-1G
-Silver nitrate,7761888,100,250,Water,Metal,Other|unknown,S6506-5G
-Silver nitrate,7761888,100,7.8,Water,Metal,Other|unknown,S6506-5G
-Zinc chloride,7646857,1000,50,Water,Metal,Other|unknown,229997-10G
+Toxicant,CAS,Stock (mM),concentration_um,diluent,Use Group,MoA Group,Sigma Catalog Number,% Growth Inhib.
+"2,4-Dichlorophenoxyacetic acid",94757,500,751.31,DMSO,Herbicide,Other|unknown,31518-250MG,12.7 ± 11.5
+Aldicarb,116063,2000,156.25,DMSO,Insecticide,AChE inhibition,33386-100MG,20.2 ± 12.6
+Atrazine,1912249,500,510.2,DMSO,Herbicide,Redox disruption,45330-250MG-R,25.4 ± 5.4
+Carbaryl,63252,500,262.14,DMSO,Insecticide,AChE inhibition,32055-250MG,14.4 ± 7.3
+Carboxin,5234684,1000,538.66,DMSO,Fungicide,Redox disruption,45371-250MG,18.9 ± 8.6
+Chlorfenapyr,122453730,500,0.62,DMSO,Insecticide,Redox disruption,37913-100MG-R,56.5 ± 8.1
+Chlorothalonil,1897456,75,111.11,DMSO,Fungicide,Redox disruption,36791-250MG,13.9 ± 4.9
+Chlorpyrifos,2921882,100,2.7,DMSO,Insecticide,AChE inhibition,45395-250MG,17.8 ± 6.8
+Malathion,121755,1200,790.12,DMSO,Insecticide,AChE inhibition,36143-100MG,37.7 ± 7
+Methomyl,16752775,1000,50,DMSO,Insecticide,AChE inhibition,36159-100MG,43.4 ± 7.8
+Propoxur,114261,1500,195.09,DMSO,Insecticide,AChE inhibition,45644-250MG,2.9 ± 4.2
+Pyraclostrobin,175013180,500,93.75,DMSO,Fungicide,Redox disruption,33696-100MG-R,38.5 ± 4.2
+Triphenyl phosphate,115866,100,6.25,DMSO,Flame Retardant,Other|unknown,241288-50G,14.4 ± 4.7
+Triphenyl phosphate,115866,100,50,DMSO,Flame Retardant,Other|unknown,241288-50G,52.1 ± 4.8
+Arsenic oxide (As2O3),1327533,450,242.26,Water,Metal,Redox disruption,202673-5G,18.8 ± 5.6
+Cadmium chloride,10108642,500,100,Water,Metal,Redox disruption,202908-10G,54.1 ± 7.5
+Copper(II) chloride,7447394,500,100,Water,Metal,Redox disruption,751944-25G,30.4 ± 15.7
+Lead nitrate,10099748,500,49.74,Water,Metal,Redox disruption,228621-100G,9.1 ± 3.5
+Mancozeb,8018017,75,102.4,DMSO,Fungicide,AChE inhibition,45553-100MG,8.5 ± 4.8
+Methylmercuric(II) chloride,115093,150,15.62,DMSO,Metal,Redox disruption,442534-5G-A,47.6 ± 11.5
+Nickel chloride,7718549,2500,100,Water,Metal,Other|unknown,339350-50G,11.3 ± 14
+Paraquat dichloride,1910425,1500,62.5,Water,Herbicide,Redox disruption,856177-1G,29.1 ± 8
+Paraquat dichloride,1910425,1500,250,Water,Herbicide,Redox disruption,856177-1G,44.8 ± 2.7
+Silver nitrate,7761888,100,250,Water,Metal,Other|unknown,S6506-5G,73.4 ± 2.7
+Silver nitrate,7761888,100,7.8,Water,Metal,Other|unknown,S6506-5G,8.8 ± 6.1
+Zinc chloride,7646857,1000,50,Water,Metal,Other|unknown,229997-10G,11 ± 4.9
