@@ -30,14 +30,11 @@ w_cas_fn <- "data/raw/tox_data/toxicant_cas.csv"
 # load comptox data
 ct_data_fn <- "data/raw/tox_data/20241001_Comptox_export.csv"
 
-# path to Kramer MoA
-kramer_moa_fn <- "data/raw/tox_data/Table_X_Tables_A_to_F_chemicals_MoAs_ecotoxdata.xlsx"
-
 # path to prep data
 prep_data_fn <- "data/raw/tox_data/tox_cons_s1.csv"
 
-# path to MoA classification data
-moa_class_fn <- "data/raw/tox_data/moa_class.csv"
+# path to MoA classification data (revised TAC designations)
+moa_class_fn <- "data/raw/tox_data/20260106_moa_summary.csv"
 
 # path to toxicant condition data
 con_data_fn <- "data/raw/tox_data/gwa.doses.csv"
@@ -80,85 +77,17 @@ ct_df <- data.table::fread(ct_data_fn) %>%
 
 # merge comptox data with clean cas numbers
 merge_cas_comptox <- prep_data %>%
-  dplyr::left_join(ct_df, by = "cas") %>%
-  dplyr::mutate(alt_dtxsid = case_when(
-    cas == "1327533" ~ "DTXSID4023886", # arsenic
-    cas == "10108642" ~ "DTXSID1023940", # cadmium dichloride
-    cas == "7447394" ~ "DTXSID2023985", # copper chloride
-    cas == "10099748" ~ "DTXSID2024161", # lead nitrate
-    cas == "115093" ~ "DTXSID1024172", # methylmercury dichloride
-    cas == "7718549" ~ "DTXSID2020925", # nickel dichloride
-    cas == "7646857" ~ "DTXSID7035012", # zinc dichloride
-    TRUE ~ NA_character_
-  ))
+  dplyr::left_join(ct_df, by = "cas")
 
-## Merge Kramer MoA with Comptox and Cas Numbers ##
-
-# read in Kramer MoA
-kramer_moa <- readxl::read_xlsx(kramer_moa_fn, sheet = "Table_C_MoA_DB") %>%
+# Load MoA classification data (revised TAC designations)
+moa_class <- data.table::fread(moa_class_fn) %>%
   dplyr::select(
-    DTXSID,
-    chemical_name,
-    use_group,
-    use_group_details,
-    MoA_broad:molecular_target
+    drug,
+    moa_class = `TAC moa_broad_class`,
+    moa_unique_class = `TAC moa_unique_class`,
+    moa_notes = `TAC notes`,
+    moa_refs = `TAC refs`
   )
-
-# First attempt to merge kramer moa with comptox data using primary DTXSID
-merge_moa_comptox <- merge_cas_comptox %>%
-  dplyr::left_join(kramer_moa, by = c("DTXSID" = "DTXSID"))
-
-# For rows where MoA data is missing, try to join using alt_dtxsid
-missing_moa <- merge_moa_comptox %>%
-  dplyr::filter(is.na(MoA_broad)) %>%
-  dplyr::select(-c(chemical_name, use_group, use_group_details, MoA_broad, MoA_specific, molecular_target)) %>%
-  dplyr::left_join(kramer_moa, by = c("alt_dtxsid" = "DTXSID"))
-
-# Combine the results
-merge_moa_comptox <- dplyr::bind_rows(
-  merge_moa_comptox %>% dplyr::filter(!is.na(MoA_broad)),
-  missing_moa
-)
-
-# Create consolidated MoA columns
-merge_moa_comptox <- merge_moa_comptox %>%
-  dplyr::mutate(
-    # First, standardize the unknown values to be capitalized
-    MoA_broad = dplyr::if_else(tolower(MoA_broad) == "unknown", "Unknown", MoA_broad),
-
-    # Create a combined MoA field using format "Broad MoA (Specific MoA)" when both exist
-    combined_moa = dplyr::case_when(
-      # When both broad and specific are available, specific is not "n/a", and they contain different information
-      !is.na(MoA_broad) & !is.na(MoA_specific) &
-        MoA_specific != "n/a" &
-        !stringr::str_detect(tolower(MoA_specific), tolower(MoA_broad)) ~
-        paste0(MoA_broad, " (", MoA_specific, ")"),
-
-      # When only specific is available and not "n/a"
-      is.na(MoA_broad) & !is.na(MoA_specific) & MoA_specific != "n/a" ~ MoA_specific,
-
-      # When only broad is available or specific is "n/a"
-      (!is.na(MoA_broad) & is.na(MoA_specific)) |
-        (!is.na(MoA_broad) & MoA_specific == "n/a") ~ MoA_broad,
-
-      # When specific is redundant with broad or is "n/a"
-      !is.na(MoA_broad) & !is.na(MoA_specific) ~ MoA_broad,
-
-      # No MoA data available
-      TRUE ~ NA_character_
-    ),
-
-    # Keep molecular target as a separate column in the dataset
-    # but we won't include it in the consolidated table
-    mt = molecular_target
-  )
-
-# Load MoA classification data
-moa_class <- data.table::fread(moa_class_fn)
-
-# Merge MoA classification with the existing data
-merge_moa_comptox <- merge_moa_comptox %>%
-  dplyr::left_join(moa_class, by = c("PREFERRED_NAME" = "toxicant"))
 
 ## Merge with condition data ##
 
