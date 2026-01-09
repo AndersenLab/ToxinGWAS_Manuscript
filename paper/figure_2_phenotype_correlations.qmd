@@ -159,9 +159,20 @@ class.pal.df <- tibble::tibble(
 tox_cols <- tox_data %>%
   # remove the controls
   dplyr::filter(big_class != "Control") %>%
-  dplyr::select(drug, nice_drug_label2, big_class, short_moa_class) %>%
+  dplyr::select(drug, nice_drug_label2, big_class, moa_class) %>%
   # Clean up to have special character for plotting
   dplyr::mutate(nice_drug_label2 = stringr::str_replace(nice_drug_label2, pattern = "uM", replacement = "µM")) %>%
+  # Create short MoA class names for figure legend
+  dplyr::mutate(
+    short_moa_class = dplyr::case_when(
+      moa_class == "AChE inhibition" ~ "AChE inhib.",
+      moa_class == "Multiple mechanisms" ~ "Multiple",
+      moa_class == "Other" ~ "Other",
+      moa_class == "Oxidative phosphorylation inhibition (OXPHOS inhibition)" ~ "OXPHOS inhib.",
+      moa_class == "Redox cycling" ~ "Redox cycl.",
+      moa_class == "Thiol binding" ~ "Thiol bind."
+    )
+  ) %>%
   # join to the class palette
   dplyr::left_join(., class.pal.df, by = c("big_class" = "big_class")) %>%
   dplyr::select(drug, nice_drug_label2, big_class, short_moa_class, col) %>%
@@ -200,10 +211,10 @@ names(cols) <- unique(class.pal.df$big_class)
 
 # Create colorblind-friendly palette for MoA (less saturated)
 moa_cols <- c(
-  "AChE" = "#7FCDBB",
-  "OXPHOS" = "#FDAE6B",
-  "Redox" = "#9ECAE1",
-  "Thiol" = "#FC9272",
+  "AChE inhib." = "#7FCDBB",
+  "OXPHOS inhib." = "#FDAE6B",
+  "Redox cycl." = "#9ECAE1",
+  "Thiol bind." = "#FC9272",
   "Multiple" = "#C994C7",
   "Other" = "#BDBDBD"
 )
