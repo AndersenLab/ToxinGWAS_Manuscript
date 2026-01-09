@@ -1,0 +1,326 @@
+trait1,trait2,r_value,Use1,MoA1,Use2,MoA2
+2_4-D,Aldicarb,0.1456444612841,Herbicide,Other,Insecticide,AChE inhibition
+2_4-D,Arsenic trioxide,0.134170914852576,Herbicide,Other,Metal,Thiol binding
+2_4-D,Atrazine,0.21267768494154,Herbicide,Other,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+2_4-D,Cadmium dichloride,0.0917073761556785,Herbicide,Other,Metal,Thiol binding
+2_4-D,Carbaryl,0.11351612014329,Herbicide,Other,Insecticide,AChE inhibition
+2_4-D,Carboxin,0.112727718073543,Herbicide,Other,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+2_4-D,Chlorfenapyr,0.00116452022492291,Herbicide,Other,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+2_4-D,Chlorothalonil,0.325742284375861,Herbicide,Other,Fungicide,Thiol binding
+2_4-D,Chlorpyrifos,0.352082608191206,Herbicide,Other,Insecticide,AChE inhibition
+2_4-D,Copper chloride,0.0934176081565169,Herbicide,Other,Metal,Redox cycling
+2_4-D,Lead nitrate,0.0748277762469,Herbicide,Other,Metal,Multiple mechanisms
+2_4-D,Malathion,0.381325778451364,Herbicide,Other,Insecticide,AChE inhibition
+2_4-D,Mancozeb,0.214203292918159,Herbicide,Other,Fungicide,Thiol binding
+2_4-D,Methomyl,0.26297260064289,Herbicide,Other,Insecticide,AChE inhibition
+2_4-D,Methyl mercury,0.167674859049894,Herbicide,Other,Metal,Thiol binding
+2_4-D,Nickel dichloride,0.172860598267046,Herbicide,Other,Metal,Other
+2_4-D,Paraquat_250,0.13952967525196,Herbicide,Other,Herbicide,Redox cycling
+2_4-D,Paraquat_62.5,0.0369018078695498,Herbicide,Other,Herbicide,Redox cycling
+2_4-D,Propoxur,0.331324056213833,Herbicide,Other,Insecticide,AChE inhibition
+2_4-D,Pyraclostrobin,0.339881854505373,Herbicide,Other,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+2_4-D,Silver nitrate_250,0.165737861568225,Herbicide,Other,Metal,Thiol binding
+2_4-D,Silver nitrate_7.8,0.229212593000827,Herbicide,Other,Metal,Thiol binding
+2_4-D,Triphenyl phosphate_50,0.0871652335982749,Herbicide,Other,Flame Retardant,Other
+2_4-D,Triphenyl phosphate_6.25,0.293051948051948,Herbicide,Other,Flame Retardant,Other
+2_4-D,Zinc dichloride,0.164345226230815,Herbicide,Other,Metal,Other
+Aldicarb,Arsenic trioxide,0.115291651087015,Insecticide,AChE inhibition,Metal,Thiol binding
+Aldicarb,Atrazine,0.27880578371471,Insecticide,AChE inhibition,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Aldicarb,Cadmium dichloride,0.00216334903576568,Insecticide,AChE inhibition,Metal,Thiol binding
+Aldicarb,Carbaryl,0.369463334059242,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Aldicarb,Carboxin,0.307452594742696,Insecticide,AChE inhibition,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Aldicarb,Chlorfenapyr,0.10584749759088,Insecticide,AChE inhibition,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Aldicarb,Chlorothalonil,0.263989971155387,Insecticide,AChE inhibition,Fungicide,Thiol binding
+Aldicarb,Chlorpyrifos,0.378361551142273,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Aldicarb,Copper chloride,0.0336150682286038,Insecticide,AChE inhibition,Metal,Redox cycling
+Aldicarb,Lead nitrate,0.139564372383132,Insecticide,AChE inhibition,Metal,Multiple mechanisms
+Aldicarb,Malathion,0.341272835318626,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Aldicarb,Mancozeb,0.111287124085252,Insecticide,AChE inhibition,Fungicide,Thiol binding
+Aldicarb,Methomyl,0.296509241931777,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Aldicarb,Methyl mercury,0.081431584515639,Insecticide,AChE inhibition,Metal,Thiol binding
+Aldicarb,Nickel dichloride,0.0481344479461567,Insecticide,AChE inhibition,Metal,Other
+Aldicarb,Paraquat_250,-0.0320409353552343,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Aldicarb,Paraquat_62.5,0.0253743726229495,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Aldicarb,Propoxur,0.231895074638518,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Aldicarb,Pyraclostrobin,0.172002697505475,Insecticide,AChE inhibition,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Aldicarb,Silver nitrate_250,-0.0776198313200211,Insecticide,AChE inhibition,Metal,Thiol binding
+Aldicarb,Silver nitrate_7.8,0.11569560920891,Insecticide,AChE inhibition,Metal,Thiol binding
+Aldicarb,Triphenyl phosphate_50,0.0337300220446404,Insecticide,AChE inhibition,Flame Retardant,Other
+Aldicarb,Triphenyl phosphate_6.25,0.263197699251118,Insecticide,AChE inhibition,Flame Retardant,Other
+Aldicarb,Zinc dichloride,0.213437740254563,Insecticide,AChE inhibition,Metal,Other
+Arsenic trioxide,Atrazine,0.213976899656083,Metal,Thiol binding,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Arsenic trioxide,Cadmium dichloride,0.288650704776125,Metal,Thiol binding,Metal,Thiol binding
+Arsenic trioxide,Carbaryl,0.182544001388815,Metal,Thiol binding,Insecticide,AChE inhibition
+Arsenic trioxide,Carboxin,0.135962889618316,Metal,Thiol binding,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Arsenic trioxide,Chlorfenapyr,0.148312932701836,Metal,Thiol binding,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Arsenic trioxide,Chlorothalonil,0.150028711073126,Metal,Thiol binding,Fungicide,Thiol binding
+Arsenic trioxide,Chlorpyrifos,0.138174108479965,Metal,Thiol binding,Insecticide,AChE inhibition
+Arsenic trioxide,Copper chloride,0.0764549169381978,Metal,Thiol binding,Metal,Redox cycling
+Arsenic trioxide,Lead nitrate,0.253303442657978,Metal,Thiol binding,Metal,Multiple mechanisms
+Arsenic trioxide,Malathion,0.0201010896853801,Metal,Thiol binding,Insecticide,AChE inhibition
+Arsenic trioxide,Mancozeb,0.0162601490305005,Metal,Thiol binding,Fungicide,Thiol binding
+Arsenic trioxide,Methomyl,0.143118618470731,Metal,Thiol binding,Insecticide,AChE inhibition
+Arsenic trioxide,Methyl mercury,0.297571413070016,Metal,Thiol binding,Metal,Thiol binding
+Arsenic trioxide,Nickel dichloride,0.180363779399398,Metal,Thiol binding,Metal,Other
+Arsenic trioxide,Paraquat_250,0.157376343345274,Metal,Thiol binding,Herbicide,Redox cycling
+Arsenic trioxide,Paraquat_62.5,0.193320025957597,Metal,Thiol binding,Herbicide,Redox cycling
+Arsenic trioxide,Propoxur,0.0258032423481652,Metal,Thiol binding,Insecticide,AChE inhibition
+Arsenic trioxide,Pyraclostrobin,0.203987166818012,Metal,Thiol binding,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Arsenic trioxide,Silver nitrate_250,0.145085478185057,Metal,Thiol binding,Metal,Thiol binding
+Arsenic trioxide,Silver nitrate_7.8,0.236515811121201,Metal,Thiol binding,Metal,Thiol binding
+Arsenic trioxide,Triphenyl phosphate_50,0.129327682207263,Metal,Thiol binding,Flame Retardant,Other
+Arsenic trioxide,Triphenyl phosphate_6.25,0.16837039779037,Metal,Thiol binding,Flame Retardant,Other
+Arsenic trioxide,Zinc dichloride,0.114000769476802,Metal,Thiol binding,Metal,Other
+Atrazine,Cadmium dichloride,0.271618837670092,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Atrazine,Carbaryl,0.408899097270445,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Atrazine,Carboxin,0.401143769029432,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Atrazine,Chlorfenapyr,0.328132368318537,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Atrazine,Chlorothalonil,0.325816750420137,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Thiol binding
+Atrazine,Chlorpyrifos,0.343555168241931,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Atrazine,Copper chloride,0.0425971656675145,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Redox cycling
+Atrazine,Lead nitrate,0.0959095709055647,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Multiple mechanisms
+Atrazine,Malathion,0.409206444428922,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Atrazine,Mancozeb,0.202259905577036,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Thiol binding
+Atrazine,Methomyl,0.360533832364818,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Atrazine,Methyl mercury,0.140539033705464,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Atrazine,Nickel dichloride,0.0949518588750601,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Other
+Atrazine,Paraquat_250,0.315680696090931,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Herbicide,Redox cycling
+Atrazine,Paraquat_62.5,0.260381553929941,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Herbicide,Redox cycling
+Atrazine,Propoxur,0.466857868374881,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Atrazine,Pyraclostrobin,0.450389320097135,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Atrazine,Silver nitrate_250,0.344341201646704,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Atrazine,Silver nitrate_7.8,0.217063519782392,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Atrazine,Triphenyl phosphate_50,0.369571507302287,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Flame Retardant,Other
+Atrazine,Triphenyl phosphate_6.25,0.343497536945813,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Flame Retardant,Other
+Atrazine,Zinc dichloride,0.233672940573479,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Other
+Cadmium dichloride,Carbaryl,0.0138242639758209,Metal,Thiol binding,Insecticide,AChE inhibition
+Cadmium dichloride,Carboxin,-0.0966847086997275,Metal,Thiol binding,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Cadmium dichloride,Chlorfenapyr,0.203290345067968,Metal,Thiol binding,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Cadmium dichloride,Chlorothalonil,0.149829197776291,Metal,Thiol binding,Fungicide,Thiol binding
+Cadmium dichloride,Chlorpyrifos,0.0525356725264602,Metal,Thiol binding,Insecticide,AChE inhibition
+Cadmium dichloride,Copper chloride,0.363174078302213,Metal,Thiol binding,Metal,Redox cycling
+Cadmium dichloride,Lead nitrate,0.169942307776422,Metal,Thiol binding,Metal,Multiple mechanisms
+Cadmium dichloride,Malathion,0.17646065518406,Metal,Thiol binding,Insecticide,AChE inhibition
+Cadmium dichloride,Mancozeb,-0.0967698478307462,Metal,Thiol binding,Fungicide,Thiol binding
+Cadmium dichloride,Methomyl,0.183127038741677,Metal,Thiol binding,Insecticide,AChE inhibition
+Cadmium dichloride,Methyl mercury,0.230348921950266,Metal,Thiol binding,Metal,Thiol binding
+Cadmium dichloride,Nickel dichloride,0.0655084482585172,Metal,Thiol binding,Metal,Other
+Cadmium dichloride,Paraquat_250,0.478426562861054,Metal,Thiol binding,Herbicide,Redox cycling
+Cadmium dichloride,Paraquat_62.5,0.0653593493044135,Metal,Thiol binding,Herbicide,Redox cycling
+Cadmium dichloride,Propoxur,0.00816439003267331,Metal,Thiol binding,Insecticide,AChE inhibition
+Cadmium dichloride,Pyraclostrobin,0.283753887336141,Metal,Thiol binding,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Cadmium dichloride,Silver nitrate_250,0.536539461771108,Metal,Thiol binding,Metal,Thiol binding
+Cadmium dichloride,Silver nitrate_7.8,0.0733115511291318,Metal,Thiol binding,Metal,Thiol binding
+Cadmium dichloride,Triphenyl phosphate_50,0.254132600815955,Metal,Thiol binding,Flame Retardant,Other
+Cadmium dichloride,Triphenyl phosphate_6.25,-0.00983750709875978,Metal,Thiol binding,Flame Retardant,Other
+Cadmium dichloride,Zinc dichloride,0.136119100396309,Metal,Thiol binding,Metal,Other
+Carbaryl,Carboxin,0.628640167647777,Insecticide,AChE inhibition,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Carbaryl,Chlorfenapyr,0.157805889870762,Insecticide,AChE inhibition,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Carbaryl,Chlorothalonil,0.224612400512793,Insecticide,AChE inhibition,Fungicide,Thiol binding
+Carbaryl,Chlorpyrifos,0.443730646686618,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Carbaryl,Copper chloride,-0.10739810907537,Insecticide,AChE inhibition,Metal,Redox cycling
+Carbaryl,Lead nitrate,0.146958783431194,Insecticide,AChE inhibition,Metal,Multiple mechanisms
+Carbaryl,Malathion,0.388789661342877,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Carbaryl,Mancozeb,0.314471382404786,Insecticide,AChE inhibition,Fungicide,Thiol binding
+Carbaryl,Methomyl,0.110792376637447,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Carbaryl,Methyl mercury,0.196670780999919,Insecticide,AChE inhibition,Metal,Thiol binding
+Carbaryl,Nickel dichloride,0.188817037017253,Insecticide,AChE inhibition,Metal,Other
+Carbaryl,Paraquat_250,-0.0438346038032716,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Carbaryl,Paraquat_62.5,0.10510691079951,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Carbaryl,Propoxur,0.382242072867574,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Carbaryl,Pyraclostrobin,0.318856498050318,Insecticide,AChE inhibition,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Carbaryl,Silver nitrate_250,-0.0208840546601457,Insecticide,AChE inhibition,Metal,Thiol binding
+Carbaryl,Silver nitrate_7.8,0.0821554003525453,Insecticide,AChE inhibition,Metal,Thiol binding
+Carbaryl,Triphenyl phosphate_50,0.242787269220171,Insecticide,AChE inhibition,Flame Retardant,Other
+Carbaryl,Triphenyl phosphate_6.25,0.531223554201429,Insecticide,AChE inhibition,Flame Retardant,Other
+Carbaryl,Zinc dichloride,0.063326404510379,Insecticide,AChE inhibition,Metal,Other
+Carboxin,Chlorfenapyr,0.0775770747476404,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Carboxin,Chlorothalonil,0.135377953503513,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Thiol binding
+Carboxin,Chlorpyrifos,0.307641538867689,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Carboxin,Copper chloride,-0.117192374467623,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Redox cycling
+Carboxin,Lead nitrate,0.10815553536066,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Multiple mechanisms
+Carboxin,Malathion,0.299464838950911,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Carboxin,Mancozeb,0.243913273472045,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Thiol binding
+Carboxin,Methomyl,-0.0531957703668821,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Carboxin,Methyl mercury,0.185777762469,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Carboxin,Nickel dichloride,0.0767739046569303,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Other
+Carboxin,Paraquat_250,-0.219285561197934,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Herbicide,Redox cycling
+Carboxin,Paraquat_62.5,0.06688847787919,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Herbicide,Redox cycling
+Carboxin,Propoxur,0.319558229118629,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Carboxin,Pyraclostrobin,0.240742750183111,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Carboxin,Silver nitrate_250,-0.161089171851823,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Carboxin,Silver nitrate_7.8,0.13738030002984,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Carboxin,Triphenyl phosphate_50,0.0529675251959687,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Flame Retardant,Other
+Carboxin,Triphenyl phosphate_6.25,0.312643987187748,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Flame Retardant,Other
+Carboxin,Zinc dichloride,0.164564186376682,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Other
+Chlorfenapyr,Chlorothalonil,0.0623398191622414,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Thiol binding
+Chlorfenapyr,Chlorpyrifos,0.023206145476664,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Chlorfenapyr,Copper chloride,0.0319370690067592,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Redox cycling
+Chlorfenapyr,Lead nitrate,-0.0203630423936741,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Multiple mechanisms
+Chlorfenapyr,Malathion,0.231449777540853,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Chlorfenapyr,Mancozeb,-0.0414360404322063,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Thiol binding
+Chlorfenapyr,Methomyl,0.160548931383577,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Chlorfenapyr,Methyl mercury,0.0439979086789822,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Chlorfenapyr,Nickel dichloride,0.073090302694797,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Other
+Chlorfenapyr,Paraquat_250,0.253664937567917,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Herbicide,Redox cycling
+Chlorfenapyr,Paraquat_62.5,0.0996697155797196,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Herbicide,Redox cycling
+Chlorfenapyr,Propoxur,0.0917208291472741,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Insecticide,AChE inhibition
+Chlorfenapyr,Pyraclostrobin,0.333692138409913,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Chlorfenapyr,Silver nitrate_250,0.2354469087515,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Chlorfenapyr,Silver nitrate_7.8,0.067779987561424,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Chlorfenapyr,Triphenyl phosphate_50,0.300459575981155,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Flame Retardant,Other
+Chlorfenapyr,Triphenyl phosphate_6.25,0.137728081480593,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Flame Retardant,Other
+Chlorfenapyr,Zinc dichloride,0.0166968427313948,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Other
+Chlorothalonil,Chlorpyrifos,0.447855422936963,Fungicide,Thiol binding,Insecticide,AChE inhibition
+Chlorothalonil,Copper chloride,0.13194240425191,Fungicide,Thiol binding,Metal,Redox cycling
+Chlorothalonil,Lead nitrate,0.130703821911223,Fungicide,Thiol binding,Metal,Multiple mechanisms
+Chlorothalonil,Malathion,0.395314753485391,Fungicide,Thiol binding,Insecticide,AChE inhibition
+Chlorothalonil,Mancozeb,0.271837108060467,Fungicide,Thiol binding,Fungicide,Thiol binding
+Chlorothalonil,Methomyl,0.296311120704288,Fungicide,Thiol binding,Insecticide,AChE inhibition
+Chlorothalonil,Methyl mercury,0.115557944280173,Fungicide,Thiol binding,Metal,Thiol binding
+Chlorothalonil,Nickel dichloride,0.142809185362016,Fungicide,Thiol binding,Metal,Other
+Chlorothalonil,Paraquat_250,0.0668762055662717,Fungicide,Thiol binding,Herbicide,Redox cycling
+Chlorothalonil,Paraquat_62.5,-0.0760048300845265,Fungicide,Thiol binding,Herbicide,Redox cycling
+Chlorothalonil,Propoxur,0.293125033384969,Fungicide,Thiol binding,Insecticide,AChE inhibition
+Chlorothalonil,Pyraclostrobin,0.421074595374179,Fungicide,Thiol binding,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Chlorothalonil,Silver nitrate_250,0.12524733709867,Fungicide,Thiol binding,Metal,Thiol binding
+Chlorothalonil,Silver nitrate_7.8,0.187675271085946,Fungicide,Thiol binding,Metal,Thiol binding
+Chlorothalonil,Triphenyl phosphate_50,0.176133232295398,Fungicide,Thiol binding,Flame Retardant,Other
+Chlorothalonil,Triphenyl phosphate_6.25,0.294196303994988,Fungicide,Thiol binding,Flame Retardant,Other
+Chlorothalonil,Zinc dichloride,0.40314094868146,Fungicide,Thiol binding,Metal,Other
+Chlorpyrifos,Copper chloride,-0.0276282182806121,Insecticide,AChE inhibition,Metal,Redox cycling
+Chlorpyrifos,Lead nitrate,0.192225421734198,Insecticide,AChE inhibition,Metal,Multiple mechanisms
+Chlorpyrifos,Malathion,0.494775047579966,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Chlorpyrifos,Mancozeb,0.421302618018362,Insecticide,AChE inhibition,Fungicide,Thiol binding
+Chlorpyrifos,Methomyl,0.30796266963483,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Chlorpyrifos,Methyl mercury,0.098656010751914,Insecticide,AChE inhibition,Metal,Thiol binding
+Chlorpyrifos,Nickel dichloride,0.123531811745506,Insecticide,AChE inhibition,Metal,Other
+Chlorpyrifos,Paraquat_250,0.0701346389228886,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Chlorpyrifos,Paraquat_62.5,0.0673609156581293,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Chlorpyrifos,Propoxur,0.391872610683854,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Chlorpyrifos,Pyraclostrobin,0.377071526780387,Insecticide,AChE inhibition,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Chlorpyrifos,Silver nitrate_250,-0.0285234569196765,Insecticide,AChE inhibition,Metal,Thiol binding
+Chlorpyrifos,Silver nitrate_7.8,0.294967489971063,Insecticide,AChE inhibition,Metal,Thiol binding
+Chlorpyrifos,Triphenyl phosphate_50,0.272065039033365,Insecticide,AChE inhibition,Flame Retardant,Other
+Chlorpyrifos,Triphenyl phosphate_6.25,0.544218165735194,Insecticide,AChE inhibition,Flame Retardant,Other
+Chlorpyrifos,Zinc dichloride,0.312775511040945,Insecticide,AChE inhibition,Metal,Other
+Copper chloride,Lead nitrate,0.0128288676229491,Metal,Redox cycling,Metal,Multiple mechanisms
+Copper chloride,Malathion,0.0730563271192778,Metal,Redox cycling,Insecticide,AChE inhibition
+Copper chloride,Mancozeb,-0.000560867475028043,Metal,Redox cycling,Fungicide,Thiol binding
+Copper chloride,Methomyl,0.181805870186152,Metal,Redox cycling,Insecticide,AChE inhibition
+Copper chloride,Methyl mercury,0.251880272902368,Metal,Redox cycling,Metal,Thiol binding
+Copper chloride,Nickel dichloride,0.213066209070028,Metal,Redox cycling,Metal,Other
+Copper chloride,Paraquat_250,0.387222621598893,Metal,Redox cycling,Herbicide,Redox cycling
+Copper chloride,Paraquat_62.5,0.0800594724693397,Metal,Redox cycling,Herbicide,Redox cycling
+Copper chloride,Propoxur,-0.0794426661955106,Metal,Redox cycling,Insecticide,AChE inhibition
+Copper chloride,Pyraclostrobin,0.0538950243042573,Metal,Redox cycling,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Copper chloride,Silver nitrate_250,0.383162772916094,Metal,Redox cycling,Metal,Thiol binding
+Copper chloride,Silver nitrate_7.8,0.00211827626729341,Metal,Redox cycling,Metal,Thiol binding
+Copper chloride,Triphenyl phosphate_50,-0.00080945163957013,Metal,Redox cycling,Flame Retardant,Other
+Copper chloride,Triphenyl phosphate_6.25,-0.0621281927161935,Metal,Redox cycling,Flame Retardant,Other
+Copper chloride,Zinc dichloride,0.247696118909992,Metal,Redox cycling,Metal,Other
+Lead nitrate,Malathion,0.232239196624112,Metal,Multiple mechanisms,Insecticide,AChE inhibition
+Lead nitrate,Mancozeb,0.205592983814967,Metal,Multiple mechanisms,Fungicide,Thiol binding
+Lead nitrate,Methomyl,0.0464230605075676,Metal,Multiple mechanisms,Insecticide,AChE inhibition
+Lead nitrate,Methyl mercury,0.229686609879825,Metal,Multiple mechanisms,Metal,Thiol binding
+Lead nitrate,Nickel dichloride,0.0851350088136318,Metal,Multiple mechanisms,Metal,Other
+Lead nitrate,Paraquat_250,0.104123714836014,Metal,Multiple mechanisms,Herbicide,Redox cycling
+Lead nitrate,Paraquat_62.5,0.00476272620485144,Metal,Multiple mechanisms,Herbicide,Redox cycling
+Lead nitrate,Propoxur,0.0144034054722586,Metal,Multiple mechanisms,Insecticide,AChE inhibition
+Lead nitrate,Pyraclostrobin,0.156320108434379,Metal,Multiple mechanisms,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Lead nitrate,Silver nitrate_250,0.054478318235434,Metal,Multiple mechanisms,Metal,Thiol binding
+Lead nitrate,Silver nitrate_7.8,0.650080457774692,Metal,Multiple mechanisms,Metal,Thiol binding
+Lead nitrate,Triphenyl phosphate_50,0.0715624138881235,Metal,Multiple mechanisms,Flame Retardant,Other
+Lead nitrate,Triphenyl phosphate_6.25,0.250534468521313,Metal,Multiple mechanisms,Flame Retardant,Other
+Lead nitrate,Zinc dichloride,0.335803411258863,Metal,Multiple mechanisms,Metal,Other
+Malathion,Mancozeb,0.304916604348058,Insecticide,AChE inhibition,Fungicide,Thiol binding
+Malathion,Methomyl,0.297568478869048,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Malathion,Methyl mercury,0.108055502807693,Insecticide,AChE inhibition,Metal,Thiol binding
+Malathion,Nickel dichloride,0.0450502536418631,Insecticide,AChE inhibition,Metal,Other
+Malathion,Paraquat_250,0.158979746486635,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Malathion,Paraquat_62.5,0.135526586000969,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Malathion,Propoxur,0.250857993696918,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Malathion,Pyraclostrobin,0.46659500026708,Insecticide,AChE inhibition,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Malathion,Silver nitrate_250,0.154573367196088,Insecticide,AChE inhibition,Metal,Thiol binding
+Malathion,Silver nitrate_7.8,0.28495907002831,Insecticide,AChE inhibition,Metal,Thiol binding
+Malathion,Triphenyl phosphate_50,0.286170049906617,Insecticide,AChE inhibition,Flame Retardant,Other
+Malathion,Triphenyl phosphate_6.25,0.338762493237279,Insecticide,AChE inhibition,Flame Retardant,Other
+Malathion,Zinc dichloride,0.214046659960785,Insecticide,AChE inhibition,Metal,Other
+Mancozeb,Methomyl,0.050208407115809,Fungicide,Thiol binding,Insecticide,AChE inhibition
+Mancozeb,Methyl mercury,0.200494059083634,Fungicide,Thiol binding,Metal,Thiol binding
+Mancozeb,Nickel dichloride,0.0312508477334997,Fungicide,Thiol binding,Metal,Other
+Mancozeb,Paraquat_250,0.0596100854229815,Fungicide,Thiol binding,Herbicide,Redox cycling
+Mancozeb,Paraquat_62.5,0.138289920073601,Fungicide,Thiol binding,Herbicide,Redox cycling
+Mancozeb,Propoxur,0.392942751455585,Fungicide,Thiol binding,Insecticide,AChE inhibition
+Mancozeb,Pyraclostrobin,0.292014983173976,Fungicide,Thiol binding,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Mancozeb,Silver nitrate_250,0.014372085970964,Fungicide,Thiol binding,Metal,Thiol binding
+Mancozeb,Silver nitrate_7.8,0.23445762779766,Fungicide,Thiol binding,Metal,Thiol binding
+Mancozeb,Triphenyl phosphate_50,0.299104655180709,Fungicide,Thiol binding,Flame Retardant,Other
+Mancozeb,Triphenyl phosphate_6.25,0.476698083658419,Fungicide,Thiol binding,Flame Retardant,Other
+Mancozeb,Zinc dichloride,0.219852501494917,Fungicide,Thiol binding,Metal,Other
+Methomyl,Methyl mercury,0.127064514748063,Insecticide,AChE inhibition,Metal,Thiol binding
+Methomyl,Nickel dichloride,-0.110725055585709,Insecticide,AChE inhibition,Metal,Other
+Methomyl,Paraquat_250,0.448161308275183,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Methomyl,Paraquat_62.5,0.190072358153513,Insecticide,AChE inhibition,Herbicide,Redox cycling
+Methomyl,Propoxur,0.303054926294363,Insecticide,AChE inhibition,Insecticide,AChE inhibition
+Methomyl,Pyraclostrobin,0.428291816065265,Insecticide,AChE inhibition,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Methomyl,Silver nitrate_250,0.391360352455803,Insecticide,AChE inhibition,Metal,Thiol binding
+Methomyl,Silver nitrate_7.8,0.140071795151208,Insecticide,AChE inhibition,Metal,Thiol binding
+Methomyl,Triphenyl phosphate_50,0.302180140386171,Insecticide,AChE inhibition,Flame Retardant,Other
+Methomyl,Triphenyl phosphate_6.25,0.168455198565735,Insecticide,AChE inhibition,Flame Retardant,Other
+Methomyl,Zinc dichloride,0.105789942087681,Insecticide,AChE inhibition,Metal,Other
+Methyl mercury,Nickel dichloride,0.0226158343054011,Metal,Thiol binding,Metal,Other
+Methyl mercury,Paraquat_250,0.240501860016534,Metal,Thiol binding,Herbicide,Redox cycling
+Methyl mercury,Paraquat_62.5,0.13942351134002,Metal,Thiol binding,Herbicide,Redox cycling
+Methyl mercury,Propoxur,0.155069107234897,Metal,Thiol binding,Insecticide,AChE inhibition
+Methyl mercury,Pyraclostrobin,0.275304137065328,Metal,Thiol binding,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Methyl mercury,Silver nitrate_250,0.192087108146014,Metal,Thiol binding,Metal,Thiol binding
+Methyl mercury,Silver nitrate_7.8,0.164172253084771,Metal,Thiol binding,Metal,Thiol binding
+Methyl mercury,Triphenyl phosphate_50,0.109330062745516,Metal,Thiol binding,Flame Retardant,Other
+Methyl mercury,Triphenyl phosphate_6.25,0.201291608530995,Metal,Thiol binding,Flame Retardant,Other
+Methyl mercury,Zinc dichloride,0.0947847087344888,Metal,Thiol binding,Metal,Other
+Nickel dichloride,Paraquat_250,0.211026300084095,Metal,Other,Herbicide,Redox cycling
+Nickel dichloride,Paraquat_62.5,0.0895889456260973,Metal,Other,Herbicide,Redox cycling
+Nickel dichloride,Propoxur,0.0843371080604669,Metal,Other,Insecticide,AChE inhibition
+Nickel dichloride,Pyraclostrobin,-0.0467840259601517,Metal,Other,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Nickel dichloride,Silver nitrate_250,0.203966636983715,Metal,Other,Metal,Thiol binding
+Nickel dichloride,Silver nitrate_7.8,0.0487420543774371,Metal,Other,Metal,Thiol binding
+Nickel dichloride,Triphenyl phosphate_50,0.0547643104270274,Metal,Other,Flame Retardant,Other
+Nickel dichloride,Triphenyl phosphate_6.25,0.010420384645693,Metal,Other,Flame Retardant,Other
+Nickel dichloride,Zinc dichloride,0.280736194612735,Metal,Other,Metal,Other
+Paraquat_250,Paraquat_62.5,0.420656237399107,Herbicide,Redox cycling,Herbicide,Redox cycling
+Paraquat_250,Propoxur,0.166128638472181,Herbicide,Redox cycling,Insecticide,AChE inhibition
+Paraquat_250,Pyraclostrobin,0.30026720559911,Herbicide,Redox cycling,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Paraquat_250,Silver nitrate_250,0.82664472303941,Herbicide,Redox cycling,Metal,Thiol binding
+Paraquat_250,Silver nitrate_7.8,0.147327604915498,Herbicide,Redox cycling,Metal,Thiol binding
+Paraquat_250,Triphenyl phosphate_50,0.38552409392275,Herbicide,Redox cycling,Flame Retardant,Other
+Paraquat_250,Triphenyl phosphate_6.25,-0.00466248293135042,Herbicide,Redox cycling,Flame Retardant,Other
+Paraquat_250,Zinc dichloride,0.154578878975905,Herbicide,Redox cycling,Metal,Other
+Paraquat_62.5,Propoxur,0.20506008855155,Herbicide,Redox cycling,Insecticide,AChE inhibition
+Paraquat_62.5,Pyraclostrobin,0.078291727248084,Herbicide,Redox cycling,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Paraquat_62.5,Silver nitrate_250,0.279153210646564,Herbicide,Redox cycling,Metal,Thiol binding
+Paraquat_62.5,Silver nitrate_7.8,0.0131217296302685,Herbicide,Redox cycling,Metal,Thiol binding
+Paraquat_62.5,Triphenyl phosphate_50,0.10420101054776,Herbicide,Redox cycling,Flame Retardant,Other
+Paraquat_62.5,Triphenyl phosphate_6.25,0.0801875543811028,Herbicide,Redox cycling,Flame Retardant,Other
+Paraquat_62.5,Zinc dichloride,-0.0020223925347265,Herbicide,Redox cycling,Metal,Other
+Propoxur,Pyraclostrobin,0.342598218578067,Insecticide,AChE inhibition,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition)
+Propoxur,Silver nitrate_250,0.194161005925712,Insecticide,AChE inhibition,Metal,Thiol binding
+Propoxur,Silver nitrate_7.8,0.121481224293574,Insecticide,AChE inhibition,Metal,Thiol binding
+Propoxur,Triphenyl phosphate_50,0.316888261228989,Insecticide,AChE inhibition,Flame Retardant,Other
+Propoxur,Triphenyl phosphate_6.25,0.415992482701672,Insecticide,AChE inhibition,Flame Retardant,Other
+Propoxur,Zinc dichloride,0.166210882997807,Insecticide,AChE inhibition,Metal,Other
+Pyraclostrobin,Silver nitrate_250,0.314467408585056,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Pyraclostrobin,Silver nitrate_7.8,0.250378636907134,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Thiol binding
+Pyraclostrobin,Triphenyl phosphate_50,0.627464822615002,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Flame Retardant,Other
+Pyraclostrobin,Triphenyl phosphate_6.25,0.470925709729776,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Flame Retardant,Other
+Pyraclostrobin,Zinc dichloride,0.204648381549244,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),Metal,Other
+Silver nitrate_250,Silver nitrate_7.8,0.0817170111287758,Metal,Thiol binding,Metal,Thiol binding
+Silver nitrate_250,Triphenyl phosphate_50,0.362515958738339,Metal,Thiol binding,Flame Retardant,Other
+Silver nitrate_250,Triphenyl phosphate_6.25,-0.0996556722261938,Metal,Thiol binding,Flame Retardant,Other
+Silver nitrate_250,Zinc dichloride,0.153074355123269,Metal,Thiol binding,Metal,Other
+Silver nitrate_7.8,Triphenyl phosphate_50,0.150378564211576,Metal,Thiol binding,Flame Retardant,Other
+Silver nitrate_7.8,Triphenyl phosphate_6.25,0.321775676983969,Metal,Thiol binding,Flame Retardant,Other
+Silver nitrate_7.8,Zinc dichloride,0.397288753123102,Metal,Thiol binding,Metal,Other
+Triphenyl phosphate_50,Triphenyl phosphate_6.25,0.426028248142362,Flame Retardant,Other,Flame Retardant,Other
+Triphenyl phosphate_50,Zinc dichloride,0.0578359160250497,Flame Retardant,Other,Metal,Other
+Triphenyl phosphate_6.25,Zinc dichloride,0.225798001082035,Flame Retardant,Other,Metal,Other

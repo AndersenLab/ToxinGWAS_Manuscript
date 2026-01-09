@@ -1,0 +1,5 @@
+group_type,comparison,n_pairs,mean_r,sd_r
+Use,between,255,0.176,0.153
+Use,within,70,0.235,0.137
+MoA,between,270,0.179,0.152
+MoA,within,55,0.238,0.14
