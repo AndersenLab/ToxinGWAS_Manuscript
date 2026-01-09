@@ -1,27 +1,53 @@
-Toxicant,CAS,Stock (mM),concentration_um,diluent,Use Group,MoA Group,Sigma Catalog Number,% Growth Inhib.
-"2,4-Dichlorophenoxyacetic acid",94757,500,751.31,DMSO,Herbicide,Other|unknown,31518-250MG,12.7 ± 11.5
-Aldicarb,116063,2000,156.25,DMSO,Insecticide,AChE inhibition,33386-100MG,20.2 ± 12.6
-Atrazine,1912249,500,510.2,DMSO,Herbicide,Redox disruption,45330-250MG-R,25.4 ± 5.4
-Carbaryl,63252,500,262.14,DMSO,Insecticide,AChE inhibition,32055-250MG,14.4 ± 7.3
-Carboxin,5234684,1000,538.66,DMSO,Fungicide,Redox disruption,45371-250MG,18.9 ± 8.6
-Chlorfenapyr,122453730,500,0.62,DMSO,Insecticide,Redox disruption,37913-100MG-R,56.5 ± 8.1
-Chlorothalonil,1897456,75,111.11,DMSO,Fungicide,Redox disruption,36791-250MG,13.9 ± 4.9
-Chlorpyrifos,2921882,100,2.7,DMSO,Insecticide,AChE inhibition,45395-250MG,17.8 ± 6.8
-Malathion,121755,1200,790.12,DMSO,Insecticide,AChE inhibition,36143-100MG,37.7 ± 7
-Methomyl,16752775,1000,50,DMSO,Insecticide,AChE inhibition,36159-100MG,43.4 ± 7.8
-Propoxur,114261,1500,195.09,DMSO,Insecticide,AChE inhibition,45644-250MG,2.9 ± 4.2
-Pyraclostrobin,175013180,500,93.75,DMSO,Fungicide,Redox disruption,33696-100MG-R,38.5 ± 4.2
-Triphenyl phosphate,115866,100,6.25,DMSO,Flame Retardant,Other|unknown,241288-50G,14.4 ± 4.7
-Triphenyl phosphate,115866,100,50,DMSO,Flame Retardant,Other|unknown,241288-50G,52.1 ± 4.8
-Arsenic oxide (As2O3),1327533,450,242.26,Water,Metal,Redox disruption,202673-5G,18.8 ± 5.6
-Cadmium chloride,10108642,500,100,Water,Metal,Redox disruption,202908-10G,54.1 ± 7.5
-Copper(II) chloride,7447394,500,100,Water,Metal,Redox disruption,751944-25G,30.4 ± 15.7
-Lead nitrate,10099748,500,49.74,Water,Metal,Redox disruption,228621-100G,9.1 ± 3.5
-Mancozeb,8018017,75,102.4,DMSO,Fungicide,AChE inhibition,45553-100MG,8.5 ± 4.8
-Methylmercuric(II) chloride,115093,150,15.62,DMSO,Metal,Redox disruption,442534-5G-A,47.6 ± 11.5
-Nickel chloride,7718549,2500,100,Water,Metal,Other|unknown,339350-50G,11.3 ± 14
-Paraquat dichloride,1910425,1500,62.5,Water,Herbicide,Redox disruption,856177-1G,29.1 ± 8
-Paraquat dichloride,1910425,1500,250,Water,Herbicide,Redox disruption,856177-1G,44.8 ± 2.7
-Silver nitrate,7761888,100,250,Water,Metal,Other|unknown,S6506-5G,73.4 ± 2.7
-Silver nitrate,7761888,100,7.8,Water,Metal,Other|unknown,S6506-5G,8.8 ± 6.1
-Zinc chloride,7646857,1000,50,Water,Metal,Other|unknown,229997-10G,11 ± 4.9
+Toxicant,CAS,Stock (mM),concentration_um,diluent,Use Group,MoA Group,References,Sigma Catalog Number,% Growth Inhib.
+"2,4-Dichlorophenoxyacetic acid",94757,500,751.31,DMSO,Herbicide,Other,"Chinalia,F.A., Regali-Seleghin,M.H. and Correa,E.M. (2007) 2, 4-D toxicity: cause, effect and control. Terrestrial and Aquatic Environmental Toxicology, 1, 24–33.
+",31518-250MG,12.7 ± 11.5
+Aldicarb,116063,2000,156.25,DMSO,Insecticide,AChE inhibition,"Kramer,L., Schulze,T., Klüver,N., Altenburger,R., Hackermüller,J., Krauss,M. and Busch,W. (2024) Curated mode-of-action data and effect concentrations for chemicals relevant for the aquatic environment. Sci Data, 11, 60.
+",33386-100MG,20.2 ± 12.6
+Arsenic oxide (As2O3),1327533,450,242.26,Water,Metal,Thiol binding,"Hughes,M.F. (2002) Arsenic toxicity and potential mechanisms of action. Toxicol. Lett., 133, 1–16.
+",202673-5G,18.8 ± 5.6
+Atrazine,1912249,500,510.2,DMSO,Herbicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),"Lim,S., Ahn,S.Y., Song,I.C., Chung,M.H., Jang,H.C., Park,K.S., Lee,K.-U., Pak,Y.K. and Lee,H.K. (2009) Chronic exposure to the herbicide, atrazine, causes mitochondrial dysfunction and insulin resistance. PLoS One, 4, e5186.
+",45330-250MG-R,25.4 ± 5.4
+Cadmium chloride,10108642,500,100,Water,Metal,Thiol binding,"Qu,F. and Zheng,W. (2024) Cadmium exposure: Mechanisms and pathways of toxicity and implications for human health. Toxics, 12, 388.
+",202908-10G,54.1 ± 7.5
+Carbaryl,63252,500,262.14,DMSO,Insecticide,AChE inhibition,"Kramer,L., Schulze,T., Klüver,N., Altenburger,R., Hackermüller,J., Krauss,M. and Busch,W. (2024) Curated mode-of-action data and effect concentrations for chemicals relevant for the aquatic environment. Sci Data, 11, 60.
+",32055-250MG,14.4 ± 7.3
+Carboxin,5234684,1000,538.66,DMSO,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),"Kramer,L., Schulze,T., Klüver,N., Altenburger,R., Hackermüller,J., Krauss,M. and Busch,W. (2024) Curated mode-of-action data and effect concentrations for chemicals relevant for the aquatic environment. Sci Data, 11, 60.
+",45371-250MG,18.9 ± 8.6
+Chlorfenapyr,122453730,500,0.62,DMSO,Insecticide,Oxidative phosphorylation inhibition (OXPHOS inhibition),"Kramer,L., Schulze,T., Klüver,N., Altenburger,R., Hackermüller,J., Krauss,M. and Busch,W. (2024) Curated mode-of-action data and effect concentrations for chemicals relevant for the aquatic environment. Sci Data, 11, 60.
+",37913-100MG-R,56.5 ± 8.1
+Chlorothalonil,1897456,75,111.11,DMSO,Fungicide,Thiol binding,"Tao,H., Fang,C., Xiao,Y. and Jin,Y. (2024) The toxicity and health risk of chlorothalonil to non-target animals and humans: A systematic review. Chemosphere, 358, 142241.
+",36791-250MG,13.9 ± 4.9
+Chlorpyrifos,2921882,100,2.7,DMSO,Insecticide,AChE inhibition,"Kramer,L., Schulze,T., Klüver,N., Altenburger,R., Hackermüller,J., Krauss,M. and Busch,W. (2024) Curated mode-of-action data and effect concentrations for chemicals relevant for the aquatic environment. Sci Data, 11, 60.
+",45395-250MG,17.8 ± 6.8
+Copper(II) chloride,7447394,500,100,Water,Metal,Redox cycling,"Gaetke,L.M., Chow-Johnson,H.S. and Chow,C.K. (2014) Copper: toxicological relevance and mechanisms. Arch. Toxicol., 88, 1929–1938.
+",751944-25G,30.4 ± 15.7
+Lead nitrate,10099748,500,49.74,Water,Metal,Multiple mechanisms,"Generalova,A., Davidova,S. and Satchanska,G. (2025) The mechanisms of lead toxicity in living organisms. J. Xenobiot., 15, 146.
+",228621-100G,9.1 ± 3.5
+Malathion,121755,1200,790.12,DMSO,Insecticide,AChE inhibition,"Kramer,L., Schulze,T., Klüver,N., Altenburger,R., Hackermüller,J., Krauss,M. and Busch,W. (2024) Curated mode-of-action data and effect concentrations for chemicals relevant for the aquatic environment. Sci Data, 11, 60.
+",36143-100MG,37.7 ± 7
+Mancozeb,8018017,75,102.4,DMSO,Fungicide,Thiol binding,"Roede,J.R. and Jones,D.P. (2014) Thiol-reactivity of the fungicide maneb. Redox Biol., 2, 651–655.",45553-100MG,8.5 ± 4.8
+Methomyl,16752775,1000,50,DMSO,Insecticide,AChE inhibition,"Kramer,L., Schulze,T., Klüver,N., Altenburger,R., Hackermüller,J., Krauss,M. and Busch,W. (2024) Curated mode-of-action data and effect concentrations for chemicals relevant for the aquatic environment. Sci Data, 11, 60.
+",36159-100MG,43.4 ± 7.8
+Methylmercuric(II) chloride,115093,150,15.62,DMSO,Metal,Thiol binding,"Kang,B., Wang,J., Guo,S. and Yang,L. (2024) Mercury-induced toxicity: Mechanisms, molecular pathways, and gene regulation. Sci. Total Environ., 943, 173577.
+
+",442534-5G-A,47.6 ± 11.5
+Nickel chloride,7718549,2500,100,Water,Metal,Other,"Macomber,L. and Hausinger,R.P. (2011) Mechanisms of nickel toxicity in microorganisms. Metallomics, 3, 1153–1162.
+",339350-50G,11.3 ± 14
+Paraquat dichloride,1910425,1500,62.5,Water,Herbicide,Redox cycling,"Bus,J.S., Cagen,S.Z., Olgaard,M. and Gibson,J.E. (1976) A mechanism of paraquat toxicity in mice and rats. Toxicol. Appl. Pharmacol., 35, 501–513.
+",856177-1G,29.1 ± 8
+Paraquat dichloride,1910425,1500,250,Water,Herbicide,Redox cycling,"Bus,J.S., Cagen,S.Z., Olgaard,M. and Gibson,J.E. (1976) A mechanism of paraquat toxicity in mice and rats. Toxicol. Appl. Pharmacol., 35, 501–513.
+",856177-1G,44.8 ± 2.7
+Propoxur,114261,1500,195.09,DMSO,Insecticide,AChE inhibition,"Kramer,L., Schulze,T., Klüver,N., Altenburger,R., Hackermüller,J., Krauss,M. and Busch,W. (2024) Curated mode-of-action data and effect concentrations for chemicals relevant for the aquatic environment. Sci Data, 11, 60.
+",45644-250MG,2.9 ± 4.2
+Pyraclostrobin,175013180,500,93.75,DMSO,Fungicide,Oxidative phosphorylation inhibition (OXPHOS inhibition),"Kramer,L., Schulze,T., Klüver,N., Altenburger,R., Hackermüller,J., Krauss,M. and Busch,W. (2024) Curated mode-of-action data and effect concentrations for chemicals relevant for the aquatic environment. Sci Data, 11, 60.
+",33696-100MG-R,38.5 ± 4.2
+Silver nitrate,7761888,100,250,Water,Metal,Thiol binding,"Holt,K.B. and Bard,A.J. (2005) Interaction of silver(I) ions with the respiratory chain of Escherichia coli: an electrochemical and scanning electrochemical microscopy study of the antimicrobial mechanism of micromolar Ag+. Biochemistry, 44, 13214–13223.
+",S6506-5G,73.4 ± 2.7
+Silver nitrate,7761888,100,7.8,Water,Metal,Thiol binding,"Holt,K.B. and Bard,A.J. (2005) Interaction of silver(I) ions with the respiratory chain of Escherichia coli: an electrochemical and scanning electrochemical microscopy study of the antimicrobial mechanism of micromolar Ag+. Biochemistry, 44, 13214–13223.
+",S6506-5G,8.8 ± 6.1
+Triphenyl phosphate,115866,100,6.25,DMSO,Flame Retardant,Other,"Yao,C., Yang,H. and Li,Y. (2021) A review on organophosphate flame retardants in the environment: Occurrence, accumulation, metabolism and toxicity. Sci. Total Environ., 795, 148837.
+",241288-50G,14.4 ± 4.7
+Triphenyl phosphate,115866,100,50,DMSO,Flame Retardant,Other,"Yao,C., Yang,H. and Li,Y. (2021) A review on organophosphate flame retardants in the environment: Occurrence, accumulation, metabolism and toxicity. Sci. Total Environ., 795, 148837.
+",241288-50G,52.1 ± 4.8
+Zinc chloride,7646857,1000,50,Water,Metal,Other,"Plum,L.M., Rink,L. and Haase,H. (2010) The essential toxin: impact of zinc on human health. Int. J. Environ. Res. Public Health, 7, 1342–1365.
+",229997-10G,11 ± 4.9

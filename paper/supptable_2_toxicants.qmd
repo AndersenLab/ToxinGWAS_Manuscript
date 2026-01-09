@@ -55,7 +55,8 @@ tox_table_pre <- tox_metadata %>%
     concentration_um,
     diluent,
     big_class,
-    moa_class
+    moa_class,
+    moa_refs
   ) %>%
   # make the stock_mM a character
   dplyr::mutate(
@@ -68,7 +69,6 @@ tox_table_pre <- tox_metadata %>%
     source_cat = cat_num
   ) %>%
   # Join with inhibition data
-
   dplyr::left_join(inhibition_formatted, by = "drug") %>%
   dplyr::select(-source, -cat_num, -drug) %>%
   dplyr::rename(
@@ -77,7 +77,8 @@ tox_table_pre <- tox_metadata %>%
     "Sigma Catalog Number" = source_cat,
     "Stock (mM)" = stock_mM,
     "Use Group" = big_class,
-    "MoA Group" = moa_class
+    "MoA Group" = moa_class,
+    "References" = moa_refs
   )
 
 
@@ -92,7 +93,8 @@ tox_table_ft <- flextable::flextable(
     "diluent",
     "Use Group",
     "MoA Group",
-    "% Growth Inhib."
+    "% Growth Inhib.",
+    "References"
   )
 ) %>%
   flextable::set_header_labels(
@@ -105,7 +107,8 @@ tox_table_ft <- flextable::flextable(
       diluent = "Diluent",
       "Use Group" = "Use Group",
       "MoA Group" = "MoA Group",
-      "% Growth Inhib." = "% Growth Inhib."
+      "% Growth Inhib." = "% Growth Inhib.",
+      "References" = "References"
     )
   ) %>%
   flextable::line_spacing(space = 1, part = "all") %>%
@@ -114,6 +117,7 @@ tox_table_ft <- flextable::flextable(
   flextable::align(j = 3, align = "center") %>%
   flextable::align(j = 4, align = "right") %>%
   flextable::align(j = "% Growth Inhib.", align = "center") %>%
+  flextable::align(j = "References", align = "left") %>%
   flextable::bold(part = "header") %>%
   flextable::bold(j = "Toxicant") %>%
   flextable::set_table_properties(
