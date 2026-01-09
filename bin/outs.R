@@ -146,25 +146,25 @@ save_plot <- function(tplot, fn_list, w_in, h_in) {
 save_analysis_plot <- function(plot, script_path, filename, width, height, date_prefix = TRUE) {
   # Extract analysis directory name from script path
   analysis_dir <- basename(dirname(script_path))
-  
+
   # Create output directory
   output_dir <- file.path("plots", analysis_dir)
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
   }
-  
+
   # Add date prefix if requested
   if (date_prefix) {
     today <- format(Sys.time(), "%Y%m%d")
     filename <- paste(today, filename, sep = "_")
   }
-  
+
   # Create file paths
   fn_list <- list(
     png = file.path(output_dir, paste0(filename, ".png")),
     eps = file.path(output_dir, paste0(filename, ".eps"))
   )
-  
+
   # Save the plot
   save_plot(plot, fn_list, width, height)
 }
@@ -245,11 +245,14 @@ save_supp_table_flextable <- function(flex_table, table_name) {
   flextable::save_as_docx(flex_table, path = table_paths$docx)
 
   # Save as HTML with error handling
-  tryCatch({
-    flextable::save_as_html(flex_table, path = table_paths$html)
-  }, error = function(e) {
-    warning("Failed to save HTML version of table: ", e$message)
-  })
+  tryCatch(
+    {
+      flextable::save_as_html(flex_table, path = table_paths$html)
+    },
+    error = function(e) {
+      warning("Failed to save HTML version of table: ", e$message)
+    }
+  )
 }
 
 #' Save Combined Semantic Similarity Heatmap
@@ -271,7 +274,7 @@ save_supp_table_flextable <- function(flex_table, table_name) {
 #'   jpg = "plots/semantic_similarity/heatmap.jpg"
 #' )
 #' save_combined_semsim_heatmap(combined_heatmaps, fn_list, 7.5, 10)
-save_combined_semsim_heatmap <- function(combined_heatmaps, fn_list, width = 7.5, height = 10) {
+save_combined_semsim_heatmap <- function(combined_heatmaps, fn_list, width = 7.5, height = 11) {
   # Create the output directories if they don't exist
   for (fn in fn_list) {
     output_dir <- dirname(fn)
