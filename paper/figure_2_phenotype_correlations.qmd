@@ -198,6 +198,16 @@ moa_anno_df <- tox_cols_with_inhibition %>%
 cols <- unique(class.pal.df$col)
 names(cols) <- unique(class.pal.df$big_class)
 
+# Create colorblind-friendly palette for MoA (less saturated)
+moa_cols <- c(
+  "AChE" = "#7FCDBB",
+  "OXPHOS" = "#FDAE6B",
+  "Redox" = "#9ECAE1",
+  "Thiol" = "#FC9272",
+  "Multiple" = "#C994C7",
+  "Other" = "#BDBDBD"
+)
+
 # Create grey-black color scale for Growth Inhibition (continuous)
 # Higher % inhibition = darker, anchored to 0-100% range
 # Using gray90 (light) to gray20 (dark)
@@ -206,6 +216,7 @@ inhibition_color_scale <- colorRampPalette(c("gray90", "gray20"))(100)
 # Create annotation colors list
 anno_cols <- list(
   Use = cols,
+  MoA = moa_cols,
   `% Growth Inhib.` = inhibition_color_scale
 )
 ```
