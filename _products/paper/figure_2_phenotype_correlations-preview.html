@@ -694,16 +694,27 @@ $qtl_overlaps$jpg
 <span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>col)</span>
 <span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cols) <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>big_class)</span>
 <span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Create grey-black color scale for Growth Inhibition (continuous)</span></span>
-<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Higher % inhibition = darker, anchored to 0-100% range</span></span>
-<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Using gray90 (light) to gray20 (dark)</span></span>
-<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a>inhibition_color_scale <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"gray90"</span>, <span class="st">"gray20"</span>))(<span class="dv">100</span>)</span>
-<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors list</span></span>
-<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>anno_cols <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">Use =</span> cols,</span>
-<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> inhibition_color_scale</span>
-<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Create colorblind-friendly palette for MoA (less saturated)</span></span>
+<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a>moa_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AChE"</span> <span class="ot">=</span> <span class="st">"#7FCDBB"</span>,</span>
+<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a>  <span class="st">"OXPHOS"</span> <span class="ot">=</span> <span class="st">"#FDAE6B"</span>,</span>
+<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Redox"</span> <span class="ot">=</span> <span class="st">"#9ECAE1"</span>,</span>
+<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Thiol"</span> <span class="ot">=</span> <span class="st">"#FC9272"</span>,</span>
+<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Multiple"</span> <span class="ot">=</span> <span class="st">"#C994C7"</span>,</span>
+<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Other"</span> <span class="ot">=</span> <span class="st">"#BDBDBD"</span></span>
+<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-63"><a href="#cb30-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Create grey-black color scale for Growth Inhibition (continuous)</span></span>
+<span id="cb30-64"><a href="#cb30-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Higher % inhibition = darker, anchored to 0-100% range</span></span>
+<span id="cb30-65"><a href="#cb30-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Using gray90 (light) to gray20 (dark)</span></span>
+<span id="cb30-66"><a href="#cb30-66" aria-hidden="true" tabindex="-1"></a>inhibition_color_scale <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"gray90"</span>, <span class="st">"gray20"</span>))(<span class="dv">100</span>)</span>
+<span id="cb30-67"><a href="#cb30-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-68"><a href="#cb30-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors list</span></span>
+<span id="cb30-69"><a href="#cb30-69" aria-hidden="true" tabindex="-1"></a>anno_cols <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb30-70"><a href="#cb30-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">Use =</span> cols,</span>
+<span id="cb30-71"><a href="#cb30-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">MoA =</span> moa_cols,</span>
+<span id="cb30-72"><a href="#cb30-72" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> inhibition_color_scale</span>
+<span id="cb30-73"><a href="#cb30-73" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>create_phenotype_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(similarity_matrix, con_metadata_df, anno_cols, significance_matrix) {</span>
