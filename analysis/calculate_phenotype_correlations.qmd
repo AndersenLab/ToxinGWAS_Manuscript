@@ -44,3 +44,133 @@ saveRDS(pheno_corr_all, "data/processed/phenotypes/pheno_corr_all.Rds")
 
 pheno_corr_all
 ```
+
+# Calculate average correlation across all toxicants
+
+```{r}
+# Extract correlation matrix
+corr_coef <- pheno_corr_all$r
+
+# Convert to long format for analysis
+corr_coef_df <- as_tibble(corr_coef, rownames = "trait1") %>%
+  pivot_longer(-trait1, names_to = "trait2", values_to = "r_value")
+
+# Calculate the average correlation (excluding self-correlations)
+pheno_corr_all_avg <- corr_coef_df %>%
+  dplyr::filter(trait1 != trait2) %>%
+  dplyr::summarise(
+    mean_r = mean(r_value, na.rm = TRUE),
+    sd_r = sd(r_value, na.rm = TRUE)
+  )
+
+pheno_corr_all_avg
+
+# Save the overall average correlation summary
+saveRDS(pheno_corr_all_avg, "data/processed/phenotypes/pheno_corr_all_avg.Rds")
+```
+
+# Calculate within- and between-group correlation summaries
+
+Create unique toxicant pairs with their Use class and MoA annotations.
+
+```{r}
+# Get unique pairwise correlations (upper triangle only, excluding diagonal)
+# This avoids double counting pairs (A-B and B-A) and self-correlations (A-A)
+get_unique_pairs <- function(cor_matrix, tox_metadata) {
+  # Convert correlation matrix to long format
+  cor_df <- as_tibble(cor_matrix, rownames = "trait1") %>%
+    pivot_longer(-trait1, names_to = "trait2", values_to = "r_value") %>%
+    # Keep only unique pairs (where trait1 < trait2 alphabetically)
+    dplyr::filter(trait1 < trait2)
+
+  # Add metadata for trait1
+  cor_df <- cor_df %>%
+    dplyr::left_join(
+      tox_metadata %>% dplyr::select(drug, big_class, moa_class),
+      by = c("trait1" = "drug")
+    ) %>%
+    dplyr::rename(Use1 = big_class, MoA1 = moa_class)
+
+  # Add metadata for trait2
+  cor_df <- cor_df %>%
+    dplyr::left_join(
+      tox_metadata %>% dplyr::select(drug, big_class, moa_class),
+      by = c("trait2" = "drug")
+    ) %>%
+    dplyr::rename(Use2 = big_class, MoA2 = moa_class)
+
+  return(cor_df)
+}
+
+# Get unique pairs with annotations
+tox_pair_df <- get_unique_pairs(
+  cor_matrix = pheno_corr_all$r,
+  tox_metadata = tox_data
+)
+
+# Verify the number of unique pairs: n*(n-1)/2 where n = number of toxicants
+n_tox <- nrow(tox_data %>% dplyr::filter(big_class != "Control"))
+expected_pairs <- n_tox * (n_tox - 1) / 2
+actual_pairs <- nrow(tox_pair_df)
+cat("Expected pairs:", expected_pairs, "\n")
+cat("Actual pairs:", actual_pairs, "\n")
+
+tox_pair_df
+```
+
+Calculate within- and between-group correlation summaries for Use class and MoA.
+
+```{r}
+# Calculate Use class correlation summary
+use_class_cor_summary <- tox_pair_df %>%
+  dplyr::mutate(comparison = ifelse(Use1 == Use2, "within", "between")) %>%
+  dplyr::group_by(comparison) %>%
+  dplyr::summarise(
+    n_pairs = n(),
+    mean_r = round(mean(r_value, na.rm = TRUE), 3),
+    sd_r = round(sd(r_value, na.rm = TRUE), 3),
+    .groups = "drop"
+  ) %>%
+  dplyr::mutate(group_type = "Use")
+
+use_class_cor_summary
+
+# Calculate MoA class correlation summary
+moa_class_cor_summary <- tox_pair_df %>%
+  dplyr::mutate(comparison = ifelse(MoA1 == MoA2, "within", "between")) %>%
+  dplyr::group_by(comparison) %>%
+  dplyr::summarise(
+    n_pairs = n(),
+    mean_r = round(mean(r_value, na.rm = TRUE), 3),
+    sd_r = round(sd(r_value, na.rm = TRUE), 3),
+    .groups = "drop"
+  ) %>%
+  dplyr::mutate(group_type = "MoA")
+
+moa_class_cor_summary
+
+# Combine summaries
+class_correlation_summary <- dplyr::bind_rows(
+  use_class_cor_summary,
+  moa_class_cor_summary
+) %>%
+  dplyr::select(group_type, comparison, n_pairs, mean_r, sd_r)
+
+class_correlation_summary
+```
+
+Save the correlation summaries.
+
+```{r}
+# Save detailed pairwise data
+data.table::fwrite(
+  tox_pair_df,
+  "data/processed/phenotypes/tox_condition_pair_correlations.csv"
+)
+
+# Save class correlation summary
+data.table::fwrite(
+  class_correlation_summary,
+  "data/processed/phenotypes/class_correlation_summary.csv"
+)
+```
