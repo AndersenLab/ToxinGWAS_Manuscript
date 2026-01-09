@@ -13,7 +13,6 @@ timestamp()
 # !/usr/bin/env Rscript
 library(data.table)
 library(dplyr)
-library(readxl)
 library(glue)
 library(rio)
 library(flextable)
@@ -24,9 +23,6 @@ source("bin/materials_key.R")
 ```
 ```{r}
 #### Inputs ####
-# load clean cas numbers
-w_cas_fn <- "data/raw/tox_data/toxicant_cas.csv"
-
 # load comptox data
 ct_data_fn <- "data/raw/tox_data/20241001_Comptox_export.csv"
 
@@ -94,7 +90,7 @@ moa_class <- data.table::fread(moa_class_fn) %>%
 # load condition data
 con_data <- data.table::fread(con_data_fn)
 
-# create a toxicant column that can be used to match the `toxicant` column in the merge_moa_comptox dataframe
+# create a toxicant column that can be used to match the `toxicant` column in the merge_cas_comptox dataframe
 con_clean <- con_data %>%
   dplyr::filter(
     !nice_drug_label %in% c("DMSO", "Water")
@@ -113,38 +109,7 @@ con_clean <- con_data %>%
     )
   )
 
-# pull out the classes we've added restricting to tox columns
-#' instead of the other columns in the dataframe
-con_clean_classes <- con_clean %>%
-  dplyr::select(
-    toxicant,
-    class
-  ) %>%
-  dplyr::distinct()
-
-# merge with condition data
-condition_meta_out <- con_clean %>%
-  dplyr::left_join(
-    merge_moa_comptox,
-    by = "toxicant"
-  ) %>%
-  # create a trait column
-  dplyr::mutate(trait = gsub(drug, pattern = "\\.", replacement = "_")) %>%
-  dplyr::mutate(trait = gsub(trait, pattern = "-", replacement = "_")) %>%
-  dplyr::mutate(trait = gsub(trait, pattern = " ", replacement = "_")) %>%
-  # add length_ to the trait column
-  dplyr::mutate(trait = paste0("length_", trait)) %>%
-  dplyr::select(-"diluent ") %>%
-  # manually set the MoA for some toxicants
-  dplyr::mutate(
-    moa_class = case_when(
-      toxicant == "Mancozeb" ~ "AChE inhibition",
-      toxicant == "Paraquat" ~ "Redox disruption",
-      TRUE ~ moa_class
-    )
-  )
-
-# create a condition metadata table that includes conditions speicifc data
+# create a condition metadata table that includes condition-specific data
 con_metadata <- con_clean %>%
   dplyr::select(
     toxicant,
@@ -160,33 +125,34 @@ con_metadata <- con_clean %>%
   dplyr::mutate(trait = gsub(trait, pattern = "-", replacement = "_")) %>%
   dplyr::mutate(trait = gsub(trait, pattern = " ", replacement = "_")) %>%
   # add length_ to the trait column
-  dplyr::mutate(trait = paste0("length_", trait))
+  dplyr::mutate(trait = paste0("length_", trait)) %>%
+  # join MoA data using drug column
+  dplyr::left_join(moa_class, by = "drug")
 
-# merge with the condition metadata
-merge_moa_comptox_con <- merge_moa_comptox %>%
-  dplyr::left_join(con_metadata, by = "toxicant") %>%
-  # manually set the MoA for some toxicants
-  dplyr::mutate(
-    moa_class = case_when(
-      toxicant == "Mancozeb" ~ "AChE inhibition",
-      toxicant == "Paraquat" ~ "Redox disruption",
-      TRUE ~ moa_class
-    )
-  )
+# merge condition metadata with toxicant prep data and comptox data
+condition_meta_out <- con_clean %>%
+  dplyr::left_join(
+    merge_cas_comptox,
+    by = "toxicant"
+  ) %>%
+  # create a trait column
+  dplyr::mutate(trait = gsub(drug, pattern = "\\.", replacement = "_")) %>%
+  dplyr::mutate(trait = gsub(trait, pattern = "-", replacement = "_")) %>%
+  dplyr::mutate(trait = gsub(trait, pattern = " ", replacement = "_")) %>%
+  # add length_ to the trait column
+  dplyr::mutate(trait = paste0("length_", trait)) %>%
+  dplyr::select(-"diluent ") %>%
+  # join MoA data using drug column
+  dplyr::left_join(moa_class, by = "drug")
 
-# create a dataframe of the use groups
-ug <- merge_moa_comptox_con %>%
-  dplyr::select(
-    toxicant,
-    big_class,
-    use_group,
-    use_group_details
-  )
+# create toxicant metadata by merging comptox data with condition metadata
+tox_metadata <- merge_cas_comptox %>%
+  dplyr::left_join(con_metadata, by = "toxicant")
 
 ## Output the toxicant metadata table as processed data ##
 
 save_csv(
-  data = merge_moa_comptox_con,
+  data = tox_metadata,
   output_file = "data/processed/tox_data/tox_metadata.csv"
 )
 
