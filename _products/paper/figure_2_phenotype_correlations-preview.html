@@ -655,57 +655,55 @@ $qtl_overlaps$jpg
 <span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>tox_cols <span class="ot">&lt;-</span> tox_data <span class="sc">%&gt;%</span></span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the controls</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(big_class <span class="sc">!=</span> <span class="st">"Control"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(drug, nice_drug_label2, big_class, moa_class) <span class="sc">%&gt;%</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(drug, nice_drug_label2, big_class, short_moa_class) <span class="sc">%&gt;%</span></span>
 <span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Clean up to have special character for plotting</span></span>
 <span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">nice_drug_label2 =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(nice_drug_label2, <span class="at">pattern =</span> <span class="st">"uM"</span>, <span class="at">replacement =</span> <span class="st">"µM"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># join to the class palette</span></span>
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(., class.pal.df, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"big_class"</span> <span class="ot">=</span> <span class="st">"big_class"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(drug, nice_drug_label2, big_class, moa_class, col) <span class="sc">%&gt;%</span></span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">MoA =</span> moa_class, <span class="at">Use =</span> big_class) <span class="sc">%&gt;%</span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># In moa_class column replace Other|unknown with "Other / unknown"</span></span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">MoA =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(MoA, <span class="at">pattern =</span> <span class="st">"Other</span><span class="sc">\\</span><span class="st">|unknown"</span>, <span class="at">replacement =</span> <span class="st">"Other / unknown"</span>))</span>
-<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mapping from drug to nice_drug_label2</span></span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>drug_to_label <span class="ot">&lt;-</span> <span class="fu">setNames</span>(tox_cols<span class="sc">$</span>nice_drug_label2, tox_cols<span class="sc">$</span>drug)</span>
-<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Update row and column names of correlation matrices</span></span>
-<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(pheno_corr_all_r) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">rownames</span>(pheno_corr_all_r)]</span>
-<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pheno_corr_all_r) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">colnames</span>(pheno_corr_all_r)]</span>
-<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(pheno_corr_all_p_symbol) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">rownames</span>(pheno_corr_all_p_symbol)]</span>
-<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pheno_corr_all_p_symbol) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">colnames</span>(pheno_corr_all_p_symbol)]</span>
-<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Join inhibition data with tox_cols for annotation</span></span>
-<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>tox_cols_with_inhibition <span class="ot">&lt;-</span> tox_cols <span class="sc">%&gt;%</span></span>
-<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
-<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>    inhibition_data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(nice_drug_label2, mean_pct_inhibition),</span>
-<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"nice_drug_label2"</span></span>
-<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>moa_anno_df <span class="ot">&lt;-</span> tox_cols_with_inhibition <span class="sc">%&gt;%</span></span>
-<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set the row names to the nice drug label</span></span>
-<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"nice_drug_label2"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the drug and color columns</span></span>
-<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>drug, <span class="sc">-</span>col) <span class="sc">%&gt;%</span></span>
-<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rename mean_pct_inhibition for display</span></span>
-<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> mean_pct_inhibition) <span class="sc">%&gt;%</span></span>
-<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reorder columns: Use, MoA, % Growth Inhib. (right to left on heatmap)</span></span>
-<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span>, MoA, Use)</span>
-<span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors for Use (categorical)</span></span>
-<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>col)</span>
-<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cols) <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>big_class)</span>
-<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Create grey-black color scale for Growth Inhibition (continuous)</span></span>
-<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Higher % inhibition = darker, anchored to 0-100% range</span></span>
-<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Using gray90 (light) to gray20 (dark)</span></span>
-<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a>inhibition_color_scale <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"gray90"</span>, <span class="st">"gray20"</span>))(<span class="dv">100</span>)</span>
-<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors list</span></span>
-<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a>anno_cols <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">Use =</span> cols,</span>
-<span id="cb30-63"><a href="#cb30-63" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> inhibition_color_scale</span>
-<span id="cb30-64"><a href="#cb30-64" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(drug, nice_drug_label2, big_class, short_moa_class, col) <span class="sc">%&gt;%</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">MoA =</span> short_moa_class, <span class="at">Use =</span> big_class)</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mapping from drug to nice_drug_label2</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>drug_to_label <span class="ot">&lt;-</span> <span class="fu">setNames</span>(tox_cols<span class="sc">$</span>nice_drug_label2, tox_cols<span class="sc">$</span>drug)</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Update row and column names of correlation matrices</span></span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(pheno_corr_all_r) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">rownames</span>(pheno_corr_all_r)]</span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pheno_corr_all_r) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">colnames</span>(pheno_corr_all_r)]</span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(pheno_corr_all_p_symbol) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">rownames</span>(pheno_corr_all_p_symbol)]</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pheno_corr_all_p_symbol) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">colnames</span>(pheno_corr_all_p_symbol)]</span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Join inhibition data with tox_cols for annotation</span></span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>tox_cols_with_inhibition <span class="ot">&lt;-</span> tox_cols <span class="sc">%&gt;%</span></span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>    inhibition_data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(nice_drug_label2, mean_pct_inhibition),</span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"nice_drug_label2"</span></span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a>moa_anno_df <span class="ot">&lt;-</span> tox_cols_with_inhibition <span class="sc">%&gt;%</span></span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set the row names to the nice drug label</span></span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"nice_drug_label2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the drug and color columns</span></span>
+<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>drug, <span class="sc">-</span>col) <span class="sc">%&gt;%</span></span>
+<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rename mean_pct_inhibition for display</span></span>
+<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> mean_pct_inhibition) <span class="sc">%&gt;%</span></span>
+<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reorder columns: Use, MoA, % Growth Inhib. (right to left on heatmap)</span></span>
+<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span>, MoA, Use)</span>
+<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors for Use (categorical)</span></span>
+<span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>col)</span>
+<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cols) <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>big_class)</span>
+<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Create grey-black color scale for Growth Inhibition (continuous)</span></span>
+<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Higher % inhibition = darker, anchored to 0-100% range</span></span>
+<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Using gray90 (light) to gray20 (dark)</span></span>
+<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a>inhibition_color_scale <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"gray90"</span>, <span class="st">"gray20"</span>))(<span class="dv">100</span>)</span>
+<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors list</span></span>
+<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>anno_cols <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">Use =</span> cols,</span>
+<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> inhibition_color_scale</span>
+<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>create_phenotype_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(similarity_matrix, con_metadata_df, anno_cols, significance_matrix) {</span>
