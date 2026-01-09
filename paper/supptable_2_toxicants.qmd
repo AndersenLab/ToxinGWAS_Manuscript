@@ -93,7 +93,8 @@ tox_table_ft <- flextable::flextable(
     "diluent",
     "Use Group",
     "MoA Group",
-    "% Growth Inhib."
+    "% Growth Inhib.",
+    "References"
   )
 ) %>%
   flextable::set_header_labels(
@@ -106,7 +107,8 @@ tox_table_ft <- flextable::flextable(
       diluent = "Diluent",
       "Use Group" = "Use Group",
       "MoA Group" = "MoA Group",
-      "% Growth Inhib." = "% Growth Inhib."
+      "% Growth Inhib." = "% Growth Inhib.",
+      "References" = "References"
     )
   ) %>%
   flextable::line_spacing(space = 1, part = "all") %>%
@@ -115,6 +117,7 @@ tox_table_ft <- flextable::flextable(
   flextable::align(j = 3, align = "center") %>%
   flextable::align(j = 4, align = "right") %>%
   flextable::align(j = "% Growth Inhib.", align = "center") %>%
+  flextable::align(j = "References", align = "left") %>%
   flextable::bold(part = "header") %>%
   flextable::bold(j = "Toxicant") %>%
   flextable::set_table_properties(
