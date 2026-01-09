@@ -85,13 +85,11 @@ moa_class <- data.table::fread(moa_class_fn) %>%
     moa_refs = `TAC refs`
   )
 
-# Define allowed moa_class values and their short names
+# Define allowed moa_class values
 allowed_moa_classes <- c(
-
   "AChE inhibition",
   "Multiple mechanisms",
   "Other",
-
   "Oxidative phosphorylation inhibition (OXPHOS inhibition)",
   "Redox cycling",
   "Thiol binding"
@@ -111,19 +109,6 @@ if (length(invalid_moa) > 0) {
     paste(allowed_moa_classes, collapse = ", ")
   ))
 }
-
-# Add short_moa_class column for figure 2
-moa_class <- moa_class %>%
-  dplyr::mutate(
-    short_moa_class = dplyr::case_when(
-      moa_class == "AChE inhibition" ~ "AChE",
-      moa_class == "Multiple mechanisms" ~ "Multiple",
-      moa_class == "Other" ~ "Other",
-      moa_class == "Oxidative phosphorylation inhibition (OXPHOS inhibition)" ~ "OXPHOS",
-      moa_class == "Redox cycling" ~ "Redox",
-      moa_class == "Thiol binding" ~ "Thiol"
-    )
-  )
 
 ## Merge with condition data ##
 
