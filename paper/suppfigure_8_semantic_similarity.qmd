@@ -83,6 +83,9 @@ candidate_semsim_fn <- "data/processed/semantic_similarity/candidate_semSim.rds"
 
 # path to condition metadata
 con_metadata_fn <- "data/processed/tox_data/con_metadata.csv"
+
+# path to percent inhibition data
+inhibition_fn <- "data/processed/phenotypes/toxicant_inhibition_summary.csv"
 ```
 # Main
 ```{r}
