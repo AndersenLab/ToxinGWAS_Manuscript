@@ -1,0 +1,130 @@
+---
+title: "Analysis: Aggregate Fine Mappings"
+---
+
+```{r}
+#| label: aggregate-finemappings-setup
+library(data.table)
+library(tidyverse)
+library(glue)
+
+set.seed(123)
+
+source("bin/outs.R")
+```
+
+# Inputs
+
+`ns_dir` - Path containing the NemaScan output directory. Used to load the BCSQ fine-mapping results
+
+```{r}
+#| label: aggregate-finemappings-inputs
+ns_dir <- "data/processed/20231116_Analysis_NemaScan"
+```
+
+# Outputs
+
+```{r}
+#| label: aggregate-finemappings-outputs
+full_finemapping_out <- "tables/full_fine_mapping.tsv"
+```
+
+# Functions
+
+```{r}
+#| label: aggregate-finemappings-functions
+
+# Function to get trait name from the file path
+get_traitname <- function(x) {
+  # get the name of the file
+  fn <- basename(x)
+
+  # remove the extension and file type info
+  id <- gsub("_bcsq_genes_inbred.tsv", "", fn)
+
+  # Regular expression to match Roman numerals
+  chrom_pattern <- "(?<=_)(I|II|III|IV|V|VI|X)(?=_)"
+
+  # Split the string at the Roman numeral
+  parts <- strsplit(id, chrom_pattern, perl = TRUE)
+
+  # Extract the parts before and after the Roman numeral
+  trait <- sapply(parts, `[`, 1)
+  interval <- sapply(parts, `[`, 2)
+
+  # Remove the last underscore from 'before' and the first underscore from 'after'
+  trait <- sub("_$", "", trait)
+  interval <- sub("^_", "", interval)
+
+  # Extract the Roman numeral
+  chrom <- regmatches(x, regexpr(chrom_pattern, x, perl = TRUE))
+
+  # Return a list of before, after, and roman parts
+  list(trait = trait, interval = interval, chrom = chrom)
+}
+
+# Function to load and annotate a single bcsq file with trait info
+load_bcsq_file <- function(bcsq_file) {
+  # Get trait info from filename
+
+  trait_info <- get_traitname(bcsq_file)
+
+  # Load the file
+  bcsq_data <- data.table::fread(bcsq_file)
+
+  # Add trait and interval columns
+  bcsq_data <- bcsq_data %>%
+    dplyr::mutate(
+      trait = trait_info$trait,
+      interval = trait_info$interval
+    )
+
+  return(bcsq_data)
+}
+```
+
+# Main
+
+Aggregate all `*_bcsq_genes_inbred` files into a single table with trait annotations.
+
+```{r}
+#| label: aggregate-finemappings-main
+
+# List all BCSQ fine-mapping files
+bcsq_inbred <- list.files(
+  path = glue::glue("{ns_dir}/INBRED/Fine_Mappings/Data"),
+  pattern = "genes_inbred",
+  recursive = TRUE,
+  full.names = TRUE
+)
+
+n_bcsq_inbred <- length(bcsq_inbred)
+
+print(
+  glue::glue("Found {n_bcsq_inbred} INBRED fine mapping BCSQ files")
+)
+
+# Remove the CV_length_{trait} files keeping only length_{trait} files
+bcsq_inbred <- bcsq_inbred[!grepl("CV_length", bcsq_inbred)]
+
+print(
+  glue::glue("Filtered to {length(bcsq_inbred)} INBRED length fine mapping BCSQ files")
+)
+
+# Load and aggregate all BCSQ files
+bcsq_list <- purrr::map(bcsq_inbred, load_bcsq_file)
+
+# Bind all dataframes into a single dataframe
+full_finemapping <- data.table::rbindlist(bcsq_list, fill = TRUE)
+
+print(
+  glue::glue("Aggregated {nrow(full_finemapping)} rows from {length(bcsq_list)} files")
+)
+
+# Save the aggregated data
+save_tsv(full_finemapping, full_finemapping_out)
+
+print(
+  glue::glue("Saved aggregated fine-mapping data to {full_finemapping_out}")
+)
+```
