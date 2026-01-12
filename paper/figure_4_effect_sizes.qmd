@@ -157,7 +157,7 @@ tox.effect.bubble
 
 pub_figure <- tox.effect.bubble +
   theme(
-    legend.position = c(0.95, 0.95),
+    legend.position = "right",
     legend.justification = c("right", "top"),
     legend.direction = "vertical",
     panel.grid = element_blank(),
