@@ -92,6 +92,7 @@ save_plot <- function(tplot, fn_list, w_in, h_in) {
   fn_png <- fn_list$png
   fn_eps <- fn_list$eps
   fn_jpg <- fn_list$jpg
+  fn_tiff <- fn_list$tiff
 
   # save eps plot
   ggplot2::ggsave(
@@ -114,6 +115,15 @@ save_plot <- function(tplot, fn_list, w_in, h_in) {
   # save jpg plot
   ggplot2::ggsave(
     filename = fn_jpg,
+    plot = tplot,
+    width = w_in,
+    height = h_in,
+    units = "in",
+    dpi = 300
+  )
+  # save tiff plot
+  ggplot2::ggsave(
+    filename = fn_tiff,
     plot = tplot,
     width = w_in,
     height = h_in,
