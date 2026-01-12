@@ -28,6 +28,7 @@ project:
     - analysis/semantic_similarity_candidate_genes.qmd
     - paper/
     - paper/aggregate_supplementary_tables.qmd
+    - analysis/aggregate_fine_mappings.qmd
 execute: 
   freeze: false
   
