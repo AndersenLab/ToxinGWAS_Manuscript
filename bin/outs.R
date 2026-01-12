@@ -92,6 +92,7 @@ save_plot <- function(tplot, fn_list, w_in, h_in) {
   fn_png <- fn_list$png
   fn_eps <- fn_list$eps
   fn_jpg <- fn_list$jpg
+  fn_tiff <- fn_list$tiff
 
   # save eps plot
   ggplot2::ggsave(
@@ -114,6 +115,15 @@ save_plot <- function(tplot, fn_list, w_in, h_in) {
   # save jpg plot
   ggplot2::ggsave(
     filename = fn_jpg,
+    plot = tplot,
+    width = w_in,
+    height = h_in,
+    units = "in",
+    dpi = 300
+  )
+  # save tiff plot
+  ggplot2::ggsave(
+    filename = fn_tiff,
     plot = tplot,
     width = w_in,
     height = h_in,
@@ -257,11 +267,11 @@ save_supp_table_flextable <- function(flex_table, table_name) {
 
 #' Save Combined Semantic Similarity Heatmap
 #'
-#' This function saves a combined heatmap plot as jpg, eps, and png files with proper panel labels.
+#' This function saves a combined heatmap plot as jpg, eps, png, and tiff files with proper panel labels.
 #' Note that this function is specific to the semantic similarity heatmap plots.
 #'
 #' @param combined_heatmaps A grid arrangement of heatmaps to save
-#' @param fn_list List of filenames with png, eps, and jpg paths
+#' @param fn_list List of filenames with png, eps, jpg, and tiff paths
 #' @param width Width of the plot in inches
 #' @param height Height of the plot in inches
 #'
@@ -271,7 +281,8 @@ save_supp_table_flextable <- function(flex_table, table_name) {
 #' fn_list <- list(
 #'   png = "plots/semantic_similarity/heatmap.png",
 #'   eps = "plots/semantic_similarity/heatmap.eps",
-#'   jpg = "plots/semantic_similarity/heatmap.jpg"
+#'   jpg = "plots/semantic_similarity/heatmap.jpg",
+#'   tiff = "plots/semantic_similarity/heatmap.tiff"
 #' )
 #' save_combined_semsim_heatmap(combined_heatmaps, fn_list, 7.5, 10)
 save_combined_semsim_heatmap <- function(combined_heatmaps, fn_list, width = 7.5, height = 11) {
@@ -309,6 +320,11 @@ save_combined_semsim_heatmap <- function(combined_heatmaps, fn_list, width = 7.5
 
   # Save as EPS
   postscript(fn_list$eps, width = width, height = height, horizontal = FALSE, paper = "special")
+  draw_plot_with_labels()
+  dev.off()
+
+  # Save as TIFF
+  tiff(fn_list$tiff, width = width, height = height, units = "in", res = 300, compression = "lzw")
   draw_plot_with_labels()
   dev.off()
 }

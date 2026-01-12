@@ -86,7 +86,8 @@ generate_figure_fns <- function(figures) {
     file_names[[name]] <- list(
       png = here("figures", figures[[name]], paste0(figures[[name]], ".png")),
       eps = here("figures", figures[[name]], paste0(figures[[name]], ".eps")),
-      jpg = here("figures", figures[[name]], paste0(figures[[name]], ".jpg"))
+      jpg = here("figures", figures[[name]], paste0(figures[[name]], ".jpg")),
+      tiff = here("figures", figures[[name]], paste0(figures[[name]], ".tiff"))
     )
   }
   return(file_names)

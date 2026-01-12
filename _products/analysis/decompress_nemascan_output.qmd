@@ -32,7 +32,7 @@ if (dir.exists(expected_dir)) {
   message("This may take several minutes (~6 GB of data)...")
 
   # Decompress
-  untar(archive_path, exdir = output_dir)
+  untar(archive_path, exdir = ".")
 
   # Validate decompression
   if (!dir.exists(expected_dir)) {

@@ -176,6 +176,16 @@ lm_summary
 ```
 Plot interval size vs. number of overlaps
 ```{r}
+# Precompute labels
+annotation_df <- data.frame(
+  x = c(7500, 7500),
+  y = c(2.75, 3.25),
+  label = c(
+    paste0("italic(p) == ", format(p_value, digits = 3)),
+    paste0("R^2 == ", format(summary(lm_model)$r.squared, digits = 3))
+  )
+)
+
 # plot the number of overlaps compared to the size of the interval
 n_overlaps_per_int_size <- overlaps_per_int_size_df %>%
   ggplot(
@@ -192,6 +202,13 @@ n_overlaps_per_int_size <- overlaps_per_int_size_df %>%
     method = "lm",
     se = FALSE
   ) +
+  geom_text(
+    data = annotation_df,
+    aes(x = x, y = y, label = label),
+    hjust = 0,
+    parse = TRUE,
+    inherit.aes = FALSE
+  ) +
   scale_color_manual(values = man_pal$col) +
   labs(
     x = "Region size (Kb)",
@@ -202,23 +219,23 @@ n_overlaps_per_int_size <- overlaps_per_int_size_df %>%
     panel.grid = ggplot2::element_blank(),
     legend.position = "top",
     legend.title = ggplot2::element_blank()
-  ) +
-  # add p-value annotation
-  annotate(
-    "text",
-    x = 7500,
-    y = 2.75,
-    label = bquote(italic(p) == .(format(p_value, digits = 3))),
-    hjust = 0
-  ) +
+  ) #+
+  # # add p-value annotation
+  # annotate(
+  #   "text",
+  #   x = 7500,
+  #   y = 2.75,
+  #   label = bquote(italic(p) == .(format(p_value, digits = 3))),
+  #   hjust = 0
+  # ) +
   # add r-squared annotation
-  annotate(
-    "text",
-    x = 7500,
-    y = 3.0,
-    label = bquote(R^2 == .(format(summary(lm_model)$r.squared, digits = 3))),
-    hjust = 0
-  )
+  # annotate(
+  #   "text",
+  #   x = 7500,
+  #   y = 3.0,
+  #   label = bquote(R^2 == .(format(summary(lm_model)$r.squared, digits = 3))),
+  #   hjust = 0
+  # )
 ```
 
 # Combine plots
