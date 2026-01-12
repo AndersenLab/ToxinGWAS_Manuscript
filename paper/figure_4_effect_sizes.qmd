@@ -132,7 +132,7 @@ tox.effect.bubble <- L.inbred %>%
       order = 2
     ),
     fill = guide_legend(
-      title = "Toxicant class",
+      title = "Use",
       order = 1,
       override.aes = list(
         size = 3
