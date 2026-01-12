@@ -448,6 +448,9 @@ $heritability_all_classes$eps
 $heritability_all_classes$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_1/figure_1.jpg"
 
+$heritability_all_classes$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_1/figure_1.tiff"
+
 
 $phenotype_correlations
 $phenotype_correlations$png
@@ -458,6 +461,9 @@ $phenotype_correlations$eps
 
 $phenotype_correlations$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_2/figure_2.jpg"
+
+$phenotype_correlations$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_2/figure_2.tiff"
 
 
 $manhattan_plots
@@ -470,6 +476,9 @@ $manhattan_plots$eps
 $manhattan_plots$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_3/figure_3.jpg"
 
+$manhattan_plots$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_3/figure_3.tiff"
+
 
 $tox.effect.bubble
 $tox.effect.bubble$png
@@ -481,6 +490,9 @@ $tox.effect.bubble$eps
 $tox.effect.bubble$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_4/figure_4.jpg"
 
+$tox.effect.bubble$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_4/figure_4.tiff"
+
 
 $qtl_overlaps
 $qtl_overlaps$png
@@ -490,7 +502,10 @@ $qtl_overlaps$eps
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.eps"
 
 $qtl_overlaps$jpg
-[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.jpg"</code></pre>
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.jpg"
+
+$qtl_overlaps$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.tiff"</code></pre>
 </div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
@@ -500,130 +515,133 @@ $qtl_overlaps$jpg
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>strain_means_pivot_matrix <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(<span class="st">"data/processed/phenotypes/strain_means_matrix.rds"</span>))</span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load percent inhibition data</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>inhibition_data <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="fu">file.path</span>(<span class="st">"data/processed/phenotypes/toxicant_inhibition_summary.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>inhibition_data <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="fu">file.path</span>(<span class="st">"data/processed/phenotypes/toxicant_inhibition_summary.csv"</span>))</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Load correlation summaries from analysis script</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_avg <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(<span class="st">"data/processed/phenotypes/pheno_corr_all_avg.Rds"</span>))</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>class_correlation_summary <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="fu">file.path</span>(<span class="st">"data/processed/phenotypes/class_correlation_summary.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <p>Report out the average correlation across all toxicant conditions</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>init_corr_coef <span class="ot">&lt;-</span> pheno_corr_all<span class="sc">$</span>r</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>corr_coef_df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(init_corr_coef, <span class="at">rownames =</span> <span class="st">"trait1"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>trait1, <span class="at">names_to =</span> <span class="st">"trait2"</span>, <span class="at">values_to =</span> <span class="st">"r_value"</span>)</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the average correlation</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_avg <span class="ot">&lt;-</span> corr_coef_df <span class="sc">%&gt;%</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(trait1 <span class="sc">!=</span> trait2) <span class="sc">%&gt;%</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_r =</span> <span class="fu">mean</span>(r_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_r =</span> <span class="fu">sd</span>(r_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1_r =</span> <span class="fu">quantile</span>(r_value, <span class="at">probs =</span> <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">q3_r =</span> <span class="fu">quantile</span>(r_value, <span class="at">probs =</span> <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper_threshold_r =</span> q3_r <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> (q3_r <span class="sc">-</span> q1_r),</span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower_threshold_r =</span> q1_r <span class="sc">-</span> <span class="fl">1.5</span> <span class="sc">*</span> (q3_r <span class="sc">-</span> q1_r)</span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_avg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_avg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 6
-  mean_r  sd_r   q1_r  q3_r upper_threshold_r lower_threshold_r
-   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;             &lt;dbl&gt;             &lt;dbl&gt;
-1  0.189 0.152 0.0801 0.296             0.621            -0.244</code></pre>
+<pre><code># A tibble: 1 × 2
+  mean_r  sd_r
+   &lt;dbl&gt; &lt;dbl&gt;
+1  0.189 0.152</code></pre>
+</div>
+</div></div>
+<p>Report within- and between-group correlation summaries</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>class_correlation_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   group_type comparison n_pairs mean_r  sd_r
+       &lt;char&gt;     &lt;char&gt;   &lt;int&gt;  &lt;num&gt; &lt;num&gt;
+1:        Use    between     255  0.176 0.153
+2:        Use     within      70  0.235 0.137
+3:        MoA    between     270  0.179 0.152
+4:        MoA     within      55  0.238 0.140</code></pre>
 </div>
 </div></div>
 <p>To annotate the cells of the clustered heatmap reprocess the correlation data after performing the clustering so that the annotation matricies align with the clusterd conditions</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># perform clustering on pairwise Spearman correlation coefficients</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> pheatmap<span class="sc">::</span><span class="fu">pheatmap</span>(init_corr_coef)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract correlation coefficients for clustering</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>init_corr_coef <span class="ot">&lt;-</span> pheno_corr_all<span class="sc">$</span>r</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># perform clustering on pairwise Spearman correlation coefficients</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> pheatmap<span class="sc">::</span><span class="fu">pheatmap</span>(init_corr_coef)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="">
 <figure class="figure">
-<p class=""><a href="figure_2_phenotype_correlations_files/figure-html/unnamed-chunk-5-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="figure_2_phenotype_correlations_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></a></p>
+<p class=""><a href="figure_2_phenotype_correlations_files/figure-html/unnamed-chunk-6-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="figure_2_phenotype_correlations_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the clustered order of the toxicants</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>desired_order <span class="ot">&lt;-</span> <span class="fu">rownames</span>(init_corr_coef)[clust<span class="sc">$</span>tree_row<span class="sc">$</span>order]</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># reshape the strain matrix to match cluster order</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>strain_means_pivot_matrix2 <span class="ot">&lt;-</span> strain_means_pivot_matrix[, desired_order]</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>pheno_corr_all2 <span class="ot">&lt;-</span> psych<span class="sc">::</span><span class="fu">corr.test</span>(</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  strain_means_pivot_matrix2,</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">use =</span> <span class="st">"pairwise"</span>,</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">adjust =</span> <span class="st">"bonferroni"</span>,</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"spearman"</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># get the reordered correlation coefficients and p-values</span></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_r <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>r</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_p <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>p</span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_p_symbol <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">round</span>(pheno_corr_all2<span class="sc">$</span>p, <span class="at">digits =</span> <span class="dv">3</span>) <span class="sc">&lt;=</span> <span class="fl">0.05</span>, <span class="st">"*"</span>, <span class="st">" "</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the clustered order of the toxicants</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>desired_order <span class="ot">&lt;-</span> <span class="fu">rownames</span>(init_corr_coef)[clust<span class="sc">$</span>tree_row<span class="sc">$</span>order]</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># reshape the strain matrix to match cluster order</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>strain_means_pivot_matrix2 <span class="ot">&lt;-</span> strain_means_pivot_matrix[, desired_order]</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>pheno_corr_all2 <span class="ot">&lt;-</span> psych<span class="sc">::</span><span class="fu">corr.test</span>(</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  strain_means_pivot_matrix2,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">use =</span> <span class="st">"pairwise"</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">adjust =</span> <span class="st">"bonferroni"</span>,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"spearman"</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co"># get the reordered correlation coefficients and p-values</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_r <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>r</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_p <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>p</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>pheno_corr_all_p_symbol <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">round</span>(pheno_corr_all2<span class="sc">$</span>p, <span class="at">digits =</span> <span class="dv">3</span>) <span class="sc">&lt;=</span> <span class="fl">0.05</span>, <span class="st">"*"</span>, <span class="st">" "</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <p>Check to identify significant correlations:</p>
 <p>Lower triangle with un-corrected p-valyes</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pull the lower and top diagonals for detailed analysis</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 299 pos, 26 neg</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># lower raw</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 185 pos, 2 neg sig raw</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>lower_r_raw <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>r</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>lower_r_raw[<span class="fu">upper.tri</span>(lower_r_raw, <span class="at">diag =</span> T)] <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>lower_r_proc <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(lower_r_raw) <span class="sc">%&gt;%</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">y_trait =</span> <span class="fu">row.names</span>(lower_r_raw)) <span class="sc">%&gt;%</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>y_trait, <span class="at">names_to =</span> <span class="st">"x_trait"</span>, <span class="at">values_to =</span> <span class="st">"r"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(r)) <span class="sc">%&gt;%</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">neg_n =</span> <span class="fu">sum</span>(r <span class="sc">&lt;</span> <span class="dv">0</span>),</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">pos_n =</span> <span class="fu">sum</span>(r <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>lower_p_raw <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>p</span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>lower_p_raw[<span class="fu">upper.tri</span>(lower_p_raw, <span class="at">diag =</span> T)] <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>lower_p_proc <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(lower_p_raw) <span class="sc">%&gt;%</span></span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">y_trait =</span> <span class="fu">row.names</span>(lower_p_raw)) <span class="sc">%&gt;%</span></span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>y_trait, <span class="at">names_to =</span> <span class="st">"x_trait"</span>, <span class="at">values_to =</span> <span class="st">"raw_p"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(raw_p)) <span class="sc">%&gt;%</span></span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="st">`</span><span class="at">raw_p&lt;0.05</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(raw_p <span class="sc">&lt;</span> <span class="fl">0.05</span>, T, F))</span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>lower_proc <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(lower_r_proc, lower_p_proc) <span class="sc">%&gt;%</span></span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">pos_sig_n =</span> <span class="fu">sum</span>(r <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">raw_p&lt;0.05</span><span class="st">`</span> <span class="sc">==</span> T),</span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">neg_sig_n =</span> <span class="fu">sum</span>(r <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">raw_p&lt;0.05</span><span class="st">`</span> <span class="sc">==</span> T)</span>
-<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pull the lower and top diagonals for detailed analysis</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 299 pos, 26 neg</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># lower raw</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 185 pos, 2 neg sig raw</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>lower_r_raw <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>r</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>lower_r_raw[<span class="fu">upper.tri</span>(lower_r_raw, <span class="at">diag =</span> T)] <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>lower_r_proc <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(lower_r_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">y_trait =</span> <span class="fu">row.names</span>(lower_r_raw)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>y_trait, <span class="at">names_to =</span> <span class="st">"x_trait"</span>, <span class="at">values_to =</span> <span class="st">"r"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(r)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">neg_n =</span> <span class="fu">sum</span>(r <span class="sc">&lt;</span> <span class="dv">0</span>),</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">pos_n =</span> <span class="fu">sum</span>(r <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>lower_p_raw <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>p</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>lower_p_raw[<span class="fu">upper.tri</span>(lower_p_raw, <span class="at">diag =</span> T)] <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>lower_p_proc <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(lower_p_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">y_trait =</span> <span class="fu">row.names</span>(lower_p_raw)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>y_trait, <span class="at">names_to =</span> <span class="st">"x_trait"</span>, <span class="at">values_to =</span> <span class="st">"raw_p"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(raw_p)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="st">`</span><span class="at">raw_p&lt;0.05</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(raw_p <span class="sc">&lt;</span> <span class="fl">0.05</span>, T, F))</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>lower_proc <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(lower_r_proc, lower_p_proc) <span class="sc">%&gt;%</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">pos_sig_n =</span> <span class="fu">sum</span>(r <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">raw_p&lt;0.05</span><span class="st">`</span> <span class="sc">==</span> T),</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">neg_sig_n =</span> <span class="fu">sum</span>(r <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">raw_p&lt;0.05</span><span class="st">`</span> <span class="sc">==</span> T)</span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Joining with `by = join_by(y_trait, x_trait)`</code></pre>
 </div>
 </div></div>
 <p>Upper triangle with Bonferroni corrected p-values</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># top or bonferroni corrected</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 88 pos, 0 neg sig</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>top_r_raw <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>r</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>top_r_raw[<span class="fu">lower.tri</span>(top_r_raw, <span class="at">diag =</span> T)] <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>top_r_proc <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(top_r_raw) <span class="sc">%&gt;%</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">y_trait =</span> <span class="fu">row.names</span>(top_r_raw)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>y_trait, <span class="at">names_to =</span> <span class="st">"x_trait"</span>, <span class="at">values_to =</span> <span class="st">"r"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(r)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">neg_n =</span> <span class="fu">sum</span>(r <span class="sc">&lt;</span> <span class="dv">0</span>),</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">pos_n =</span> <span class="fu">sum</span>(r <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>top_p_raw <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>p</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>top_p_raw[<span class="fu">lower.tri</span>(top_p_raw, <span class="at">diag =</span> T)] <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>top_p_proc <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(top_p_raw) <span class="sc">%&gt;%</span></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">y_trait =</span> <span class="fu">row.names</span>(top_p_raw)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>y_trait, <span class="at">names_to =</span> <span class="st">"x_trait"</span>, <span class="at">values_to =</span> <span class="st">"BF_p"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BF_p)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="st">`</span><span class="at">BF_p&lt;0.05</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(BF_p <span class="sc">&lt;</span> <span class="fl">0.05</span>, T, F))</span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>top_proc <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(top_r_proc, top_p_proc) <span class="sc">%&gt;%</span></span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">pos_sig_n =</span> <span class="fu">sum</span>(r <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">BF_p&lt;0.05</span><span class="st">`</span> <span class="sc">==</span> T),</span>
-<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">neg_sig_n =</span> <span class="fu">sum</span>(r <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">BF_p&lt;0.05</span><span class="st">`</span> <span class="sc">==</span> T)</span>
-<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># top or bonferroni corrected</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 88 pos, 0 neg sig</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>top_r_raw <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>r</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>top_r_raw[<span class="fu">lower.tri</span>(top_r_raw, <span class="at">diag =</span> T)] <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>top_r_proc <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(top_r_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">y_trait =</span> <span class="fu">row.names</span>(top_r_raw)) <span class="sc">%&gt;%</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>y_trait, <span class="at">names_to =</span> <span class="st">"x_trait"</span>, <span class="at">values_to =</span> <span class="st">"r"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(r)) <span class="sc">%&gt;%</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">neg_n =</span> <span class="fu">sum</span>(r <span class="sc">&lt;</span> <span class="dv">0</span>),</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">pos_n =</span> <span class="fu">sum</span>(r <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>top_p_raw <span class="ot">&lt;-</span> pheno_corr_all2<span class="sc">$</span>p</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>top_p_raw[<span class="fu">lower.tri</span>(top_p_raw, <span class="at">diag =</span> T)] <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>top_p_proc <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(top_p_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">y_trait =</span> <span class="fu">row.names</span>(top_p_raw)) <span class="sc">%&gt;%</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>y_trait, <span class="at">names_to =</span> <span class="st">"x_trait"</span>, <span class="at">values_to =</span> <span class="st">"BF_p"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BF_p)) <span class="sc">%&gt;%</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="st">`</span><span class="at">BF_p&lt;0.05</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(BF_p <span class="sc">&lt;</span> <span class="fl">0.05</span>, T, F))</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>top_proc <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(top_r_proc, top_p_proc) <span class="sc">%&gt;%</span></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">pos_sig_n =</span> <span class="fu">sum</span>(r <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">BF_p&lt;0.05</span><span class="st">`</span> <span class="sc">==</span> T),</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">neg_sig_n =</span> <span class="fu">sum</span>(r <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">BF_p&lt;0.05</span><span class="st">`</span> <span class="sc">==</span> T)</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Joining with `by = join_by(y_trait, x_trait)`</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>top_proc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>top_proc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 325 × 9
    y_trait   x_trait       r neg_n pos_n    BF_p `BF_p&lt;0.05` pos_sig_n neg_sig_n
@@ -641,116 +659,127 @@ $qtl_overlaps$jpg
 # ℹ 315 more rows</code></pre>
 </div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the color palette and annotation data</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set color palette for annotations</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>class.pal.df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#E69F00"</span>, <span class="st">"#56B4E9"</span>, <span class="st">"#009E73"</span>, <span class="st">"#F0E442"</span>, <span class="st">"#D55E00"</span>),</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">big_class =</span> <span class="fu">c</span>(<span class="st">"Flame Retardant"</span>, <span class="st">"Fungicide"</span>, <span class="st">"Herbicide"</span>, <span class="st">"Insecticide"</span>, <span class="st">"Metal"</span>)</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co"># filter the meta data to include only toxicant and join to the class palette</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>tox_cols <span class="ot">&lt;-</span> tox_data <span class="sc">%&gt;%</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the controls</span></span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(big_class <span class="sc">!=</span> <span class="st">"Control"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(drug, nice_drug_label2, big_class, short_moa_class) <span class="sc">%&gt;%</span></span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Clean up to have special character for plotting</span></span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">nice_drug_label2 =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(nice_drug_label2, <span class="at">pattern =</span> <span class="st">"uM"</span>, <span class="at">replacement =</span> <span class="st">"µM"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># join to the class palette</span></span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(., class.pal.df, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"big_class"</span> <span class="ot">=</span> <span class="st">"big_class"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(drug, nice_drug_label2, big_class, short_moa_class, col) <span class="sc">%&gt;%</span></span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">MoA =</span> short_moa_class, <span class="at">Use =</span> big_class)</span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mapping from drug to nice_drug_label2</span></span>
-<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>drug_to_label <span class="ot">&lt;-</span> <span class="fu">setNames</span>(tox_cols<span class="sc">$</span>nice_drug_label2, tox_cols<span class="sc">$</span>drug)</span>
-<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Update row and column names of correlation matrices</span></span>
-<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(pheno_corr_all_r) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">rownames</span>(pheno_corr_all_r)]</span>
-<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pheno_corr_all_r) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">colnames</span>(pheno_corr_all_r)]</span>
-<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(pheno_corr_all_p_symbol) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">rownames</span>(pheno_corr_all_p_symbol)]</span>
-<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pheno_corr_all_p_symbol) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">colnames</span>(pheno_corr_all_p_symbol)]</span>
-<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Join inhibition data with tox_cols for annotation</span></span>
-<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>tox_cols_with_inhibition <span class="ot">&lt;-</span> tox_cols <span class="sc">%&gt;%</span></span>
-<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
-<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>    inhibition_data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(nice_drug_label2, mean_pct_inhibition),</span>
-<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"nice_drug_label2"</span></span>
-<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a>moa_anno_df <span class="ot">&lt;-</span> tox_cols_with_inhibition <span class="sc">%&gt;%</span></span>
-<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set the row names to the nice drug label</span></span>
-<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"nice_drug_label2"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the drug and color columns</span></span>
-<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>drug, <span class="sc">-</span>col) <span class="sc">%&gt;%</span></span>
-<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rename mean_pct_inhibition for display</span></span>
-<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> mean_pct_inhibition) <span class="sc">%&gt;%</span></span>
-<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reorder columns: Use, MoA, % Growth Inhib. (right to left on heatmap)</span></span>
-<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span>, MoA, Use)</span>
-<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors for Use (categorical)</span></span>
-<span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>col)</span>
-<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cols) <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>big_class)</span>
-<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Create colorblind-friendly palette for MoA (less saturated)</span></span>
-<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a>moa_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AChE"</span> <span class="ot">=</span> <span class="st">"#7FCDBB"</span>,</span>
-<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a>  <span class="st">"OXPHOS"</span> <span class="ot">=</span> <span class="st">"#FDAE6B"</span>,</span>
-<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Redox"</span> <span class="ot">=</span> <span class="st">"#9ECAE1"</span>,</span>
-<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Thiol"</span> <span class="ot">=</span> <span class="st">"#FC9272"</span>,</span>
-<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Multiple"</span> <span class="ot">=</span> <span class="st">"#C994C7"</span>,</span>
-<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Other"</span> <span class="ot">=</span> <span class="st">"#BDBDBD"</span></span>
-<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-63"><a href="#cb30-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Create grey-black color scale for Growth Inhibition (continuous)</span></span>
-<span id="cb30-64"><a href="#cb30-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Higher % inhibition = darker, anchored to 0-100% range</span></span>
-<span id="cb30-65"><a href="#cb30-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Using gray90 (light) to gray20 (dark)</span></span>
-<span id="cb30-66"><a href="#cb30-66" aria-hidden="true" tabindex="-1"></a>inhibition_color_scale <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"gray90"</span>, <span class="st">"gray20"</span>))(<span class="dv">100</span>)</span>
-<span id="cb30-67"><a href="#cb30-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-68"><a href="#cb30-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors list</span></span>
-<span id="cb30-69"><a href="#cb30-69" aria-hidden="true" tabindex="-1"></a>anno_cols <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb30-70"><a href="#cb30-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">Use =</span> cols,</span>
-<span id="cb30-71"><a href="#cb30-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">MoA =</span> moa_cols,</span>
-<span id="cb30-72"><a href="#cb30-72" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> inhibition_color_scale</span>
-<span id="cb30-73"><a href="#cb30-73" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>create_phenotype_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(similarity_matrix, con_metadata_df, anno_cols, significance_matrix) {</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Perform hierarchical clustering on rows to get the dendrogram</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  row_dist <span class="ot">&lt;-</span> <span class="fu">dist</span>(similarity_matrix)</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  row_hclust <span class="ot">&lt;-</span> <span class="fu">hclust</span>(row_dist)</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Use the same clustering order for both rows and columns</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (since it's a symmetric similarity matrix)</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> pheatmap<span class="sc">::</span><span class="fu">pheatmap</span>(</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    similarity_matrix,</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotation_row =</span> con_metadata_df,</span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotation_colors =</span> anno_cols,</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">7.5</span>,</span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">6</span>,</span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"navy"</span>, <span class="st">"white"</span>, <span class="st">"darkred"</span>))(<span class="dv">1000</span>),</span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="at">length.out =</span> (<span class="dv">1000</span> <span class="sc">+</span> <span class="dv">1</span>)),</span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_colnames =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize_number =</span> <span class="dv">12</span>,</span>
-<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">display_numbers =</span> significance_matrix,</span>
-<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_rows =</span> row_hclust,</span>
-<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_cols =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">cutree_rows =</span> <span class="dv">2</span>,</span>
-<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">silent =</span> <span class="cn">TRUE</span></span>
-<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
-<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the color palette and annotation data</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set color palette for annotations</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>class.pal.df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#E69F00"</span>, <span class="st">"#56B4E9"</span>, <span class="st">"#009E73"</span>, <span class="st">"#F0E442"</span>, <span class="st">"#D55E00"</span>),</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">big_class =</span> <span class="fu">c</span>(<span class="st">"Flame Retardant"</span>, <span class="st">"Fungicide"</span>, <span class="st">"Herbicide"</span>, <span class="st">"Insecticide"</span>, <span class="st">"Metal"</span>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co"># filter the meta data to include only toxicant and join to the class palette</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>tox_cols <span class="ot">&lt;-</span> tox_data <span class="sc">%&gt;%</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the controls</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(big_class <span class="sc">!=</span> <span class="st">"Control"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(drug, nice_drug_label2, big_class, moa_class) <span class="sc">%&gt;%</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Clean up to have special character for plotting</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">nice_drug_label2 =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(nice_drug_label2, <span class="at">pattern =</span> <span class="st">"uM"</span>, <span class="at">replacement =</span> <span class="st">"µM"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create short MoA class names for figure legend</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">short_moa_class =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"AChE inhibition"</span> <span class="sc">~</span> <span class="st">"AChE inhib."</span>,</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Multiple mechanisms"</span> <span class="sc">~</span> <span class="st">"Multiple"</span>,</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Other"</span> <span class="sc">~</span> <span class="st">"Other"</span>,</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Oxidative phosphorylation inhibition (OXPHOS inhibition)"</span> <span class="sc">~</span> <span class="st">"OXPHOS inhib."</span>,</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Redox cycling"</span> <span class="sc">~</span> <span class="st">"Redox cycl."</span>,</span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Thiol binding"</span> <span class="sc">~</span> <span class="st">"Thiol bind."</span></span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># join to the class palette</span></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(., class.pal.df, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"big_class"</span> <span class="ot">=</span> <span class="st">"big_class"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(drug, nice_drug_label2, big_class, short_moa_class, col) <span class="sc">%&gt;%</span></span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">MoA =</span> short_moa_class, <span class="at">Use =</span> big_class)</span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mapping from drug to nice_drug_label2</span></span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>drug_to_label <span class="ot">&lt;-</span> <span class="fu">setNames</span>(tox_cols<span class="sc">$</span>nice_drug_label2, tox_cols<span class="sc">$</span>drug)</span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Update row and column names of correlation matrices</span></span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(pheno_corr_all_r) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">rownames</span>(pheno_corr_all_r)]</span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pheno_corr_all_r) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">colnames</span>(pheno_corr_all_r)]</span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(pheno_corr_all_p_symbol) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">rownames</span>(pheno_corr_all_p_symbol)]</span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pheno_corr_all_p_symbol) <span class="ot">&lt;-</span> drug_to_label[<span class="fu">colnames</span>(pheno_corr_all_p_symbol)]</span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Join inhibition data with tox_cols for annotation</span></span>
+<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a>tox_cols_with_inhibition <span class="ot">&lt;-</span> tox_cols <span class="sc">%&gt;%</span></span>
+<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
+<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a>    inhibition_data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(nice_drug_label2, mean_pct_inhibition),</span>
+<span id="cb32-47"><a href="#cb32-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"nice_drug_label2"</span></span>
+<span id="cb32-48"><a href="#cb32-48" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-49"><a href="#cb32-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-50"><a href="#cb32-50" aria-hidden="true" tabindex="-1"></a>moa_anno_df <span class="ot">&lt;-</span> tox_cols_with_inhibition <span class="sc">%&gt;%</span></span>
+<span id="cb32-51"><a href="#cb32-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set the row names to the nice drug label</span></span>
+<span id="cb32-52"><a href="#cb32-52" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"nice_drug_label2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-53"><a href="#cb32-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the drug and color columns</span></span>
+<span id="cb32-54"><a href="#cb32-54" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>drug, <span class="sc">-</span>col) <span class="sc">%&gt;%</span></span>
+<span id="cb32-55"><a href="#cb32-55" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rename mean_pct_inhibition for display</span></span>
+<span id="cb32-56"><a href="#cb32-56" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> mean_pct_inhibition) <span class="sc">%&gt;%</span></span>
+<span id="cb32-57"><a href="#cb32-57" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reorder columns: Use, MoA, % Growth Inhib. (right to left on heatmap)</span></span>
+<span id="cb32-58"><a href="#cb32-58" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span>, MoA, Use)</span>
+<span id="cb32-59"><a href="#cb32-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-60"><a href="#cb32-60" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors for Use (categorical)</span></span>
+<span id="cb32-61"><a href="#cb32-61" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>col)</span>
+<span id="cb32-62"><a href="#cb32-62" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cols) <span class="ot">&lt;-</span> <span class="fu">unique</span>(class.pal.df<span class="sc">$</span>big_class)</span>
+<span id="cb32-63"><a href="#cb32-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-64"><a href="#cb32-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Create colorblind-friendly palette for MoA (less saturated)</span></span>
+<span id="cb32-65"><a href="#cb32-65" aria-hidden="true" tabindex="-1"></a>moa_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb32-66"><a href="#cb32-66" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AChE inhib."</span> <span class="ot">=</span> <span class="st">"#7FCDBB"</span>,</span>
+<span id="cb32-67"><a href="#cb32-67" aria-hidden="true" tabindex="-1"></a>  <span class="st">"OXPHOS inhib."</span> <span class="ot">=</span> <span class="st">"#FDAE6B"</span>,</span>
+<span id="cb32-68"><a href="#cb32-68" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Redox cycl."</span> <span class="ot">=</span> <span class="st">"#9ECAE1"</span>,</span>
+<span id="cb32-69"><a href="#cb32-69" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Thiol bind."</span> <span class="ot">=</span> <span class="st">"#FC9272"</span>,</span>
+<span id="cb32-70"><a href="#cb32-70" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Multiple"</span> <span class="ot">=</span> <span class="st">"#C994C7"</span>,</span>
+<span id="cb32-71"><a href="#cb32-71" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Other"</span> <span class="ot">=</span> <span class="st">"#BDBDBD"</span></span>
+<span id="cb32-72"><a href="#cb32-72" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-73"><a href="#cb32-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-74"><a href="#cb32-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Create grey-black color scale for Growth Inhibition (continuous)</span></span>
+<span id="cb32-75"><a href="#cb32-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Higher % inhibition = darker, anchored to 0-100% range</span></span>
+<span id="cb32-76"><a href="#cb32-76" aria-hidden="true" tabindex="-1"></a><span class="co"># Using gray90 (light) to gray20 (dark)</span></span>
+<span id="cb32-77"><a href="#cb32-77" aria-hidden="true" tabindex="-1"></a>inhibition_color_scale <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"gray90"</span>, <span class="st">"gray20"</span>))(<span class="dv">100</span>)</span>
+<span id="cb32-78"><a href="#cb32-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-79"><a href="#cb32-79" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors list</span></span>
+<span id="cb32-80"><a href="#cb32-80" aria-hidden="true" tabindex="-1"></a>anno_cols <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb32-81"><a href="#cb32-81" aria-hidden="true" tabindex="-1"></a>  <span class="at">Use =</span> cols,</span>
+<span id="cb32-82"><a href="#cb32-82" aria-hidden="true" tabindex="-1"></a>  <span class="at">MoA =</span> moa_cols,</span>
+<span id="cb32-83"><a href="#cb32-83" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> inhibition_color_scale</span>
+<span id="cb32-84"><a href="#cb32-84" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div id="cell-fig-phenotype-correlations" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>phenotype_correlations <span class="ot">&lt;-</span> <span class="fu">create_phenotype_heatmap</span>(</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">similarity_matrix =</span> pheno_corr_all_r,</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">con_metadata_df =</span> moa_anno_df,</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">significance_matrix =</span> pheno_corr_all_p_symbol,</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">anno_cols =</span> anno_cols</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>phenotype_correlations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>create_phenotype_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(similarity_matrix, con_metadata_df, anno_cols, significance_matrix) {</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Perform hierarchical clustering on rows to get the dendrogram</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  row_dist <span class="ot">&lt;-</span> <span class="fu">dist</span>(similarity_matrix)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  row_hclust <span class="ot">&lt;-</span> <span class="fu">hclust</span>(row_dist)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Use the same clustering order for both rows and columns</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (since it's a symmetric similarity matrix)</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> pheatmap<span class="sc">::</span><span class="fu">pheatmap</span>(</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    similarity_matrix,</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotation_row =</span> con_metadata_df,</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotation_colors =</span> anno_cols,</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">7.5</span>,</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">6</span>,</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"navy"</span>, <span class="st">"white"</span>, <span class="st">"darkred"</span>))(<span class="dv">1000</span>),</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="at">length.out =</span> (<span class="dv">1000</span> <span class="sc">+</span> <span class="dv">1</span>)),</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_colnames =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize_number =</span> <span class="dv">12</span>,</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">display_numbers =</span> significance_matrix,</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_rows =</span> row_hclust,</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_cols =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">cutree_rows =</span> <span class="dv">2</span>,</span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">silent =</span> <span class="cn">TRUE</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div id="cell-fig-phenotype-correlations" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>phenotype_correlations <span class="ot">&lt;-</span> <span class="fu">create_phenotype_heatmap</span>(</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">similarity_matrix =</span> pheno_corr_all_r,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">con_metadata_df =</span> moa_anno_df,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">significance_matrix =</span> pheno_corr_all_p_symbol,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">anno_cols =</span> anno_cols</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>phenotype_correlations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-phenotype-correlations" class="quarto-float quarto-figure quarto-figure-center anchored" width="720">
 <figure class="quarto-float quarto-float-fig figure">
@@ -764,13 +793,13 @@ $qtl_overlaps$jpg
 </div>
 </div></div>
 <p>Save publication figure</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">save_plot</span>(</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">tplot =</span> phenotype_correlations,</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fn_list =</span> figure_fns<span class="sc">$</span>phenotype_correlations,</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">w_in =</span> <span class="fl">7.5</span>,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">h_in =</span> <span class="dv">5</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [12]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">save_plot</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">tplot =</span> phenotype_correlations,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fn_list =</span> figure_fns<span class="sc">$</span>phenotype_correlations,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">w_in =</span> <span class="fl">7.5</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">h_in =</span> <span class="dv">5</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
      </main>
 <!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">

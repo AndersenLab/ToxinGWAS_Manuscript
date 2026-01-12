@@ -209,7 +209,7 @@
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">timestamp</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>##------ Fri Jan  9 11:17:06 2026 ------##</code></pre>
+<pre><code>##------ Mon Jan 12 08:26:25 2026 ------##</code></pre>
 </div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
@@ -427,6 +427,9 @@ $heritability_all_classes$eps
 $heritability_all_classes$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_1/figure_1.jpg"
 
+$heritability_all_classes$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_1/figure_1.tiff"
+
 
 $phenotype_correlations
 $phenotype_correlations$png
@@ -437,6 +440,9 @@ $phenotype_correlations$eps
 
 $phenotype_correlations$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_2/figure_2.jpg"
+
+$phenotype_correlations$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_2/figure_2.tiff"
 
 
 $manhattan_plots
@@ -449,6 +455,9 @@ $manhattan_plots$eps
 $manhattan_plots$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_3/figure_3.jpg"
 
+$manhattan_plots$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_3/figure_3.tiff"
+
 
 $tox.effect.bubble
 $tox.effect.bubble$png
@@ -460,6 +469,9 @@ $tox.effect.bubble$eps
 $tox.effect.bubble$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_4/figure_4.jpg"
 
+$tox.effect.bubble$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_4/figure_4.tiff"
+
 
 $qtl_overlaps
 $qtl_overlaps$png
@@ -469,7 +481,10 @@ $qtl_overlaps$eps
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.eps"
 
 $qtl_overlaps$jpg
-[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.jpg"</code></pre>
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.jpg"
+
+$qtl_overlaps$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.tiff"</code></pre>
 </div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
@@ -536,80 +551,80 @@ $qtl_overlaps$jpg
 <span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">moa_refs =</span> <span class="st">`</span><span class="at">TAC refs</span><span class="st">`</span></span>
 <span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Define allowed moa_class values and their short names</span></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Define allowed moa_class values</span></span>
 <span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>allowed_moa_classes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AChE inhibition"</span>,</span>
-<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Multiple mechanisms"</span>,</span>
-<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Other"</span>,</span>
-<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Oxidative phosphorylation inhibition (OXPHOS inhibition)"</span>,</span>
-<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Redox cycling"</span>,</span>
-<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Thiol binding"</span></span>
-<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a><span class="co"># Validate moa_class values</span></span>
-<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>invalid_moa <span class="ot">&lt;-</span> moa_class <span class="sc">%&gt;%</span></span>
-<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span>moa_class <span class="sc">%in%</span> allowed_moa_classes) <span class="sc">%&gt;%</span></span>
-<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(moa_class) <span class="sc">%&gt;%</span></span>
-<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
-<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(invalid_moa) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="fu">paste</span>(</span>
-<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Invalid moa_class values found:"</span>,</span>
-<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(invalid_moa, <span class="at">collapse =</span> <span class="st">", "</span>),</span>
-<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="sc">\n</span><span class="st">Allowed values:"</span>,</span>
-<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(allowed_moa_classes, <span class="at">collapse =</span> <span class="st">", "</span>)</span>
-<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AChE inhibition"</span>,</span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Multiple mechanisms"</span>,</span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Other"</span>,</span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Oxidative phosphorylation inhibition (OXPHOS inhibition)"</span>,</span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Redox cycling"</span>,</span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Thiol binding"</span></span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Validate moa_class values</span></span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>invalid_moa <span class="ot">&lt;-</span> moa_class <span class="sc">%&gt;%</span></span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span>moa_class <span class="sc">%in%</span> allowed_moa_classes) <span class="sc">%&gt;%</span></span>
+<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(moa_class) <span class="sc">%&gt;%</span></span>
+<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(invalid_moa) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="fu">paste</span>(</span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Invalid moa_class values found:"</span>,</span>
+<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(invalid_moa, <span class="at">collapse =</span> <span class="st">", "</span>),</span>
+<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="sc">\n</span><span class="st">Allowed values:"</span>,</span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(allowed_moa_classes, <span class="at">collapse =</span> <span class="st">", "</span>)</span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a><span class="do">## Merge with condition data ##</span></span>
 <span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a><span class="co"># Add short_moa_class column for figure 2</span></span>
-<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>moa_class <span class="ot">&lt;-</span> moa_class <span class="sc">%&gt;%</span></span>
-<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a>    <span class="at">short_moa_class =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
-<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"AChE inhibition"</span> <span class="sc">~</span> <span class="st">"AChE"</span>,</span>
-<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Multiple mechanisms"</span> <span class="sc">~</span> <span class="st">"Multiple"</span>,</span>
-<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Other"</span> <span class="sc">~</span> <span class="st">"Other"</span>,</span>
-<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Oxidative phosphorylation inhibition (OXPHOS inhibition)"</span> <span class="sc">~</span> <span class="st">"OXPHOS"</span>,</span>
-<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Redox cycling"</span> <span class="sc">~</span> <span class="st">"Redox"</span>,</span>
-<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Thiol binding"</span> <span class="sc">~</span> <span class="st">"Thiol"</span></span>
-<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a><span class="do">## Merge with condition data ##</span></span>
-<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a><span class="co"># load condition data</span></span>
-<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a>con_data <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(con_data_fn)</span>
-<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a><span class="co"># create a toxicant column that can be used to match the `toxicant` column in the merge_cas_comptox dataframe</span></span>
-<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a>con_clean <span class="ot">&lt;-</span> con_data <span class="sc">%&gt;%</span></span>
-<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(</span>
-<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span>nice_drug_label <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"DMSO"</span>, <span class="st">"Water"</span>)</span>
-<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicant =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(nice_drug_label, <span class="st">"uM"</span>, <span class="st">""</span>),</span>
-<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicant =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(toxicant, <span class="st">" </span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">d+"</span>, <span class="st">""</span>),</span>
-<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicant =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(toxicant, <span class="st">" </span><span class="sc">\\</span><span class="st">d+"</span>, <span class="st">""</span>)</span>
-<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicant =</span> <span class="fu">case_when</span>(</span>
-<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a>      toxicant <span class="sc">==</span> <span class="st">"Arsenic trioxide"</span> <span class="sc">~</span> <span class="st">"Arsenic"</span>,</span>
-<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a>      toxicant <span class="sc">==</span> <span class="st">"Lead nitrate"</span> <span class="sc">~</span> <span class="st">"Lead (II) nitrate"</span>,</span>
-<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a>      toxicant <span class="sc">==</span> <span class="st">"Methyl mercury"</span> <span class="sc">~</span> <span class="st">"Methylmercury dichloride"</span>,</span>
-<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> toxicant</span>
-<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a><span class="co"># create a condition metadata table that includes condition-specific data</span></span>
-<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a>con_metadata <span class="ot">&lt;-</span> con_clean <span class="sc">%&gt;%</span></span>
-<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
-<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a>    toxicant,</span>
-<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a>    drug,</span>
-<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a>    nice_drug_label2,</span>
-<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a>    nice_drug_label,</span>
-<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a>    concentration_um,</span>
-<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a>    class,</span>
-<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a>    big_class</span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a><span class="co"># load condition data</span></span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>con_data <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(con_data_fn)</span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a><span class="co"># create a toxicant column that can be used to match the `toxicant` column in the merge_cas_comptox dataframe</span></span>
+<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a>con_clean <span class="ot">&lt;-</span> con_data <span class="sc">%&gt;%</span></span>
+<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(</span>
+<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span>nice_drug_label <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"DMSO"</span>, <span class="st">"Water"</span>)</span>
+<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicant =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(nice_drug_label, <span class="st">"uM"</span>, <span class="st">""</span>),</span>
+<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicant =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(toxicant, <span class="st">" </span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">d+"</span>, <span class="st">""</span>),</span>
+<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicant =</span> stringr<span class="sc">::</span><span class="fu">str_replace</span>(toxicant, <span class="st">" </span><span class="sc">\\</span><span class="st">d+"</span>, <span class="st">""</span>)</span>
+<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicant =</span> <span class="fu">case_when</span>(</span>
+<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a>      toxicant <span class="sc">==</span> <span class="st">"Arsenic trioxide"</span> <span class="sc">~</span> <span class="st">"Arsenic"</span>,</span>
+<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a>      toxicant <span class="sc">==</span> <span class="st">"Lead nitrate"</span> <span class="sc">~</span> <span class="st">"Lead (II) nitrate"</span>,</span>
+<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a>      toxicant <span class="sc">==</span> <span class="st">"Methyl mercury"</span> <span class="sc">~</span> <span class="st">"Methylmercury dichloride"</span>,</span>
+<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> toxicant</span>
+<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a><span class="co"># create a condition metadata table that includes condition-specific data</span></span>
+<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a>con_metadata <span class="ot">&lt;-</span> con_clean <span class="sc">%&gt;%</span></span>
+<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a>    toxicant,</span>
+<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a>    drug,</span>
+<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a>    nice_drug_label2,</span>
+<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a>    nice_drug_label,</span>
+<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a>    concentration_um,</span>
+<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a>    class,</span>
+<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a>    big_class</span>
+<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a trait column</span></span>
+<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">gsub</span>(drug, <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">gsub</span>(trait, <span class="at">pattern =</span> <span class="st">"-"</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">gsub</span>(trait, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add length_ to the trait column</span></span>
+<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">paste0</span>(<span class="st">"length_"</span>, trait)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a>  <span class="co"># join MoA data using drug column</span></span>
+<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(moa_class, <span class="at">by =</span> <span class="st">"drug"</span>)</span>
+<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a><span class="co"># merge condition metadata with toxicant prep data and comptox data</span></span>
+<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a>condition_meta_out <span class="ot">&lt;-</span> con_clean <span class="sc">%&gt;%</span></span>
+<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
+<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a>    merge_cas_comptox,</span>
+<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"toxicant"</span></span>
 <span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a trait column</span></span>
 <span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">gsub</span>(drug, <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span></span>
@@ -617,49 +632,34 @@ $qtl_overlaps$jpg
 <span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">gsub</span>(trait, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add length_ to the trait column</span></span>
 <span id="cb15-144"><a href="#cb15-144" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">paste0</span>(<span class="st">"length_"</span>, trait)) <span class="sc">%&gt;%</span></span>
-<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a>  <span class="co"># join MoA data using drug column</span></span>
-<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(moa_class, <span class="at">by =</span> <span class="st">"drug"</span>)</span>
-<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a><span class="co"># merge condition metadata with toxicant prep data and comptox data</span></span>
-<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a>condition_meta_out <span class="ot">&lt;-</span> con_clean <span class="sc">%&gt;%</span></span>
-<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
-<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a>    merge_cas_comptox,</span>
-<span id="cb15-152"><a href="#cb15-152" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"toxicant"</span></span>
-<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a trait column</span></span>
-<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">gsub</span>(drug, <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">gsub</span>(trait, <span class="at">pattern =</span> <span class="st">"-"</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">gsub</span>(trait, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add length_ to the trait column</span></span>
-<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">trait =</span> <span class="fu">paste0</span>(<span class="st">"length_"</span>, trait)) <span class="sc">%&gt;%</span></span>
-<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="st">"diluent "</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-161"><a href="#cb15-161" aria-hidden="true" tabindex="-1"></a>  <span class="co"># join MoA data using drug column</span></span>
-<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(moa_class, <span class="at">by =</span> <span class="st">"drug"</span>)</span>
-<span id="cb15-163"><a href="#cb15-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-164"><a href="#cb15-164" aria-hidden="true" tabindex="-1"></a><span class="co"># create toxicant metadata by merging comptox data with condition metadata</span></span>
-<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a>tox_metadata <span class="ot">&lt;-</span> merge_cas_comptox <span class="sc">%&gt;%</span></span>
-<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(con_metadata, <span class="at">by =</span> <span class="st">"toxicant"</span>)</span>
-<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a><span class="do">## Output the toxicant metadata table as processed data ##</span></span>
-<span id="cb15-169"><a href="#cb15-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a><span class="fu">save_csv</span>(</span>
-<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> tox_metadata,</span>
-<span id="cb15-172"><a href="#cb15-172" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_file =</span> <span class="st">"data/processed/tox_data/tox_metadata.csv"</span></span>
-<span id="cb15-173"><a href="#cb15-173" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a><span class="do">## Output the condition metadata table as processed data ##</span></span>
-<span id="cb15-176"><a href="#cb15-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-177"><a href="#cb15-177" aria-hidden="true" tabindex="-1"></a><span class="fu">save_csv</span>(</span>
-<span id="cb15-178"><a href="#cb15-178" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> condition_meta_out,</span>
-<span id="cb15-179"><a href="#cb15-179" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_file =</span> <span class="st">"data/processed/tox_data/con_metadata.csv"</span></span>
-<span id="cb15-180"><a href="#cb15-180" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="st">"diluent "</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a>  <span class="co"># join MoA data using drug column</span></span>
+<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(moa_class, <span class="at">by =</span> <span class="st">"drug"</span>)</span>
+<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a><span class="co"># create toxicant metadata by merging comptox data with condition metadata</span></span>
+<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a>tox_metadata <span class="ot">&lt;-</span> merge_cas_comptox <span class="sc">%&gt;%</span></span>
+<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(con_metadata, <span class="at">by =</span> <span class="st">"toxicant"</span>)</span>
+<span id="cb15-152"><a href="#cb15-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a><span class="do">## Output the toxicant metadata table as processed data ##</span></span>
+<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a><span class="fu">save_csv</span>(</span>
+<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> tox_metadata,</span>
+<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_file =</span> <span class="st">"data/processed/tox_data/tox_metadata.csv"</span></span>
+<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a><span class="do">## Output the condition metadata table as processed data ##</span></span>
+<span id="cb15-161"><a href="#cb15-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a><span class="fu">save_csv</span>(</span>
+<span id="cb15-163"><a href="#cb15-163" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> condition_meta_out,</span>
+<span id="cb15-164"><a href="#cb15-164" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_file =</span> <span class="st">"data/processed/tox_data/con_metadata.csv"</span></span>
+<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># label: timestamp-end</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">timestamp</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>##------ Fri Jan  9 11:17:07 2026 ------##</code></pre>
+<pre><code>##------ Mon Jan 12 08:26:26 2026 ------##</code></pre>
 </div>
 </div></div>
      </main>

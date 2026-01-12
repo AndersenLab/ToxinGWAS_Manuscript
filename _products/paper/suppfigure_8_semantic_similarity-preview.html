@@ -444,6 +444,9 @@ $heritability_all_classes$eps
 $heritability_all_classes$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_1/figure_1.jpg"
 
+$heritability_all_classes$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_1/figure_1.tiff"
+
 
 $phenotype_correlations
 $phenotype_correlations$png
@@ -454,6 +457,9 @@ $phenotype_correlations$eps
 
 $phenotype_correlations$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_2/figure_2.jpg"
+
+$phenotype_correlations$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_2/figure_2.tiff"
 
 
 $manhattan_plots
@@ -466,6 +472,9 @@ $manhattan_plots$eps
 $manhattan_plots$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_3/figure_3.jpg"
 
+$manhattan_plots$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_3/figure_3.tiff"
+
 
 $tox.effect.bubble
 $tox.effect.bubble$png
@@ -477,6 +486,9 @@ $tox.effect.bubble$eps
 $tox.effect.bubble$jpg
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_4/figure_4.jpg"
 
+$tox.effect.bubble$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_4/figure_4.tiff"
+
 
 $qtl_overlaps
 $qtl_overlaps$png
@@ -486,7 +498,10 @@ $qtl_overlaps$eps
 [1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.eps"
 
 $qtl_overlaps$jpg
-[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.jpg"</code></pre>
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.jpg"
+
+$qtl_overlaps$tiff
+[1] "/Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_5/figure_5.tiff"</code></pre>
 </div>
 </div></div>
 <section id="functions" class="level1">
@@ -557,7 +572,10 @@ $qtl_overlaps$jpg
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>candidate_semsim_fn <span class="ot">&lt;-</span> <span class="st">"data/processed/semantic_similarity/candidate_semSim.rds"</span></span>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># path to condition metadata</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>con_metadata_fn <span class="ot">&lt;-</span> <span class="st">"data/processed/tox_data/con_metadata.csv"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>con_metadata_fn <span class="ot">&lt;-</span> <span class="st">"data/processed/tox_data/con_metadata.csv"</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co"># path to percent inhibition data</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>inhibition_fn <span class="ot">&lt;-</span> <span class="st">"data/processed/phenotypes/toxicant_inhibition_summary.csv"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 <section id="main" class="level1">
@@ -589,74 +607,109 @@ $qtl_overlaps$jpg
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>con_metadata <span class="ot">&lt;-</span> <span class="fu">fread</span>(con_metadata_fn) <span class="sc">%&gt;%</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>diluent)</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>class.pal.df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#E69F00"</span>, <span class="st">"#56B4E9"</span>, <span class="st">"#009E73"</span>, <span class="st">"#F0E442"</span>, <span class="st">"#D55E00"</span>),</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">big_class =</span> <span class="fu">c</span>(<span class="st">"Flame Retardant"</span>, <span class="st">"Fungicide"</span>, <span class="st">"Herbicide"</span>, <span class="st">"Insecticide"</span>, <span class="st">"Metal"</span>)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a dataframe with the three columns</span></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>con_metadata_df <span class="ot">&lt;-</span> con_metadata <span class="sc">%&gt;%</span></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(class.pal.df, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"big_class"</span> <span class="ot">=</span> <span class="st">"big_class"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(nice_drug_label2, big_class, moa_class, col) <span class="sc">%&gt;%</span></span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">Use =</span> <span class="fu">factor</span>(big_class, <span class="at">levels =</span> <span class="fu">c</span>(</span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Flame Retardant"</span>,</span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Fungicide"</span>,</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Herbicide"</span>,</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Insecticide"</span>,</span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Metal"</span></span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    )),</span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">MoA =</span> <span class="fu">factor</span>(moa_class, <span class="at">levels =</span> <span class="fu">c</span>(</span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">"AChE inhibition"</span>,</span>
-<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Redox disruption"</span>,</span>
-<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Other|unknown"</span></span>
-<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>    ))</span>
-<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors</span></span>
-<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>annotation_colors <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Map colors to Use categories (big_class)</span></span>
-<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">Use =</span> <span class="fu">setNames</span>(</span>
-<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"#E69F00"</span>, <span class="st">"#56B4E9"</span>, <span class="st">"#009E73"</span>, <span class="st">"#F0E442"</span>, <span class="st">"#D55E00"</span>),</span>
-<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"Flame Retardant"</span>, <span class="st">"Fungicide"</span>, <span class="st">"Herbicide"</span>, <span class="st">"Insecticide"</span>, <span class="st">"Metal"</span>)</span>
-<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Map colors to MoA categories</span></span>
-<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">MoA =</span> <span class="fu">setNames</span>(</span>
-<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"#8DD3C7"</span>, <span class="st">"#FFFFB3"</span>, <span class="st">"#BEBADA"</span>),</span>
-<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"AChE inhibition"</span>, <span class="st">"Redox disruption"</span>, <span class="st">"Other|unknown"</span>)</span>
-<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Update matrix names using the update_matrix_names function</span></span>
-<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>all_genes_semSim <span class="ot">&lt;-</span> <span class="fu">update_matrix_names</span>(all_genes_semSim, con_metadata)</span>
-<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>candidate_semSim <span class="ot">&lt;-</span> <span class="fu">update_matrix_names</span>(candidate_semSim, con_metadata)</span>
-<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a><span class="co"># remove the color column now from the metadata</span></span>
-<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>con_metadata_pre_p_df <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">select</span>(con_metadata_df, <span class="sc">-</span>col) <span class="sc">%&gt;%</span></span>
-<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"nice_drug_label2"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(Use, MoA)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load percent inhibition data</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>inhibition_data <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(inhibition_fn)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>class.pal.df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#E69F00"</span>, <span class="st">"#56B4E9"</span>, <span class="st">"#009E73"</span>, <span class="st">"#F0E442"</span>, <span class="st">"#D55E00"</span>),</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">big_class =</span> <span class="fu">c</span>(<span class="st">"Flame Retardant"</span>, <span class="st">"Fungicide"</span>, <span class="st">"Herbicide"</span>, <span class="st">"Insecticide"</span>, <span class="st">"Metal"</span>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a dataframe with annotations</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>con_metadata_df <span class="ot">&lt;-</span> con_metadata <span class="sc">%&gt;%</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(class.pal.df, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"big_class"</span> <span class="ot">=</span> <span class="st">"big_class"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(nice_drug_label2, big_class, moa_class, col) <span class="sc">%&gt;%</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create short MoA class names for figure legend</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a> dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">short_moa_class =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"AChE inhibition"</span> <span class="sc">~</span> <span class="st">"AChE inhib."</span>,</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Multiple mechanisms"</span> <span class="sc">~</span> <span class="st">"Multiple"</span>,</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Other"</span> <span class="sc">~</span> <span class="st">"Other"</span>,</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Oxidative phosphorylation inhibition (OXPHOS inhibition)"</span> <span class="sc">~</span> <span class="st">"OXPHOS inhib."</span>,</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Redox cycling"</span> <span class="sc">~</span> <span class="st">"Redox cycl."</span>,</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>      moa_class <span class="sc">==</span> <span class="st">"Thiol binding"</span> <span class="sc">~</span> <span class="st">"Thiol bind."</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">Use =</span> <span class="fu">factor</span>(big_class, <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Flame Retardant"</span>,</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Fungicide"</span>,</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Herbicide"</span>,</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Insecticide"</span>,</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Metal"</span></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>    )),</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">MoA =</span> <span class="fu">factor</span>(short_moa_class, <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>      <span class="st">"AChE inhib."</span>,</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>      <span class="st">"OXPHOS inhib."</span>,</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Redox cycl."</span>,</span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Thiol bind."</span>,</span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Multiple"</span>,</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Other"</span></span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Join with inhibition data</span></span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>    inhibition_data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(nice_drug_label2, mean_pct_inhibition),</span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"nice_drug_label2"</span></span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> mean_pct_inhibition)</span>
 <span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Create heatmaps for each gene set</span></span>
-<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a>all_genes_semSim_plot <span class="ot">&lt;-</span> <span class="fu">create_heatmap</span>(all_genes_semSim, <span class="st">"All Genes"</span>, con_metadata_pre_p_df, annotation_colors)</span>
-<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a>candidate_semSim_plot <span class="ot">&lt;-</span> <span class="fu">create_heatmap</span>(candidate_semSim, <span class="st">"Candidate Genes"</span>, con_metadata_pre_p_df, annotation_colors)</span>
-<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a><span class="co"># # extract the legend grob from the first plot</span></span>
-<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a><span class="co"># legend_index &lt;- which(grepl("legend", all_genes_semSim_plot$gtable$layout$name))</span></span>
-<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a><span class="co"># common_legend &lt;- all_genes_semSim_plot$gtable$grobs[[legend_index]]</span></span>
-<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a><span class="co"># # Remove the legends from both heatmap gtables by replacing them with a null grob.</span></span>
-<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a><span class="co"># all_genes_semSim_plot$gtable$grobs[[legend_index]] &lt;- nullGrob()</span></span>
-<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a>combined_heatmaps <span class="ot">&lt;-</span> <span class="fu">grid.arrange</span>(</span>
-<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a>  all_genes_semSim_plot<span class="sc">$</span>gtable, </span>
-<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a>  candidate_semSim_plot<span class="sc">$</span>gtable, </span>
-<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">1</span>,  <span class="co"># Single column layout</span></span>
-<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">heights =</span> <span class="fu">c</span>(<span class="fl">1.2</span>, <span class="dv">1</span>),  <span class="co"># First plot 20% taller</span></span>
-<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">top =</span> <span class="fu">textGrob</span>(<span class="st">""</span>, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">14</span>)),  <span class="co"># Empty title to create space</span></span>
-<span id="cb25-70"><a href="#cb25-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">left =</span> <span class="fu">textGrob</span>(<span class="st">""</span>, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">14</span>)),  <span class="co"># Empty left margin for labels</span></span>
-<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">padding =</span> <span class="fu">unit</span>(<span class="dv">5</span>, <span class="st">"mm"</span>)  <span class="co"># Add some padding</span></span>
-<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Create colorblind-friendly palette for MoA (less saturated)</span></span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a>moa_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AChE inhib."</span> <span class="ot">=</span> <span class="st">"#7FCDBB"</span>,</span>
+<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a>  <span class="st">"OXPHOS inhib."</span> <span class="ot">=</span> <span class="st">"#FDAE6B"</span>,</span>
+<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Redox cycl."</span> <span class="ot">=</span> <span class="st">"#9ECAE1"</span>,</span>
+<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Thiol bind."</span> <span class="ot">=</span> <span class="st">"#FC9272"</span>,</span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Multiple"</span> <span class="ot">=</span> <span class="st">"#C994C7"</span>,</span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Other"</span> <span class="ot">=</span> <span class="st">"#BDBDBD"</span></span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a><span class="co"># Create grey-black color scale for Growth Inhibition (continuous)</span></span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a>inhibition_color_scale <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"gray90"</span>, <span class="st">"gray20"</span>))(<span class="dv">100</span>)</span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Create annotation colors</span></span>
+<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a>annotation_colors <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Map colors to Use categories (big_class)</span></span>
+<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">Use =</span> <span class="fu">setNames</span>(</span>
+<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"#E69F00"</span>, <span class="st">"#56B4E9"</span>, <span class="st">"#009E73"</span>, <span class="st">"#F0E442"</span>, <span class="st">"#D55E00"</span>),</span>
+<span id="cb25-70"><a href="#cb25-70" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"Flame Retardant"</span>, <span class="st">"Fungicide"</span>, <span class="st">"Herbicide"</span>, <span class="st">"Insecticide"</span>, <span class="st">"Metal"</span>)</span>
+<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Map colors to MoA categories</span></span>
+<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">MoA =</span> moa_cols,</span>
+<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span> <span class="ot">=</span> inhibition_color_scale</span>
+<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Update matrix names using the update_matrix_names function</span></span>
+<span id="cb25-78"><a href="#cb25-78" aria-hidden="true" tabindex="-1"></a>all_genes_semSim <span class="ot">&lt;-</span> <span class="fu">update_matrix_names</span>(all_genes_semSim, con_metadata)</span>
+<span id="cb25-79"><a href="#cb25-79" aria-hidden="true" tabindex="-1"></a>candidate_semSim <span class="ot">&lt;-</span> <span class="fu">update_matrix_names</span>(candidate_semSim, con_metadata)</span>
+<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a><span class="co"># remove the color column now from the metadata</span></span>
+<span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a>con_metadata_pre_p_df <span class="ot">&lt;-</span> con_metadata_df <span class="sc">%&gt;%</span></span>
+<span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>col, <span class="sc">-</span>big_class, <span class="sc">-</span>moa_class, <span class="sc">-</span>short_moa_class) <span class="sc">%&gt;%</span></span>
+<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"nice_drug_label2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">% Growth Inhib.</span><span class="st">`</span>, MoA, Use)</span>
+<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a><span class="co"># Create heatmaps for each gene set</span></span>
+<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a>all_genes_semSim_plot <span class="ot">&lt;-</span> <span class="fu">create_heatmap</span>(all_genes_semSim, <span class="st">"All Genes"</span>, con_metadata_pre_p_df, annotation_colors)</span>
+<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a>candidate_semSim_plot <span class="ot">&lt;-</span> <span class="fu">create_heatmap</span>(candidate_semSim, <span class="st">"Candidate Genes"</span>, con_metadata_pre_p_df, annotation_colors)</span>
+<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-91"><a href="#cb25-91" aria-hidden="true" tabindex="-1"></a><span class="co"># # extract the legend grob from the first plot</span></span>
+<span id="cb25-92"><a href="#cb25-92" aria-hidden="true" tabindex="-1"></a><span class="co"># legend_index &lt;- which(grepl("legend", all_genes_semSim_plot$gtable$layout$name))</span></span>
+<span id="cb25-93"><a href="#cb25-93" aria-hidden="true" tabindex="-1"></a><span class="co"># common_legend &lt;- all_genes_semSim_plot$gtable$grobs[[legend_index]]</span></span>
+<span id="cb25-94"><a href="#cb25-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-95"><a href="#cb25-95" aria-hidden="true" tabindex="-1"></a><span class="co"># # Remove the legends from both heatmap gtables by replacing them with a null grob.</span></span>
+<span id="cb25-96"><a href="#cb25-96" aria-hidden="true" tabindex="-1"></a><span class="co"># all_genes_semSim_plot$gtable$grobs[[legend_index]] &lt;- nullGrob()</span></span>
+<span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-98"><a href="#cb25-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-99"><a href="#cb25-99" aria-hidden="true" tabindex="-1"></a>combined_heatmaps <span class="ot">&lt;-</span> <span class="fu">grid.arrange</span>(</span>
+<span id="cb25-100"><a href="#cb25-100" aria-hidden="true" tabindex="-1"></a>  all_genes_semSim_plot<span class="sc">$</span>gtable, </span>
+<span id="cb25-101"><a href="#cb25-101" aria-hidden="true" tabindex="-1"></a>  candidate_semSim_plot<span class="sc">$</span>gtable, </span>
+<span id="cb25-102"><a href="#cb25-102" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">1</span>,  <span class="co"># Single column layout</span></span>
+<span id="cb25-103"><a href="#cb25-103" aria-hidden="true" tabindex="-1"></a>  <span class="at">heights =</span> <span class="fu">c</span>(<span class="fl">1.2</span>, <span class="dv">1</span>),  <span class="co"># First plot 20% taller</span></span>
+<span id="cb25-104"><a href="#cb25-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">top =</span> <span class="fu">textGrob</span>(<span class="st">""</span>, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">14</span>)),  <span class="co"># Empty title to create space</span></span>
+<span id="cb25-105"><a href="#cb25-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">left =</span> <span class="fu">textGrob</span>(<span class="st">""</span>, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">14</span>)),  <span class="co"># Empty left margin for labels</span></span>
+<span id="cb25-106"><a href="#cb25-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">padding =</span> <span class="fu">unit</span>(<span class="dv">5</span>, <span class="st">"mm"</span>)  <span class="co"># Add some padding</span></span>
+<span id="cb25-107"><a href="#cb25-107" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="">
 <figure class="figure">
@@ -671,9 +724,10 @@ $qtl_overlaps$jpg
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Saving combined semantic similarity heatmap to /Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_S8/figure_S8.png"
-[2] "Saving combined semantic similarity heatmap to /Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_S8/figure_S8.eps"
-[3] "Saving combined semantic similarity heatmap to /Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_S8/figure_S8.jpg"</code></pre>
+<pre><code>[1] "Saving combined semantic similarity heatmap to /Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_S8/figure_S8.png" 
+[2] "Saving combined semantic similarity heatmap to /Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_S8/figure_S8.eps" 
+[3] "Saving combined semantic similarity heatmap to /Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_S8/figure_S8.jpg" 
+[4] "Saving combined semantic similarity heatmap to /Users/ryanmckeown/Desktop/ToxinGWAS_Manuscript/figures/figure_S8/figure_S8.tiff"</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">save_combined_semsim_heatmap</span>(combined_heatmaps, sup_figure_fns<span class="sc">$</span>sem_sim_heatmap)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">

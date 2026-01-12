@@ -3,7 +3,10 @@ project:
   title: Toxicant GWAS Analysis
   output-dir: _products
   execute-dir: project
+  pre-render:
+    - bin/check_packages.R
   render: 
+    - analysis/calculate_inhibition.qmd
     - analysis/nemascan_pipeline_documentation.qmd
     - analysis/decompress_nemascan_output.qmd
     - analysis/organize_tox_metadata.qmd
