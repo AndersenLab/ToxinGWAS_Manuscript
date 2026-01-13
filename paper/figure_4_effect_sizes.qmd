@@ -161,10 +161,10 @@ pub_figure <- tox.effect.bubble +
     legend.justification = c("right", "top"),
     legend.direction = "vertical",
     panel.grid = element_blank(),
-    legend.title = element_text(size = 9, color = "black"),
+    legend.title = element_text(size = 9, color = "black", face = "bold"),
     legend.text = element_text(size = 8, color = "black"),
     axis.text = element_text(color = "black"),
-    axis.title = element_text(color = "black")
+    axis.title = element_text(color = "black", face = "bold")
   )
 
 save_plot(
