@@ -304,11 +304,11 @@ save_combined_semsim_heatmap <- function(combined_heatmaps, fn_list, width = 7.5
     # Add panel labels A and B
     grid.text("A",
       x = unit(0.02, "npc"), y = unit(0.95, "npc"),
-      just = "left", gp = gpar(fontsize = 14, fontface = "bold")
+      just = "left", gp = gpar(fontsize = 14, fontface = "bold", fontfamily = "Helvetica")
     )
     grid.text("B",
       x = unit(0.02, "npc"), y = unit(0.45, "npc"),
-      just = "left", gp = gpar(fontsize = 14, fontface = "bold")
+      just = "left", gp = gpar(fontsize = 14, fontface = "bold", fontfamily = "Helvetica")
     )
   }
 

@@ -150,7 +150,12 @@ sim_performance <- summer.GWA.perform %>%
   guides(color = "none") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
+        panel.grid.minor = element_blank(),
+        text = element_text(family = "Helvetica"),
+        axis.text = element_text(family = "Helvetica"),
+        axis.title = element_text(family = "Helvetica"),
+        strip.text = element_text(family = "Helvetica"),
+        legend.text = element_text(family = "Helvetica")) +
   facet_wrap(~h2) 
 ```
 

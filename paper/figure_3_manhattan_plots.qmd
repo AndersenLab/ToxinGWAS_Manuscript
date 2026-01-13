@@ -236,7 +236,11 @@ manhattan_plots <- ggplot(d.all2) +
   ) +
   theme(
     legend.position = "none",
-    panel.grid = element_blank()
+    panel.grid = element_blank(),
+    text = element_text(family = "Helvetica"),
+    axis.text = element_text(family = "Helvetica"),
+    axis.title = element_text(family = "Helvetica"),
+    strip.text = element_text(family = "Helvetica")
   ) +
   ggh4x::facet_grid2(
     nice_drug_label2 ~ CHROM,
