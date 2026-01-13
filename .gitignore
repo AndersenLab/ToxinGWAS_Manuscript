@@ -2,6 +2,9 @@
 **/*.quarto_ipynb
 **/.DS_Store
 
+# Large figure outputs (regenerate from code)
+*.tiff
+
 # Decompressed NemaScan output (keep compressed version only)
 data/processed/20231116_Analysis_NemaScan
 

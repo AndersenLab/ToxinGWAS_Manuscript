@@ -52,10 +52,12 @@ n_outlier_hist <- outlier_summary_df %>%
     panel.grid = ggplot2::element_blank(),
     legend.position = "inside",
     legend.position.inside = c(0.85, 0.90),
-    text = element_text(size = 10),
-    legend.title = element_text(face = "bold"),
-    axis.title.x = element_text(face = "bold"),
-    axis.title.y = element_text(face = "bold")
+    text = element_text(size = 10, family = "Helvetica"),
+    legend.title = element_text(face = "bold", family = "Helvetica"),
+    legend.text = element_text(family = "Helvetica"),
+    axis.title.x = element_text(face = "bold", family = "Helvetica"),
+    axis.title.y = element_text(face = "bold", family = "Helvetica"),
+    axis.text = element_text(family = "Helvetica")
   ) +
   ggplot2::scale_x_continuous(breaks = 1:max(outlier_summary_df$Count))
 
