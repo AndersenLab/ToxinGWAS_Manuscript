@@ -52,6 +52,7 @@ create_heatmap <- function(similarity_matrix, title, con_metadata_df, anno_cols)
     breaks = seq(0, 1, length.out = 101),
     show_colnames = TRUE,
     fontsize_number = 12,
+    fontfamily = "Helvetica",
     cluster_rows = row_hclust,
     cluster_cols = row_hclust,
     main = title,
@@ -205,12 +206,12 @@ candidate_semSim_plot <- create_heatmap(candidate_semSim, "Candidate Genes", con
 
 
 combined_heatmaps <- grid.arrange(
-  all_genes_semSim_plot$gtable, 
-  candidate_semSim_plot$gtable, 
+  all_genes_semSim_plot$gtable,
+  candidate_semSim_plot$gtable,
   ncol = 1,  # Single column layout
   heights = c(1.2, 1),  # First plot 20% taller
-  top = textGrob("", gp = gpar(fontsize = 14)),  # Empty title to create space
-  left = textGrob("", gp = gpar(fontsize = 14)),  # Empty left margin for labels
+  top = textGrob("", gp = gpar(fontsize = 14, fontfamily = "Helvetica")),  # Empty title to create space
+  left = textGrob("", gp = gpar(fontsize = 14, fontfamily = "Helvetica")),  # Empty left margin for labels
   padding = unit(5, "mm")  # Add some padding
 )
 

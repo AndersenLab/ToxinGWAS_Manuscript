@@ -540,26 +540,27 @@ $qtl_overlaps$tiff
 <span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">101</span>),</span>
 <span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_colnames =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize_number =</span> <span class="dv">12</span>,</span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_rows =</span> row_hclust,</span>
-<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_cols =</span> row_hclust,</span>
-<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">main =</span> title,</span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">silent =</span> <span class="cn">TRUE</span></span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
-<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate average of unique trait pairs</span></span>
-<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>calculate_avg_similarity <span class="ot">&lt;-</span> <span class="cf">function</span>(matrix) {</span>
-<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get upper triangle values (excluding diagonal)</span></span>
-<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># This gives us unique pairs where order doesn't matter</span></span>
-<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>  upper_tri_values <span class="ot">&lt;-</span> matrix[<span class="fu">upper.tri</span>(matrix, <span class="at">diag =</span> <span class="cn">FALSE</span>)]</span>
-<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate and return the average and SD</span></span>
-<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(</span>
-<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">mean</span>(upper_tri_values, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(upper_tri_values, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontfamily =</span> <span class="st">"Helvetica"</span>,</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_rows =</span> row_hclust,</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_cols =</span> row_hclust,</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">main =</span> title,</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">silent =</span> <span class="cn">TRUE</span></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate average of unique trait pairs</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>calculate_avg_similarity <span class="ot">&lt;-</span> <span class="cf">function</span>(matrix) {</span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get upper triangle values (excluding diagonal)</span></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># This gives us unique pairs where order doesn't matter</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>  upper_tri_values <span class="ot">&lt;-</span> matrix[<span class="fu">upper.tri</span>(matrix, <span class="at">diag =</span> <span class="cn">FALSE</span>)]</span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate and return the average and SD</span></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">mean</span>(upper_tri_values, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(upper_tri_values, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 <section id="inputs" class="level1">
@@ -702,12 +703,12 @@ $qtl_overlaps$tiff
 <span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-98"><a href="#cb25-98" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-99"><a href="#cb25-99" aria-hidden="true" tabindex="-1"></a>combined_heatmaps <span class="ot">&lt;-</span> <span class="fu">grid.arrange</span>(</span>
-<span id="cb25-100"><a href="#cb25-100" aria-hidden="true" tabindex="-1"></a>  all_genes_semSim_plot<span class="sc">$</span>gtable, </span>
-<span id="cb25-101"><a href="#cb25-101" aria-hidden="true" tabindex="-1"></a>  candidate_semSim_plot<span class="sc">$</span>gtable, </span>
+<span id="cb25-100"><a href="#cb25-100" aria-hidden="true" tabindex="-1"></a>  all_genes_semSim_plot<span class="sc">$</span>gtable,</span>
+<span id="cb25-101"><a href="#cb25-101" aria-hidden="true" tabindex="-1"></a>  candidate_semSim_plot<span class="sc">$</span>gtable,</span>
 <span id="cb25-102"><a href="#cb25-102" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">1</span>,  <span class="co"># Single column layout</span></span>
 <span id="cb25-103"><a href="#cb25-103" aria-hidden="true" tabindex="-1"></a>  <span class="at">heights =</span> <span class="fu">c</span>(<span class="fl">1.2</span>, <span class="dv">1</span>),  <span class="co"># First plot 20% taller</span></span>
-<span id="cb25-104"><a href="#cb25-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">top =</span> <span class="fu">textGrob</span>(<span class="st">""</span>, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">14</span>)),  <span class="co"># Empty title to create space</span></span>
-<span id="cb25-105"><a href="#cb25-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">left =</span> <span class="fu">textGrob</span>(<span class="st">""</span>, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">14</span>)),  <span class="co"># Empty left margin for labels</span></span>
+<span id="cb25-104"><a href="#cb25-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">top =</span> <span class="fu">textGrob</span>(<span class="st">""</span>, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">14</span>, <span class="at">fontfamily =</span> <span class="st">"Helvetica"</span>)),  <span class="co"># Empty title to create space</span></span>
+<span id="cb25-105"><a href="#cb25-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">left =</span> <span class="fu">textGrob</span>(<span class="st">""</span>, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">14</span>, <span class="at">fontfamily =</span> <span class="st">"Helvetica"</span>)),  <span class="co"># Empty left margin for labels</span></span>
 <span id="cb25-106"><a href="#cb25-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">padding =</span> <span class="fu">unit</span>(<span class="dv">5</span>, <span class="st">"mm"</span>)  <span class="co"># Add some padding</span></span>
 <span id="cb25-107"><a href="#cb25-107" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">

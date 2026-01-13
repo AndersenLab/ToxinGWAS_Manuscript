@@ -55,9 +55,10 @@ H_comp2 <-
     }, " GWAS"))
   ) +
   theme(
-    axis.text = element_text(size = 7),
-    axis.title = element_text(size = 9),
-    panel.grid = element_blank()
+    axis.text = element_text(size = 7, family = "Helvetica"),
+    axis.title = element_text(size = 9, family = "Helvetica"),
+    panel.grid = element_blank(),
+    text = element_text(family = "Helvetica")
   )
 
 H_comp2
@@ -91,9 +92,10 @@ h_comp3 <-
     }, " GWAS"))
   ) +
   theme(
-    axis.text = element_text(size = 7),
-    axis.title = element_text(size = 9),
-    panel.grid = element_blank()
+    axis.text = element_text(size = 7, family = "Helvetica"),
+    axis.title = element_text(size = 9, family = "Helvetica"),
+    panel.grid = element_blank(),
+    text = element_text(family = "Helvetica")
   )
 
 h_comp3
