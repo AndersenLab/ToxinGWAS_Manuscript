@@ -101,7 +101,7 @@ save_plot <- function(tplot, fn_list, w_in, h_in) {
     width = w_in,
     height = h_in,
     units = "in",
-    dpi = 300,
+    dpi = 600,
     bg = "white"
   )
   # save png plot
@@ -111,7 +111,7 @@ save_plot <- function(tplot, fn_list, w_in, h_in) {
     width = w_in,
     height = h_in,
     units = "in",
-    dpi = 300,
+    dpi = 600,
     bg = "white"
   )
   # save jpg plot
@@ -121,7 +121,7 @@ save_plot <- function(tplot, fn_list, w_in, h_in) {
     width = w_in,
     height = h_in,
     units = "in",
-    dpi = 300,
+    dpi = 600,
     bg = "white"
   )
   # save tiff plot
@@ -131,7 +131,7 @@ save_plot <- function(tplot, fn_list, w_in, h_in) {
     width = w_in,
     height = h_in,
     units = "in",
-    dpi = 300,
+    dpi = 600,
     bg = "white"
   )
 }
@@ -313,12 +313,12 @@ save_combined_semsim_heatmap <- function(combined_heatmaps, fn_list, width = 7.5
   }
 
   # Save as JPG
-  jpeg(fn_list$jpg, width = width, height = height, units = "in", res = 300, bg = "white")
+  jpeg(fn_list$jpg, width = width, height = height, units = "in", res = 600, bg = "white")
   draw_plot_with_labels()
   dev.off()
 
   # Save as PNG
-  png(fn_list$png, width = width, height = height, units = "in", res = 300, bg = "white")
+  png(fn_list$png, width = width, height = height, units = "in", res = 600, bg = "white")
   draw_plot_with_labels()
   dev.off()
 
@@ -328,7 +328,7 @@ save_combined_semsim_heatmap <- function(combined_heatmaps, fn_list, width = 7.5
   dev.off()
 
   # Save as TIFF
-  tiff(fn_list$tiff, width = width, height = height, units = "in", res = 300, compression = "lzw", bg = "white")
+  tiff(fn_list$tiff, width = width, height = height, units = "in", res = 600, compression = "lzw", bg = "white")
   draw_plot_with_labels()
   dev.off()
 }
